@@ -1,34 +1,74 @@
-# Gradle files
+# =========================
+# 🏗 Gradle
+# =========================
 .gradle/
 build/
+*/build/
 
-# Local configuration file (sdk path, etc)
+# Kotlin DSL cache (if using build.gradle.kts)
+.gradle-cache/
+
+# =========================
+# 📦 Local Configuration
+# =========================
 local.properties
 
-# Log/OS Files
-*.log
+# Environment / secrets
+*.env
+.env
+.env.*
 
-# Android Studio generated files and folders
+# =========================
+# 🔐 Keystore & Signing
+# =========================
+*.jks
+*.keystore
+*.pem
+*.key
+
+# =========================
+# 📱 Android Generated Files
+# =========================
+*.apk
+*.aab
+*.ap_
+output-metadata.json
+
 captures/
 .externalNativeBuild/
 .cxx/
-*.aab
-*.apk
-output-metadata.json
 
-# IntelliJ
-*.iml
+# =========================
+# 🧠 Android Studio / IntelliJ
+# =========================
 .idea/
-misc.xml
-deploymentTargetDropDown.xml
-render.experimental.xml
+*.iml
 
-# Keystore files
-*.jks
-*.keystore
+# Optional: keep code style but ignore workspace stuff
+.idea/caches/
+.idea/libraries/
+.idea/modules.xml
+.idea/workspace.xml
+.idea/navEditor.xml
+.idea/assetWizardSettings.xml
 
-# Google Services (e.g. APIs or Firebase)
-google-services.json
+# =========================
+# 🖥 OS Files
+# =========================
+.DS_Store
+Thumbs.db
 
-# Android Profiling
+# =========================
+# 📝 Logs
+# =========================
+*.log
+
+# =========================
+# 🧪 Profiling
+# =========================
 *.hprof
+
+# =========================
+# 🧵 Native
+# =========================
+*.so

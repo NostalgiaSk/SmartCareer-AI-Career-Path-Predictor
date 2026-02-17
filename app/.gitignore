@@ -1,1 +1,74 @@
-/build
+# =========================
+# 🏗 Gradle
+# =========================
+.gradle/
+build/
+*/build/
+
+# Kotlin DSL cache (if using build.gradle.kts)
+.gradle-cache/
+
+# =========================
+# 📦 Local Configuration
+# =========================
+local.properties
+
+# Environment / secrets
+*.env
+.env
+.env.*
+
+# =========================
+# 🔐 Keystore & Signing
+# =========================
+*.jks
+*.keystore
+*.pem
+*.key
+
+# =========================
+# 📱 Android Generated Files
+# =========================
+*.apk
+*.aab
+*.ap_
+output-metadata.json
+
+captures/
+.externalNativeBuild/
+.cxx/
+
+# =========================
+# 🧠 Android Studio / IntelliJ
+# =========================
+.idea/
+*.iml
+
+# Optional: keep code style but ignore workspace stuff
+.idea/caches/
+.idea/libraries/
+.idea/modules.xml
+.idea/workspace.xml
+.idea/navEditor.xml
+.idea/assetWizardSettings.xml
+
+# =========================
+# 🖥 OS Files
+# =========================
+.DS_Store
+Thumbs.db
+
+# =========================
+# 📝 Logs
+# =========================
+*.log
+
+# =========================
+# 🧪 Profiling
+# =========================
+*.hprof
+
+# =========================
+# 🧵 Native
+# =========================
+*.so

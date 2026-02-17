@@ -1,5 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+
+    <!-- ============================================================= -->
+    <!-- SmartCareer Brand Colors                                      -->
+    <!-- A modern indigo / blue palette with soft neutrals              -->
+    <!-- ============================================================= -->
+
+    <!-- Primary brand colors -->
+    <color name="sc_primary">#4F6BED</color>          <!-- Vibrant blue – buttons, accents -->
+    <color name="sc_primary_dark">#3B50C4</color>     <!-- Darker tint for status bar  -->
+    <color name="sc_secondary">#6C63FF</color>        <!-- Indigo accent               -->
+
+    <!-- Gradient endpoints for the login button -->
+    <color name="sc_gradient_start">#6C63FF</color>   <!-- Indigo  -->
+    <color name="sc_gradient_end">#4F6BED</color>     <!-- Blue    -->
+
+    <!-- Backgrounds -->
+    <color name="sc_background">#F5F7FF</color>       <!-- Soft lavender-white page bg  -->
+    <color name="sc_surface">#FFFFFF</color>           <!-- Card / input surface         -->
+
+    <!-- Text colors -->
+    <color name="sc_text_primary">#1E1E2D</color>     <!-- Near-black for headings      -->
+    <color name="sc_text_secondary">#6B7280</color>   <!-- Muted gray for subtitles     -->
+    <color name="sc_text_hint">#9CA3AF</color>        <!-- Placeholder / hint text      -->
+    <color name="sc_text_link">#4F6BED</color>        <!-- Clickable text links         -->
+
+    <!-- Semantic colors -->
+    <color name="sc_error">#EF4444</color>            <!-- Validation error red         -->
+    <color name="sc_divider">#E5E7EB</color>          <!-- Subtle divider / border      -->
+
+    <!-- Legacy colors (kept for compatibility) -->
     <color name="purple_200">#FFBB86FC</color>
     <color name="purple_500">#FF6200EE</color>
     <color name="purple_700">#FF3700B3</color>
@@ -7,4 +37,5 @@
     <color name="teal_700">#FF018786</color>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+
 </resources>

@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    SmartCareer app logo – a stylised rocket icon that represents
+    AI-powered career trajectory.  Drawn with vector paths in the
+    brand indigo / blue palette.
+-->
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="96dp"
+    android:height="96dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+
+    <!-- Rocket body -->
+    <path
+        android:fillColor="@color/sc_primary"
+        android:pathData="M12,2C12,2 7,7 7,12c0,3 1.5,5.5 3.5,7l1.5,-3 1.5,3c2,-1.5 3.5,-4 3.5,-7C17,7 12,2 12,2z" />
+
+    <!-- Rocket window (porthole) -->
+    <path
+        android:fillColor="@color/sc_background"
+        android:pathData="M12,9.5m-1.5,0a1.5,1.5 0,1 1,3 0a1.5,1.5 0,1 1,-3 0" />
+
+    <!-- Left fin -->
+    <path
+        android:fillColor="@color/sc_secondary"
+        android:pathData="M7,12c0,0 -2,2 -2,4l3,-1.5z" />
+
+    <!-- Right fin -->
+    <path
+        android:fillColor="@color/sc_secondary"
+        android:pathData="M17,12c0,0 2,2 2,4l-3,-1.5z" />
+
+    <!-- Exhaust flame centre -->
+    <path
+        android:fillColor="#FBBF24"
+        android:pathData="M12,19l-1,3.5L12,21l1,1.5z" />
+
+</vector>

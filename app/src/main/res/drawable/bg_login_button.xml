@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Gradient shape for the Login button: indigo → blue, fully rounded corners -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+
+    <!-- Horizontal gradient using brand colors -->
+    <gradient
+        android:angle="0"
+        android:startColor="@color/sc_gradient_start"
+        android:endColor="@color/sc_gradient_end"
+        android:type="linear" />
+
+    <!-- Fully rounded pill-shape corners -->
+    <corners android:radius="28dp" />
+
+</shape>

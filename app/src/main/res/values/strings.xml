@@ -1,3 +1,32 @@
 <resources>
     <string name="app_name">SmartCareer</string>
+
+    <!-- ============================================================= -->
+    <!-- Login Screen Strings                                          -->
+    <!-- ============================================================= -->
+
+    <!-- Headings -->
+    <string name="login_welcome">Welcome to SmartCareer</string>
+    <string name="login_subtitle">Discover your ideal career path using AI</string>
+
+    <!-- Input field hints -->
+    <string name="hint_email">Email Address</string>
+    <string name="hint_password">Password</string>
+
+    <!-- Buttons & links -->
+    <string name="btn_login">Login</string>
+    <string name="forgot_password">Forgot Password?</string>
+    <string name="no_account">Don\'t have an account? </string>
+    <string name="create_account">Create Account</string>
+
+    <!-- Validation error messages -->
+    <string name="error_email_empty">Please enter your email address</string>
+    <string name="error_email_invalid">Please enter a valid email address</string>
+    <string name="error_password_empty">Please enter your password</string>
+    <string name="error_password_short">Password must be at least 6 characters</string>
+
+    <!-- Toast messages (placeholder) -->
+    <string name="toast_login_success">Login successful! Redirecting…</string>
+    <string name="toast_forgot_password">Forgot Password clicked – coming soon!</string>
+    <string name="toast_create_account">Create Account clicked – coming soon!</string>
 </resources>

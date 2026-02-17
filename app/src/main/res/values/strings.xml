@@ -29,4 +29,57 @@
     <string name="toast_login_success">Login successful! Redirecting…</string>
     <string name="toast_forgot_password">Forgot Password clicked – coming soon!</string>
     <string name="toast_create_account">Create Account clicked – coming soon!</string>
+
+    <!-- ============================================================= -->
+    <!-- Registration Screen Strings                                   -->
+    <!-- ============================================================= -->
+
+    <!-- Headings -->
+    <string name="register_title">Create Your Account</string>
+    <string name="register_subtitle">Start building your AI-powered career journey</string>
+
+    <!-- Input field hints -->
+    <string name="hint_full_name">Full Name</string>
+    <string name="hint_confirm_password">Confirm Password</string>
+
+    <!-- Buttons & links -->
+    <string name="btn_register">Register</string>
+    <string name="has_account">Already have an account? </string>
+    <string name="link_login">Login</string>
+
+    <!-- Validation error messages -->
+    <string name="error_name_empty">Please enter your full name</string>
+    <string name="error_confirm_password_empty">Please confirm your password</string>
+    <string name="error_passwords_mismatch">Passwords do not match</string>
+
+    <!-- Toast messages (placeholder) -->
+    <string name="toast_register_success">Registration successful! Welcome aboard!</string>
+
+    <!-- ============================================================= -->
+    <!-- Career Profile Screen Strings                                 -->
+    <!-- ============================================================= -->
+
+    <!-- Headings -->
+    <string name="profile_title">Build Your Career Profile</string>
+    <string name="profile_subtitle">Tell us about your skills and interests</string>
+
+    <!-- Input field hints -->
+    <string name="hint_skills">Enter your skills (e.g., Java, UI Design, Data Analysis)</string>
+    <string name="hint_interests">Enter your interests (e.g., AI, Business, Mobile Development)</string>
+    <string name="hint_gpa">Enter your GPA</string>
+    <string name="hint_projects">Describe your academic projects</string>
+
+    <!-- Button -->
+    <string name="btn_generate_suggestions">Generate Career Suggestions</string>
+
+    <!-- Validation error messages -->
+    <string name="error_skills_empty">Please enter your skills</string>
+    <string name="error_interests_empty">Please enter your interests</string>
+    <string name="error_gpa_empty">Please enter your GPA</string>
+    <string name="error_gpa_range">GPA must be between 0.0 and 4.0</string>
+    <string name="error_projects_empty">Please describe your academic projects</string>
+
+    <!-- Toast messages (placeholder) -->
+    <string name="toast_profile_saved">Profile saved successfully!</string>
+
 </resources>

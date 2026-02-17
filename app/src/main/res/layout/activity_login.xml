@@ -1,14 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-    ================================================================
-    activity_login.xml
-    ================================================================
-    Modern, Material Design 3 login screen for SmartCareer.
-    Uses ConstraintLayout for precise positioning.
-    Wrapped in a ScrollView so the form remains accessible on
-    smaller screens or when the keyboard is showing.
-    ================================================================
--->
+
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -29,7 +20,6 @@
 
         <!-- ====================================================== -->
         <!-- APP LOGO                                                -->
-        <!-- Centered at the top of the screen                       -->
         <!-- ====================================================== -->
         <ImageView
             android:id="@+id/ivLogo"
@@ -167,7 +157,7 @@
         </com.google.android.material.textfield.TextInputLayout>
 
         <!-- ====================================================== -->
-        <!-- FORGOT PASSWORD – right-aligned clickable text          -->
+        <!-- FORGOT PASSWORD                                        -->
         <!-- ====================================================== -->
         <TextView
             android:id="@+id/tvForgotPassword"
@@ -187,7 +177,6 @@
 
         <!-- ====================================================== -->
         <!-- LOGIN BUTTON                                            -->
-        <!-- Gradient background with ripple, bold white text        -->
         <!-- ====================================================== -->
         <Button
             android:id="@+id/btnLogin"
@@ -208,8 +197,7 @@
             app:layout_constraintTop_toBottomOf="@id/tvForgotPassword" />
 
         <!-- ====================================================== -->
-        <!-- CREATE ACCOUNT – bottom-anchored text                   -->
-        <!-- "Don't have an account?  Create Account"                -->
+        <!-- CREATE ACCOUNT                                         -->
         <!-- ====================================================== -->
         <TextView
             android:id="@+id/tvCreateAccount"

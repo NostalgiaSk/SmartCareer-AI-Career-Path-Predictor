@@ -1,5 +1,6 @@
 package com.hanin.smartcareer;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.text.SpannableString;
 import android.text.Spanned;
@@ -81,10 +82,8 @@ public class LoginActivity extends AppCompatActivity {
         ClickableSpan clickableSpan = new ClickableSpan() {
             @Override
             public void onClick(@NonNull View widget) {
-                // TODO: Navigate to a SignUpActivity when implemented
-                Toast.makeText(LoginActivity.this,
-                        R.string.toast_create_account,
-                        Toast.LENGTH_SHORT).show();
+                // Navigate to the registration screen
+                startActivity(new Intent(LoginActivity.this, RegisterActivity.class));
             }
 
             @Override
@@ -141,6 +140,10 @@ public class LoginActivity extends AppCompatActivity {
         // ── Proceed if all checks pass ──────────────────────────────
         if (isValid) {
             Toast.makeText(this, R.string.toast_login_success, Toast.LENGTH_SHORT).show();
+
+            // Navigate to the Career Profile screen
+            startActivity(new Intent(LoginActivity.this, CareerProfileActivity.class));
+            finish();
 
             // Hand off to Firebase (placeholder)
             loginWithFirebase(email, password);

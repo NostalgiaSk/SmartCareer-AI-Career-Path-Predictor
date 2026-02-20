@@ -45,6 +45,20 @@
             android:label="@string/app_name"
             android:theme="@style/Theme.SmartCareer" />
 
+        <!-- AI career suggestions list (launched after profile submission) -->
+        <activity
+            android:name=".CareerSuggestionsActivity"
+            android:exported="false"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.SmartCareer" />
+
+        <!-- Skill gap detail screen (launched from a career card) -->
+        <activity
+            android:name=".SkillGapActivity"
+            android:exported="false"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.SmartCareer" />
+
     </application>
 
 </manifest>

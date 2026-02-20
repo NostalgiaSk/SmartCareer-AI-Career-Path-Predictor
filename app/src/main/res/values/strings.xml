@@ -82,4 +82,15 @@
     <!-- Toast messages (placeholder) -->
     <string name="toast_profile_saved">Profile saved successfully!</string>
 
+    <!-- ============================================================= -->
+    <!-- Career Suggestions Screen Strings                             -->
+    <!-- ============================================================= -->
+
+    <!-- Headings -->
+    <string name="career_suggestions_title">Your AI Career Matches</string>
+    <string name="career_suggestions_subtitle">Based on your profile, here are the best options for you</string>
+
+    <!-- Button -->
+    <string name="btn_view_skill_gap">View Skill Gap</string>
+
 </resources>

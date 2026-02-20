@@ -28,6 +28,7 @@
     <!-- Semantic colors -->
     <color name="sc_error">#EF4444</color>            <!-- Validation error red         -->
     <color name="sc_divider">#E5E7EB</color>          <!-- Subtle divider / border      -->
+    <color name="sc_score_badge_bg">#1A4F6BED</color>   <!-- 10 % opacity primary – badge  -->
 
     <!-- Legacy colors (kept for compatibility) -->
     <color name="purple_200">#FFBB86FC</color>

@@ -1,6 +1,7 @@
 package com.hanin.smartcareer;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.Toast;
@@ -113,6 +114,10 @@ public class CareerProfileActivity extends AppCompatActivity {
 
             // Hand off to Firestore (placeholder)
             saveProfileToFirestore(skills, interests, gpa, projects);
+
+            // Navigate to the AI career suggestions screen
+            startActivity(new Intent(this, CareerSuggestionsActivity.class));
+            finish();
         }
     }
 

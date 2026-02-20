@@ -104,4 +104,17 @@
     <!-- Button -->
     <string name="btn_start_learning">Start Learning</string>
 
+    <!-- ============================================================= -->
+    <!-- OpenAI Integration Strings                                    -->
+    <!-- ============================================================= -->
+
+    <!-- Button loading state -->
+    <string name="btn_generating">Generating…</string>
+
+    <!-- Error / status Toasts -->
+    <string name="toast_openai_parse_error">Could not parse AI response. Please try again.</string>
+    <string name="toast_openai_empty">AI returned an empty response. Please try again.</string>
+    <string name="toast_openai_http_error">Server error (code %1$d). Please try again later.</string>
+    <string name="toast_openai_network_error">Network error: %1$s</string>
+
 </resources>

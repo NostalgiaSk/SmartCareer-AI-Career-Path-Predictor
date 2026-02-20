@@ -1,7 +1,16 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+}
+
+// ── Load API key from local.properties (git-ignored) ────────────────
+val localProps = Properties()
+val localPropsFile = rootProject.file("local.properties")
+if (localPropsFile.exists()) {
+    localProps.load(localPropsFile.inputStream())
 }
 
 android {
@@ -18,6 +27,14 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        // Inject the OpenAI key at build-time so it is available as
+        // BuildConfig.OPENAI_API_KEY without hard-coding it in Java.
+        buildConfigField(
+            "String",
+            "OPENAI_API_KEY",
+            "\"${localProps.getProperty("OPENAI_API_KEY", "")}\""
+        )
     }
 
     buildTypes {
@@ -38,6 +55,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true   // generate BuildConfig class
     }
 }
 
@@ -53,6 +71,12 @@ dependencies {
     implementation(libs.google.material)
     implementation(libs.constraintlayout)
     implementation(libs.appcompat)
+
+    // Networking – Retrofit + Gson + OkHttp
+    implementation(libs.retrofit)
+    implementation(libs.retrofit.gson)
+    implementation(libs.okhttp.logging)
+
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)

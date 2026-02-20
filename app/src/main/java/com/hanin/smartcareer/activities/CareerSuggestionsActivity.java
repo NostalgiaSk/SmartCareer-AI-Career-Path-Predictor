@@ -1,6 +1,7 @@
 package com.hanin.smartcareer.activities;
 
 import android.os.Bundle;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -11,7 +12,6 @@ import com.hanin.smartcareer.adapters.CareerAdapter;
 import com.hanin.smartcareer.models.Career;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 
@@ -31,11 +31,20 @@ public class CareerSuggestionsActivity extends AppCompatActivity {
         setContentView(R.layout.activity_career_suggestions);
 
         initViews();
-        loadDummyCareers();
-        setupRecyclerView();
 
-        // Placeholder – swap with real Firestore call when backend is ready
-        fetchCareerSuggestionsFromFirestore();
+        // Get AI-generated career data from the Intent
+        ArrayList<Career> intentCareers =
+                (ArrayList<Career>) getIntent().getSerializableExtra("career_list");
+
+        if (intentCareers != null && !intentCareers.isEmpty()) {
+            careerList = intentCareers;
+        } else {
+            // No data received — show empty state
+            careerList = new ArrayList<>();
+            Toast.makeText(this, "No career suggestions available.", Toast.LENGTH_SHORT).show();
+        }
+
+        setupRecyclerView();
     }
 
     // ── View initialisation ─────────────────────────────────────────
@@ -50,51 +59,6 @@ public class CareerSuggestionsActivity extends AppCompatActivity {
         careerAdapter = new CareerAdapter(this, careerList);
         rvCareers.setLayoutManager(new LinearLayoutManager(this));
         rvCareers.setAdapter(careerAdapter);
-    }
-
-    // ── Dummy AI-generated career data ──────────────────────────────
-
-
-    private void loadDummyCareers() {
-        careerList = new ArrayList<>();
-
-        careerList.add(new Career(
-                "AI Engineer",
-                92,
-                "Design and build intelligent systems powered by machine learning and deep learning frameworks.",
-                new ArrayList<>(Arrays.asList("TensorFlow", "PyTorch", "MLOps")),
-                new ArrayList<>(Arrays.asList("Google ML Engineer", "AWS ML Specialty"))
-        ));
-
-        careerList.add(new Career(
-                "Data Analyst",
-                88,
-                "Transform raw data into actionable insights using statistical analysis and visualization tools.",
-                new ArrayList<>(Arrays.asList("SQL", "Power BI", "Pandas")),
-                new ArrayList<>(Arrays.asList("Google Data Analytics", "IBM Data Analyst"))
-        ));
-
-        careerList.add(new Career(
-                "Product Manager",
-                85,
-                "Lead cross-functional teams to define product vision, strategy, and roadmap execution.",
-                new ArrayList<>(Arrays.asList("Agile / Scrum", "User Research", "A/B Testing")),
-                new ArrayList<>(Arrays.asList("Certified Scrum Product Owner", "PMI-ACP"))
-        ));
-        careerList.add(new Career(
-                "Product Manager",
-                70,
-                "Lead cross-functional teams to define product vision, strategy, and roadmap execution.",
-                new ArrayList<>(Arrays.asList("Agile / Scrum", "User Research", "A/B Testing")),
-                new ArrayList<>(Arrays.asList("Certified Scrum Product Owner", "PMI-ACP"))
-        ));
-        careerList.add(new Career(
-                "Khadhar",
-                60,
-                "Lead cross-functional teams to define product vision, strategy, and roadmap execution.",
-                new ArrayList<>(Arrays.asList("Agile / Scrum", "User Research", "A/B Testing")),
-                new ArrayList<>(Arrays.asList("Certified Scrum Product Owner", "PMI-ACP"))
-        ));
     }
 
     // ── Firestore Integration (placeholder) ─────────────────────────

@@ -93,4 +93,15 @@
     <!-- Button -->
     <string name="btn_view_skill_gap">View Skill Gap</string>
 
+    <!-- ============================================================= -->
+    <!-- Skill Gap Screen Strings                                      -->
+    <!-- ============================================================= -->
+
+    <!-- Section headings -->
+    <string name="skill_gaps_title">Skills You Need to Improve</string>
+    <string name="certifications_title">Recommended Certifications</string>
+
+    <!-- Button -->
+    <string name="btn_start_learning">Start Learning</string>
+
 </resources>

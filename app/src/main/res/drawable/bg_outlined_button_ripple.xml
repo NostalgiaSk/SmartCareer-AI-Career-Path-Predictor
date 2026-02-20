@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Ripple wrapper for the outlined "Start Learning" button -->
+<ripple xmlns:android="http://schemas.android.com/apk/res/android"
+    android:color="@color/sc_score_badge_bg">
+
+    <item android:drawable="@drawable/bg_outlined_button" />
+</ripple>

@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginStart="20dp"
+    android:layout_marginEnd="20dp"
+    android:layout_marginBottom="12dp"
+    app:cardCornerRadius="16dp"
+    app:cardElevation="2dp"
+    app:cardBackgroundColor="@color/sc_surface"
+    app:strokeWidth="0dp">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+
+        <TextView
+            android:id="@+id/tvCertName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:fontFamily="sans-serif-medium"
+            android:textColor="@color/sc_text_primary"
+            android:textSize="15sp"
+            android:textStyle="bold"
+            tools:text="Google ML Engineer"
+            app:layout_constraintEnd_toStartOf="@id/tvDifficulty"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tvDifficulty"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/bg_difficulty_badge"
+            android:fontFamily="sans-serif-medium"
+            android:textColor="@color/sc_primary"
+            android:textSize="11sp"
+            tools:text="Advanced"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/tvProvider"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:fontFamily="sans-serif"
+            android:textColor="@color/sc_text_secondary"
+            android:textSize="13sp"
+            tools:text="Offered by Google"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvCertName" />
+
+        <Button
+            android:id="@+id/btnStartLearning"
+            android:layout_width="wrap_content"
+            android:layout_height="34dp"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/bg_outlined_button_ripple"
+            android:fontFamily="sans-serif-medium"
+            android:letterSpacing="0.02"
+            android:minWidth="0dp"
+            android:stateListAnimator="@null"
+            android:text="@string/btn_start_learning"
+            android:textAllCaps="false"
+            android:textColor="@color/sc_primary"
+            android:textSize="12sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvProvider" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</com.google.android.material.card.MaterialCardView>

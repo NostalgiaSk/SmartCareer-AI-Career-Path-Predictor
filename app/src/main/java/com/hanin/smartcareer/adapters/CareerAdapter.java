@@ -1,4 +1,4 @@
-package com.hanin.smartcareer;
+package com.hanin.smartcareer.adapters;
 
 import android.content.Context;
 import android.content.Intent;
@@ -11,8 +11,20 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.hanin.smartcareer.R;
+import com.hanin.smartcareer.activities.SkillGapActivity;
+import com.hanin.smartcareer.models.Career;
+
 import java.util.List;
 
+/**
+ * RecyclerView adapter that binds a list of {@link Career} objects to
+ * {@code item_career.xml} card layouts.
+ *
+ * Each card displays the career name, match score, short description,
+ * and a button that navigates to {@code SkillGapActivity} with the
+ * selected career data passed via Intent.
+ */
 public class CareerAdapter extends RecyclerView.Adapter<CareerAdapter.CareerViewHolder> {
 
     private final List<Career> careers;

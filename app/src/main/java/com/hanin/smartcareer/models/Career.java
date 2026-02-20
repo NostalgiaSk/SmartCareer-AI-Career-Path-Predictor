@@ -1,8 +1,12 @@
-package com.hanin.smartcareer;
+package com.hanin.smartcareer.models;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 
+/**
+ * Data model representing a single AI-generated career suggestion.
+ * Implements Serializable so it can be passed between activities via Intent extras.
+ */
 public class Career implements Serializable {
 
     private String careerName;

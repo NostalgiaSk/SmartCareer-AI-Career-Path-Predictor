@@ -14,7 +14,7 @@
 
         <!-- Login screen – the first screen users see -->
         <activity
-            android:name=".LoginActivity"
+            android:name=".activities.LoginActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.SmartCareer">
@@ -33,28 +33,28 @@
 
         <!-- Registration screen (launched from Login → Create Account) -->
         <activity
-            android:name=".RegisterActivity"
+            android:name=".activities.RegisterActivity"
             android:exported="false"
             android:label="@string/app_name"
             android:theme="@style/Theme.SmartCareer" />
 
         <!-- Career profile form (launched after login/register) -->
         <activity
-            android:name=".CareerProfileActivity"
+            android:name=".activities.CareerProfileActivity"
             android:exported="false"
             android:label="@string/app_name"
             android:theme="@style/Theme.SmartCareer" />
 
         <!-- AI career suggestions list (launched after profile submission) -->
         <activity
-            android:name=".CareerSuggestionsActivity"
+            android:name=".activities.CareerSuggestionsActivity"
             android:exported="false"
             android:label="@string/app_name"
             android:theme="@style/Theme.SmartCareer" />
 
         <!-- Skill gap detail screen (launched from a career card) -->
         <activity
-            android:name=".SkillGapActivity"
+            android:name=".activities.SkillGapActivity"
             android:exported="false"
             android:label="@string/app_name"
             android:theme="@style/Theme.SmartCareer" />

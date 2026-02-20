@@ -1,8 +1,10 @@
-package com.hanin.smartcareer;
+package com.hanin.smartcareer.activities;
 
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
+
+import com.hanin.smartcareer.models.Career;
 
 /**
  * Stub activity for the Skill Gap detail screen.

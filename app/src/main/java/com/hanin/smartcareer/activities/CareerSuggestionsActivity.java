@@ -1,10 +1,14 @@
-package com.hanin.smartcareer;
+package com.hanin.smartcareer.activities;
 
 import android.os.Bundle;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.hanin.smartcareer.R;
+import com.hanin.smartcareer.adapters.CareerAdapter;
+import com.hanin.smartcareer.models.Career;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -73,6 +77,20 @@ public class CareerSuggestionsActivity extends AppCompatActivity {
         careerList.add(new Career(
                 "Product Manager",
                 85,
+                "Lead cross-functional teams to define product vision, strategy, and roadmap execution.",
+                new ArrayList<>(Arrays.asList("Agile / Scrum", "User Research", "A/B Testing")),
+                new ArrayList<>(Arrays.asList("Certified Scrum Product Owner", "PMI-ACP"))
+        ));
+        careerList.add(new Career(
+                "Product Manager",
+                70,
+                "Lead cross-functional teams to define product vision, strategy, and roadmap execution.",
+                new ArrayList<>(Arrays.asList("Agile / Scrum", "User Research", "A/B Testing")),
+                new ArrayList<>(Arrays.asList("Certified Scrum Product Owner", "PMI-ACP"))
+        ));
+        careerList.add(new Career(
+                "Khadhar",
+                60,
                 "Lead cross-functional teams to define product vision, strategy, and roadmap execution.",
                 new ArrayList<>(Arrays.asList("Agile / Scrum", "User Research", "A/B Testing")),
                 new ArrayList<>(Arrays.asList("Certified Scrum Product Owner", "PMI-ACP"))

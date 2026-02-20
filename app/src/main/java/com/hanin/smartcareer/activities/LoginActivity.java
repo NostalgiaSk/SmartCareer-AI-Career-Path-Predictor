@@ -1,4 +1,4 @@
-package com.hanin.smartcareer;
+package com.hanin.smartcareer.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -18,6 +18,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+import com.hanin.smartcareer.R;
 
 
 public class LoginActivity extends AppCompatActivity {

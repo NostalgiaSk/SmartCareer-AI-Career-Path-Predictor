@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Featured "Top Career Match" card gradient: deep indigo → bright blue.
+     Makes this card visually prominent above other cards. -->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="rectangle">
+
+    <gradient
+        android:angle="135"
+        android:startColor="#6C63FF"
+        android:endColor="#4F8BED"
+        android:type="linear" />
+
+    <corners android:radius="20dp" />
+</shape>

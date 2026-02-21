@@ -1,48 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 
+<!--
+    REDESIGNED saved career card — compact card for horizontal list,
+    now with 20dp corners, gradient-tinted score, and better spacing.
+-->
+
 <com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="160dp"
+    android:layout_width="150dp"
     android:layout_height="wrap_content"
     android:layout_marginEnd="12dp"
     app:cardBackgroundColor="@color/sc_surface"
-    app:cardCornerRadius="16dp"
-    app:cardElevation="2dp"
+    app:cardCornerRadius="20dp"
+    app:cardElevation="4dp"
     app:strokeWidth="0dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
         android:orientation="vertical"
-        android:padding="14dp">
+        android:padding="18dp">
 
-        <TextView
-            android:id="@+id/tvCareerName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:ellipsize="end"
-            android:fontFamily="sans-serif-medium"
-            android:maxLines="1"
-            android:textColor="@color/sc_text_primary"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            tools:text="AI Engineer" />
-
+        <!-- Large match score — visually dominant -->
         <TextView
             android:id="@+id/tvMatchScore"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
             android:fontFamily="sans-serif-medium"
             android:textColor="@color/sc_primary"
-            android:textSize="22sp"
+            android:textSize="28sp"
             android:textStyle="bold"
-            tools:text="92%" />
+            tools:text="85%" />
 
+        <!-- "Match" label -->
         <TextView
-            android:id="@+id/tvLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
@@ -50,6 +44,21 @@
             android:text="@string/home_match_label"
             android:textColor="@color/sc_text_hint"
             android:textSize="11sp" />
+
+        <!-- Career name — 2-line max, centered -->
+        <TextView
+            android:id="@+id/tvCareerName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp"
+            android:ellipsize="end"
+            android:fontFamily="sans-serif-medium"
+            android:gravity="center"
+            android:maxLines="2"
+            android:textColor="@color/sc_text_primary"
+            android:textSize="13sp"
+            android:textStyle="bold"
+            tools:text="Product Manager" />
 
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

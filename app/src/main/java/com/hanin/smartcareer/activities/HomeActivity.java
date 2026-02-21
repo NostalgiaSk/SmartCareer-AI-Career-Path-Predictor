@@ -2,6 +2,8 @@ package com.hanin.smartcareer.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.animation.AnimationUtils;
+import android.view.animation.LayoutAnimationController;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,13 +27,13 @@ import java.util.List;
 /**
  * Main Home Dashboard — the first screen the user sees after login.
  *
- * Displays:
+ * <p>Redesigned with a modern 2026 startup aesthetic:</p>
  * <ul>
- *   <li>Welcome greeting with user name</li>
- *   <li>Quick action cards (New Analysis, Saved, Certs, Progress)</li>
- *   <li>Latest AI-generated career suggestions (vertical RecyclerView)</li>
- *   <li>Saved careers (horizontal RecyclerView)</li>
- *   <li>Certifications in progress (vertical RecyclerView + ProgressBar)</li>
+ *   <li>Gradient hero header with rounded bottom corners</li>
+ *   <li>Featured "Top Career Match" card (highest score)</li>
+ *   <li>Quick action cards with emoji icons</li>
+ *   <li>Cascading entry animations on RecyclerView items</li>
+ *   <li>20dp corner radius cards with soft elevation</li>
  * </ul>
  */
 public class HomeActivity extends AppCompatActivity {
@@ -43,6 +45,10 @@ public class HomeActivity extends AppCompatActivity {
     private MaterialCardView cardNewAnalysis, cardSavedCareers,
             cardCertifications, cardProgress;
     private RecyclerView rvLatestCareers, rvSavedCareers, rvCertificationsProgress;
+
+    // Top Career Match card views
+    private MaterialCardView cardTopMatch;
+    private TextView tvTopMatchName, tvTopMatchScore, tvTopMatchDesc;
 
     // ── Data ─────────────────────────────────────────────────────────
 
@@ -61,7 +67,9 @@ public class HomeActivity extends AppCompatActivity {
         setupWelcome();
         setupQuickActions();
         loadDummyData();
+        populateTopMatchCard();
         setupRecyclerViews();
+        applyEntryAnimations();
 
         // Firebase placeholders — swap with live data when backend is ready
         fetchLatestCareers();
@@ -75,11 +83,19 @@ public class HomeActivity extends AppCompatActivity {
         tvWelcome     = findViewById(R.id.tvWelcome);
         ivProfile     = findViewById(R.id.ivProfile);
 
-        cardNewAnalysis   = findViewById(R.id.cardNewAnalysis);
-        cardSavedCareers  = findViewById(R.id.cardSavedCareers);
-        cardCertifications = findViewById(R.id.cardCertifications);
-        cardProgress      = findViewById(R.id.cardProgress);
+        // Top Career Match card
+        cardTopMatch    = findViewById(R.id.cardTopMatch);
+        tvTopMatchName  = findViewById(R.id.tvTopMatchName);
+        tvTopMatchScore = findViewById(R.id.tvTopMatchScore);
+        tvTopMatchDesc  = findViewById(R.id.tvTopMatchDesc);
 
+        // Quick action cards
+        cardNewAnalysis    = findViewById(R.id.cardNewAnalysis);
+        cardSavedCareers   = findViewById(R.id.cardSavedCareers);
+        cardCertifications = findViewById(R.id.cardCertifications);
+        cardProgress       = findViewById(R.id.cardProgress);
+
+        // RecyclerViews
         rvLatestCareers          = findViewById(R.id.rvLatestCareers);
         rvSavedCareers           = findViewById(R.id.rvSavedCareers);
         rvCertificationsProgress = findViewById(R.id.rvCertificationsProgress);
@@ -114,6 +130,36 @@ public class HomeActivity extends AppCompatActivity {
                 Toast.makeText(this, "My Progress – coming soon!", Toast.LENGTH_SHORT).show());
     }
 
+    // ── Top Career Match card ────────────────────────────────────────
+
+    /**
+     * Populates the featured "Top Career Match" card with the
+     * highest-scoring career from the latest suggestions list.
+     */
+    private void populateTopMatchCard() {
+        if (latestCareers == null || latestCareers.isEmpty()) return;
+
+        // Find the career with the highest match score
+        Career topMatch = latestCareers.get(0);
+        for (Career c : latestCareers) {
+            if (c.getMatchScore() > topMatch.getMatchScore()) {
+                topMatch = c;
+            }
+        }
+
+        tvTopMatchName.setText(topMatch.getCareerName());
+        tvTopMatchScore.setText(topMatch.getMatchScore() + "%");
+        tvTopMatchDesc.setText(topMatch.getDescription());
+
+        // Tap the card → navigate to SkillGapActivity with career data
+        Career finalTopMatch = topMatch;
+        cardTopMatch.setOnClickListener(v -> {
+            Intent intent = new Intent(this, SkillGapActivity.class);
+            intent.putExtra("career_data", finalTopMatch);
+            startActivity(intent);
+        });
+    }
+
     // ── RecyclerView setup ───────────────────────────────────────────
 
     private void setupRecyclerViews() {
@@ -130,6 +176,24 @@ public class HomeActivity extends AppCompatActivity {
         rvCertificationsProgress.setLayoutManager(new LinearLayoutManager(this));
         rvCertificationsProgress.setAdapter(
                 new CertificationProgressAdapter(this, certProgressList));
+    }
+
+    // ── Entry animations ─────────────────────────────────────────────
+
+    /**
+     * Applies a cascading slide-up + fade-in animation to each
+     * RecyclerView so cards stagger in sequentially on load.
+     */
+    private void applyEntryAnimations() {
+        LayoutAnimationController animation = AnimationUtils.loadLayoutAnimation(
+                this, R.anim.layout_animation_fall_down);
+
+        rvLatestCareers.setLayoutAnimation(animation);
+        rvCertificationsProgress.setLayoutAnimation(animation);
+
+        // Trigger animation playback
+        rvLatestCareers.scheduleLayoutAnimation();
+        rvCertificationsProgress.scheduleLayoutAnimation();
     }
 
     // ── Dummy data (will be replaced by Firebase) ────────────────────

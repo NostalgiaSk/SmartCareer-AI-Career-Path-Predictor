@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Layout animation controller for RecyclerView items.
+     Each item enters with a staggered 120ms delay for a cascading effect. -->
+<layoutAnimation xmlns:android="http://schemas.android.com/apk/res/android"
+    android:animation="@anim/slide_up_fade_in"
+    android:delay="15%"
+    android:animationOrder="normal" />

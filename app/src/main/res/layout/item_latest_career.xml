@@ -1,5 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 
+<!--
+    REDESIGNED latest career card — cleaner, with 20dp radius,
+    soft 4dp elevation, larger match badge, and better spacing.
+-->
+
 <com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -8,65 +13,73 @@
     android:layout_height="wrap_content"
     android:layout_marginStart="20dp"
     android:layout_marginEnd="20dp"
-    android:layout_marginBottom="12dp"
+    android:layout_marginBottom="14dp"
     app:cardBackgroundColor="@color/sc_surface"
-    app:cardCornerRadius="16dp"
-    app:cardElevation="3dp"
+    app:cardCornerRadius="20dp"
+    app:cardElevation="4dp"
     app:strokeWidth="0dp">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:padding="16dp">
+        android:padding="18dp">
 
+        <!-- Career name — bold, primary -->
         <TextView
             android:id="@+id/tvCareerName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginEnd="12dp"
             android:fontFamily="sans-serif-medium"
             android:textColor="@color/sc_text_primary"
-            android:textSize="16sp"
+            android:textSize="17sp"
             android:textStyle="bold"
-            tools:text="AI Engineer"
+            tools:text="Data Analyst"
             app:layout_constraintEnd_toStartOf="@id/tvMatchScore"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <!-- Match score badge — rounded pill -->
         <TextView
             android:id="@+id/tvMatchScore"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/bg_match_score_badge"
             android:fontFamily="sans-serif-medium"
+            android:paddingStart="14dp"
+            android:paddingEnd="14dp"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp"
             android:textColor="@color/sc_primary"
-            android:textSize="12sp"
+            android:textSize="14sp"
             android:textStyle="bold"
-            tools:text="92%"
+            tools:text="87%"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <!-- Description — two-line max -->
         <TextView
             android:id="@+id/tvDescription"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:ellipsize="end"
+            android:layout_marginTop="10dp"
             android:fontFamily="sans-serif"
+            android:lineSpacingExtra="3dp"
             android:maxLines="2"
+            android:ellipsize="end"
             android:textColor="@color/sc_text_secondary"
             android:textSize="13sp"
-            tools:text="Design and build intelligent systems using ML."
+            tools:text="Transform raw data into actionable insights with statistical tools."
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tvCareerName" />
 
+        <!-- View Details button — outlined style -->
         <Button
             android:id="@+id/btnViewDetails"
             android:layout_width="wrap_content"
-            android:layout_height="36dp"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/bg_card_button_ripple"
+            android:layout_height="38dp"
+            android:layout_marginTop="14dp"
+            android:background="@drawable/bg_outlined_button_ripple"
             android:fontFamily="sans-serif-medium"
             android:letterSpacing="0.02"
             android:minWidth="0dp"
@@ -75,9 +88,9 @@
             android:stateListAnimator="@null"
             android:text="@string/home_view_details"
             android:textAllCaps="false"
-            android:textColor="@color/white"
-            android:textSize="12sp"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:textColor="@color/sc_primary"
+            android:textSize="13sp"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tvDescription" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>

@@ -142,8 +142,8 @@ public class LoginActivity extends AppCompatActivity {
         if (isValid) {
             Toast.makeText(this, R.string.toast_login_success, Toast.LENGTH_SHORT).show();
 
-            // Navigate to the Career Profile screen
-            startActivity(new Intent(LoginActivity.this, CareerProfileActivity.class));
+            // Navigate to the Home Dashboard
+            startActivity(new Intent(LoginActivity.this, HomeActivity.class));
             finish();
 
             // Hand off to Firebase (placeholder)

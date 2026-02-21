@@ -27,6 +27,13 @@
             </intent-filter>
         </activity>
 
+        <!-- Home dashboard (launched after successful login) -->
+        <activity
+            android:name=".activities.HomeActivity"
+            android:exported="false"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.SmartCareer" />
+
         <!-- Main dashboard (launched after successful login) -->
         <activity
             android:name=".MainActivity"

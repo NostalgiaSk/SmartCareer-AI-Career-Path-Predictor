@@ -117,4 +117,28 @@
     <string name="toast_openai_http_error">Server error (code %1$d). Please try again later.</string>
     <string name="toast_openai_network_error">Network error: %1$s</string>
 
+    <!-- ============================================================= -->
+    <!-- Home Dashboard Screen Strings                                 -->
+    <!-- ============================================================= -->
+
+    <!-- Welcome -->
+    <string name="home_welcome">Welcome back, %1$s 👋</string>
+    <string name="home_subtitle">Let\'s shape your future today</string>
+    <string name="home_profile_icon">Profile</string>
+
+    <!-- Quick Actions -->
+    <string name="home_quick_actions">Quick Actions</string>
+    <string name="home_new_analysis">Start New\nAnalysis</string>
+    <string name="home_saved_careers">Saved Careers</string>
+    <string name="home_my_certs">My\nCertifications</string>
+    <string name="home_my_progress">My Progress</string>
+
+    <!-- Section titles -->
+    <string name="home_latest_careers">Latest Career Suggestions</string>
+    <string name="home_certs_progress">Certifications In Progress</string>
+
+    <!-- Card labels -->
+    <string name="home_view_details">View Details</string>
+    <string name="home_match_label">Match</string>
+
 </resources>

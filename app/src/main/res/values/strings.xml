@@ -141,4 +141,18 @@
     <string name="home_view_details">View Details</string>
     <string name="home_match_label">Match</string>
 
+    <!-- ============================================================= -->
+    <!-- Certification Detail Screen Strings                           -->
+    <!-- ============================================================= -->
+
+    <string name="cert_detail_back">Go back</string>
+    <string name="cert_detail_provider_prefix">by %1$s</string>
+    <string name="cert_detail_progress_label">Overall Progress</string>
+    <string name="cert_detail_progress_text">%1$d%% Completed</string>
+    <string name="cert_detail_modules_title">Learning Modules</string>
+    <string name="cert_detail_mark_complete">Mark as Completed</string>
+    <string name="cert_detail_completed">Completed</string>
+    <string name="cert_detail_pending">Pending</string>
+    <string name="cert_detail_all_complete">Certification Completed 🎉</string>
+
 </resources>

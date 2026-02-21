@@ -1,6 +1,7 @@
 package com.hanin.smartcareer.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.hanin.smartcareer.R;
+import com.hanin.smartcareer.activities.CertificationDetailActivity;
 import com.hanin.smartcareer.models.CertificationProgress;
 
 import java.util.List;
@@ -18,7 +20,7 @@ import java.util.List;
 /**
  * Adapter for the "Certifications In Progress" section on the Home
  * dashboard. Each card shows certification name, provider, percentage
- * text, and a horizontal ProgressBar.
+ * text, and a horizontal ProgressBar. Tapping a card opens the detail screen.
  */
 public class CertificationProgressAdapter
         extends RecyclerView.Adapter<CertificationProgressAdapter.ViewHolder> {
@@ -48,6 +50,16 @@ public class CertificationProgressAdapter
         holder.tvPercentage.setText(cert.getProgressPercent() + "%");
         holder.tvProvider.setText("by " + cert.getProvider());
         holder.progressBar.setProgress(cert.getProgressPercent());
+
+        // Navigate to CertificationDetailActivity on card tap
+        holder.itemView.setOnClickListener(v -> {
+            Intent intent = new Intent(context, CertificationDetailActivity.class);
+            intent.putExtra("certificationName", cert.getCertName());
+            intent.putExtra("provider", cert.getProvider());
+            intent.putExtra("progress", cert.getProgressPercent());
+            intent.putExtra("level", "Intermediate");
+            context.startActivity(intent);
+        });
     }
 
     @Override

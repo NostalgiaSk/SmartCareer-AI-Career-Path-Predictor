@@ -22,14 +22,6 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.hanin.smartcareer.R;
 import com.hanin.smartcareer.firebase.AuthRepository;
 
-
-/**
- * Registration screen – allows new users to create an account.
- * <p>
- * Uses {@link AuthRepository} to register via Firebase Auth and
- * automatically create the Firestore user document. If the Firestore
- * write fails the Auth account is rolled back to avoid orphan entries.
- */
 public class RegisterActivity extends AppCompatActivity {
 
     // ── View references ─────────────────────────────────────────────
@@ -45,15 +37,8 @@ public class RegisterActivity extends AppCompatActivity {
     private Button btnRegister;
     private TextView tvLoginLink;
 
-    /** Spinner shown while the Firebase request is in progress. */
     private ProgressBar progressBar;
-
-    // ── Firebase ────────────────────────────────────────────────────
-
-    /** Repository that encapsulates all Auth + Firestore logic. */
     private AuthRepository authRepository;
-
-    // ── Lifecycle ───────────────────────────────────────────────────
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,14 +72,10 @@ public class RegisterActivity extends AppCompatActivity {
     // ── Listeners ───────────────────────────────────────────────────
 
     private void setupListeners() {
-        // ── Register button ─────────────────────────────────────────
         btnRegister.setOnClickListener(v -> attemptRegistration());
     }
 
-    /**
-     * Builds the "Already have an account? Login" spannable text
-     * and makes the "Login" portion clickable.
-     */
+
     private void setupLoginLinkText() {
         String fullText      = getString(R.string.has_account) + getString(R.string.link_login);
         String clickablePart = getString(R.string.link_login);
@@ -109,7 +90,7 @@ public class RegisterActivity extends AppCompatActivity {
             public void onClick(@NonNull View widget) {
                 // Navigate back to LoginActivity
                 startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
-                finish(); // Remove RegisterActivity from back stack
+                finish(); 
             }
 
             @Override
@@ -130,10 +111,6 @@ public class RegisterActivity extends AppCompatActivity {
 
     // ── Validation ──────────────────────────────────────────────────
 
-    /**
-     * Validates all four fields and, if everything passes, proceeds to
-     * create the user account via Firebase.
-     */
     private void attemptRegistration() {
         // Read current input values (trim whitespace)
         String fullName        = etFullName.getText()        != null ? etFullName.getText().toString().trim()        : "";
@@ -190,17 +167,6 @@ public class RegisterActivity extends AppCompatActivity {
 
     // ── Firebase Registration ───────────────────────────────────────
 
-    /**
-     * Registers the user with Firebase Auth and creates the Firestore
-     * "users" document via the {@link AuthRepository}.
-     * <p>
-     * If the Firestore write fails, the repository automatically
-     * deletes the Auth account to prevent orphan entries.
-     *
-     * @param fullName Validated full name.
-     * @param email    Validated email address.
-     * @param password Validated password.
-     */
     private void registerWithFirebase(String fullName, String email, String password) {
         // Show progress spinner and disable button to prevent double-taps
         setLoading(true);
@@ -230,12 +196,6 @@ public class RegisterActivity extends AppCompatActivity {
 
     // ── UI helpers ──────────────────────────────────────────────────
 
-    /**
-     * Toggles the loading state: shows/hides the progress bar and
-     * enables/disables the register button.
-     *
-     * @param isLoading {@code true} to show spinner and disable button.
-     */
     private void setLoading(boolean isLoading) {
         progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
         btnRegister.setEnabled(!isLoading);

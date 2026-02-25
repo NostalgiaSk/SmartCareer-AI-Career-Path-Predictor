@@ -15,53 +15,24 @@ import com.google.firebase.firestore.FirebaseFirestore;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Repository class that centralises all Firebase Authentication and
- * Firestore user-document operations.
- * <p>
- * Activities call methods on this class and receive results via simple
- * callback interfaces, keeping the UI layer free of Firebase SDK details.
- *
- * <h3>Design notes</h3>
- * <ul>
- *   <li>On <b>registration</b>: if the Firestore write fails the newly
- *       created Auth account is deleted to avoid orphan accounts.</li>
- *   <li>On <b>login</b>: if the user document does not exist in Firestore
- *       it is automatically created to keep data consistent.</li>
- * </ul>
- */
 public class AuthRepository {
 
-    // ── Constants ────────────────────────────────────────────────────
     private static final String TAG = "AuthRepository";
 
-    /** Firestore collection that stores user profile documents. */
     private static final String COLLECTION_USERS = "users";
 
-    // ── Firebase instances ───────────────────────────────────────────
-
-    /** Firebase Authentication instance (manages sign-in / sign-up). */
     private final FirebaseAuth auth;
 
-    /** Cloud Firestore instance (manages user documents). */
     private final FirebaseFirestore db;
 
     // ── Constructor ──────────────────────────────────────────────────
 
-    /**
-     * Creates a new AuthRepository with default Firebase instances.
-     */
     public AuthRepository() {
         this.auth = FirebaseAuth.getInstance();
         this.db   = FirebaseFirestore.getInstance();
     }
 
     // ── Callback interfaces ─────────────────────────────────────────
-
-    /**
-     * Generic callback for operations that either succeed or fail with
-     * an error message.
-     */
     public interface AuthCallback {
         /** Called when the operation completes successfully. */
         void onSuccess();
@@ -72,19 +43,6 @@ public class AuthRepository {
     }
 
     // ── Public API ──────────────────────────────────────────────────
-
-    /**
-     * Registers a new user with Firebase Auth, then creates the
-     * corresponding Firestore document in the "users" collection.
-     * <p>
-     * If the Firestore write fails, the Auth account is deleted
-     * automatically to prevent orphan accounts.
-     *
-     * @param fullName User's full name.
-     * @param email    User's email address.
-     * @param password User's chosen password (never stored manually).
-     * @param callback Result callback.
-     */
     public void register(@NonNull String fullName,
                          @NonNull String email,
                          @NonNull String password,
@@ -150,14 +108,7 @@ public class AuthRepository {
                 });
     }
 
-    /**
-     * Signs in an existing user with Firebase Auth, then fetches (or
-     * auto-creates) the user's Firestore document.
-     *
-     * @param email    User's email address.
-     * @param password User's password.
-     * @param callback Result callback.
-     */
+
     public void login(@NonNull String email,
                       @NonNull String password,
                       @NonNull AuthCallback callback) {
@@ -229,14 +180,7 @@ public class AuthRepository {
 
     // ── Private helpers ─────────────────────────────────────────────
 
-    /**
-     * Creates a Firestore document for a user who was authenticated
-     * but whose document is missing (e.g., legacy account or failed
-     * previous write).
-     *
-     * @param firebaseUser The authenticated FirebaseUser.
-     * @param callback     Result callback forwarded from the login flow.
-     */
+
     private void createMissingUserDocument(@NonNull FirebaseUser firebaseUser,
                                            @NonNull AuthCallback callback) {
 

@@ -22,17 +22,7 @@ import com.google.android.material.textfield.TextInputLayout;
 import com.hanin.smartcareer.R;
 import com.hanin.smartcareer.firebase.AuthRepository;
 
-
-/**
- * Login screen – the first screen the user sees.
- * <p>
- * Uses {@link AuthRepository} to authenticate via Firebase Auth and
- * automatically fetch/create the Firestore user document before
- * navigating to {@link HomeActivity}.
- */
 public class LoginActivity extends AppCompatActivity {
-
-    // ── View references ─────────────────────────────────────────────
 
     private TextInputLayout tilEmail;
     private TextInputLayout tilPassword;
@@ -42,15 +32,8 @@ public class LoginActivity extends AppCompatActivity {
     private TextView tvForgotPassword;
     private TextView tvCreateAccount;
 
-    /** Spinner shown while the Firebase request is in progress. */
     private ProgressBar progressBar;
-
-    // ── Firebase ────────────────────────────────────────────────────
-
-    /** Repository that encapsulates all Auth + Firestore logic. */
     private AuthRepository authRepository;
-
-    // ── Lifecycle ───────────────────────────────────────────────────
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,20 +41,17 @@ public class LoginActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_login);
 
-        // Initialise the Firebase repository
         authRepository = new AuthRepository();
 
         initViews();
         setupListeners();
         setupCreateAccountText();
 
-        // If the user is already signed in, skip login and go to Home
         if (authRepository.getCurrentUser() != null) {
             navigateToHome();
         }
     }
 
-    // ── View initialisation ─────────────────────────────────────────
 
     private void initViews() {
         tilEmail         = findViewById(R.id.tilEmail);
@@ -87,10 +67,7 @@ public class LoginActivity extends AppCompatActivity {
     // ── Listeners ───────────────────────────────────────────────────
 
     private void setupListeners() {
-        // ── Login button ────────────────────────────────────────────
         btnLogin.setOnClickListener(v -> attemptLogin());
-
-        // ── Forgot Password ─────────────────────────────────────────
         tvForgotPassword.setOnClickListener(v ->
                 Toast.makeText(LoginActivity.this,
                         R.string.toast_forgot_password,
@@ -98,21 +75,16 @@ public class LoginActivity extends AppCompatActivity {
         );
     }
 
-    /**
-     * Builds the "Don't have an account? Create Account" spannable text
-     * and makes the "Create Account" portion clickable.
-     */
+
     private void setupCreateAccountText() {
         String fullText      = getString(R.string.no_account) + getString(R.string.create_account);
         String clickablePart = getString(R.string.create_account);
 
         SpannableString spannable = new SpannableString(fullText);
 
-        // Find the position of "Create Account" within the full string
         int start = fullText.indexOf(clickablePart);
         int end   = start + clickablePart.length();
 
-        // Define what happens when the user taps the span
         ClickableSpan clickableSpan = new ClickableSpan() {
             @Override
             public void onClick(@NonNull View widget) {
@@ -138,12 +110,7 @@ public class LoginActivity extends AppCompatActivity {
 
     // ── Validation ──────────────────────────────────────────────────
 
-    /**
-     * Validates the form and, if everything is correct, proceeds to
-     * authenticate the user via Firebase.
-     */
     private void attemptLogin() {
-        // Read current input values (trim whitespace)
         String email    = etEmail.getText()    != null ? etEmail.getText().toString().trim()    : "";
         String password = etPassword.getText() != null ? etPassword.getText().toString().trim() : "";
 
@@ -179,16 +146,6 @@ public class LoginActivity extends AppCompatActivity {
 
     // ── Firebase Authentication ─────────────────────────────────────
 
-    /**
-     * Signs in the user with Firebase Auth via the {@link AuthRepository}.
-     * <p>
-     * On success the repository also verifies that the user's Firestore
-     * document exists (creating it if missing) before the activity
-     * navigates to {@link HomeActivity}.
-     *
-     * @param email    Validated email address.
-     * @param password Validated password.
-     */
     private void loginWithFirebase(String email, String password) {
         // Show progress spinner and disable button to prevent double-taps
         setLoading(true);
@@ -215,12 +172,7 @@ public class LoginActivity extends AppCompatActivity {
 
     // ── UI helpers ──────────────────────────────────────────────────
 
-    /**
-     * Toggles the loading state: shows/hides the progress bar and
-     * enables/disables the login button.
-     *
-     * @param isLoading {@code true} to show spinner and disable button.
-     */
+
     private void setLoading(boolean isLoading) {
         progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
         btnLogin.setEnabled(!isLoading);

@@ -4,6 +4,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    alias(libs.plugins.google.services)
 }
 
 // ── Load API key from local.properties (git-ignored) ────────────────
@@ -76,6 +77,15 @@ dependencies {
     implementation(libs.retrofit)
     implementation(libs.retrofit.gson)
     implementation(libs.okhttp.logging)
+
+    // Firebase BOM — manages all Firebase library versions
+    implementation(platform(libs.firebase.bom))
+    // Firebase Authentication
+    implementation(libs.firebase.auth)
+    // Cloud Firestore
+    implementation(libs.firebase.firestore)
+    // Realtime Database
+    implementation(libs.firebase.database)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)

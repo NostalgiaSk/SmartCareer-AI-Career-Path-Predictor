@@ -10,6 +10,7 @@ import android.text.style.ClickableSpan;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,11 +20,20 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.hanin.smartcareer.R;
+import com.hanin.smartcareer.firebase.AuthRepository;
 
 
+/**
+ * Registration screen – allows new users to create an account.
+ * <p>
+ * Uses {@link AuthRepository} to register via Firebase Auth and
+ * automatically create the Firestore user document. If the Firestore
+ * write fails the Auth account is rolled back to avoid orphan entries.
+ */
 public class RegisterActivity extends AppCompatActivity {
 
     // ── View references ─────────────────────────────────────────────
+
     private TextInputLayout tilFullName;
     private TextInputLayout tilEmail;
     private TextInputLayout tilPassword;
@@ -35,12 +45,24 @@ public class RegisterActivity extends AppCompatActivity {
     private Button btnRegister;
     private TextView tvLoginLink;
 
+    /** Spinner shown while the Firebase request is in progress. */
+    private ProgressBar progressBar;
+
+    // ── Firebase ────────────────────────────────────────────────────
+
+    /** Repository that encapsulates all Auth + Firestore logic. */
+    private AuthRepository authRepository;
+
     // ── Lifecycle ───────────────────────────────────────────────────
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
+
+        // Initialise the Firebase repository
+        authRepository = new AuthRepository();
+
         initViews();
         setupListeners();
         setupLoginLinkText();
@@ -59,6 +81,7 @@ public class RegisterActivity extends AppCompatActivity {
         etConfirmPassword  = findViewById(R.id.etConfirmPassword);
         btnRegister        = findViewById(R.id.btnRegister);
         tvLoginLink        = findViewById(R.id.tvLoginLink);
+        progressBar        = findViewById(R.id.progressBar);
     }
 
     // ── Listeners ───────────────────────────────────────────────────
@@ -68,6 +91,10 @@ public class RegisterActivity extends AppCompatActivity {
         btnRegister.setOnClickListener(v -> attemptRegistration());
     }
 
+    /**
+     * Builds the "Already have an account? Login" spannable text
+     * and makes the "Login" portion clickable.
+     */
     private void setupLoginLinkText() {
         String fullText      = getString(R.string.has_account) + getString(R.string.link_login);
         String clickablePart = getString(R.string.link_login);
@@ -105,7 +132,7 @@ public class RegisterActivity extends AppCompatActivity {
 
     /**
      * Validates all four fields and, if everything passes, proceeds to
-     * create the user account.
+     * create the user account via Firebase.
      */
     private void attemptRegistration() {
         // Read current input values (trim whitespace)
@@ -157,62 +184,60 @@ public class RegisterActivity extends AppCompatActivity {
 
         // ── Proceed if all checks pass ──────────────────────────────
         if (isValid) {
-            Toast.makeText(this, R.string.toast_register_success, Toast.LENGTH_SHORT).show();
-
-            // Hand off to Firebase (placeholder)
             registerWithFirebase(fullName, email, password);
         }
     }
 
-    // ── Firebase Authentication (placeholder) ───────────────────────
+    // ── Firebase Registration ───────────────────────────────────────
 
     /**
-     * Placeholder method for Firebase Authentication registration.
+     * Registers the user with Firebase Auth and creates the Firestore
+     * "users" document via the {@link AuthRepository}.
      * <p>
-     * To integrate Firebase:
-     * <ol>
-     *   <li>Add the Firebase SDK to your project (google-services plugin + BOM).</li>
-     *   <li>Initialise {@code FirebaseAuth} in {@link #onCreate}.</li>
-     *   <li>Call {@code firebaseAuth.createUserWithEmailAndPassword(email, password)}
-     *       and handle the {@code Task} result here.</li>
-     *   <li>Optionally store the {@code fullName} in Firestore or Realtime Database
-     *       under the newly created user's UID.</li>
-     *   <li>On success → navigate to the main dashboard.</li>
-     *   <li>On failure → display the error message to the user.</li>
-     * </ol>
+     * If the Firestore write fails, the repository automatically
+     * deletes the Auth account to prevent orphan entries.
      *
-     * @param fullName The user's full name.
-     * @param email    The validated email address entered by the user.
-     * @param password The validated password entered by the user.
+     * @param fullName Validated full name.
+     * @param email    Validated email address.
+     * @param password Validated password.
      */
     private void registerWithFirebase(String fullName, String email, String password) {
-        // TODO: Implement Firebase Authentication registration
-        //
-        // Example (uncomment when Firebase is configured):
-        //
-        // FirebaseAuth auth = FirebaseAuth.getInstance();
-        // auth.createUserWithEmailAndPassword(email, password)
-        //     .addOnCompleteListener(this, task -> {
-        //         if (task.isSuccessful()) {
-        //             // Registration success
-        //             FirebaseUser user = auth.getCurrentUser();
-        //
-        //             // Optionally update the user's display name
-        //             // UserProfileChangeRequest profileUpdate = new UserProfileChangeRequest.Builder()
-        //             //         .setDisplayName(fullName)
-        //             //         .build();
-        //             // user.updateProfile(profileUpdate);
-        //
-        //             // Navigate to the main dashboard
-        //             startActivity(new Intent(RegisterActivity.this, MainActivity.class));
-        //             finish();
-        //         } else {
-        //             // Registration failed – show error
-        //             String errorMsg = task.getException() != null
-        //                     ? task.getException().getMessage()
-        //                     : "Registration failed";
-        //             Toast.makeText(RegisterActivity.this, errorMsg, Toast.LENGTH_LONG).show();
-        //         }
-        //     });
+        // Show progress spinner and disable button to prevent double-taps
+        setLoading(true);
+
+        authRepository.register(fullName, email, password, new AuthRepository.AuthCallback() {
+            @Override
+            public void onSuccess() {
+                setLoading(false);
+                Toast.makeText(RegisterActivity.this,
+                        R.string.toast_register_success, Toast.LENGTH_SHORT).show();
+
+                // Navigate to the Home Dashboard and clear back stack
+                Intent intent = new Intent(RegisterActivity.this, HomeActivity.class);
+                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                startActivity(intent);
+                finish();
+            }
+
+            @Override
+            public void onFailure(String errorMessage) {
+                setLoading(false);
+                Toast.makeText(RegisterActivity.this,
+                        errorMessage, Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    // ── UI helpers ──────────────────────────────────────────────────
+
+    /**
+     * Toggles the loading state: shows/hides the progress bar and
+     * enables/disables the register button.
+     *
+     * @param isLoading {@code true} to show spinner and disable button.
+     */
+    private void setLoading(boolean isLoading) {
+        progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
+        btnRegister.setEnabled(!isLoading);
     }
 }

@@ -197,6 +197,20 @@
             app:layout_constraintTop_toBottomOf="@id/tvForgotPassword" />
 
         <!-- ====================================================== -->
+        <!-- PROGRESS BAR – shown during Firebase authentication     -->
+        <!-- ====================================================== -->
+        <ProgressBar
+            android:id="@+id/progressBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:visibility="gone"
+            android:indeterminate="true"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/btnLogin" />
+
+        <!-- ====================================================== -->
         <!-- CREATE ACCOUNT                                         -->
         <!-- ====================================================== -->
         <TextView

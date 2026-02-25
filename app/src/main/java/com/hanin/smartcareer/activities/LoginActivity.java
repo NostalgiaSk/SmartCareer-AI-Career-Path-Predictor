@@ -10,6 +10,7 @@ import android.text.style.ClickableSpan;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -19,8 +20,16 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.hanin.smartcareer.R;
+import com.hanin.smartcareer.firebase.AuthRepository;
 
 
+/**
+ * Login screen – the first screen the user sees.
+ * <p>
+ * Uses {@link AuthRepository} to authenticate via Firebase Auth and
+ * automatically fetch/create the Firestore user document before
+ * navigating to {@link HomeActivity}.
+ */
 public class LoginActivity extends AppCompatActivity {
 
     // ── View references ─────────────────────────────────────────────
@@ -33,6 +42,14 @@ public class LoginActivity extends AppCompatActivity {
     private TextView tvForgotPassword;
     private TextView tvCreateAccount;
 
+    /** Spinner shown while the Firebase request is in progress. */
+    private ProgressBar progressBar;
+
+    // ── Firebase ────────────────────────────────────────────────────
+
+    /** Repository that encapsulates all Auth + Firestore logic. */
+    private AuthRepository authRepository;
+
     // ── Lifecycle ───────────────────────────────────────────────────
 
     @Override
@@ -40,25 +57,36 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_login);
+
+        // Initialise the Firebase repository
+        authRepository = new AuthRepository();
+
         initViews();
         setupListeners();
         setupCreateAccountText();
+
+        // If the user is already signed in, skip login and go to Home
+        if (authRepository.getCurrentUser() != null) {
+            navigateToHome();
+        }
     }
 
     // ── View initialisation ─────────────────────────────────────────
+
     private void initViews() {
-        tilEmail        = findViewById(R.id.tilEmail);
-        tilPassword     = findViewById(R.id.tilPassword);
-        etEmail         = findViewById(R.id.etEmail);
-        etPassword      = findViewById(R.id.etPassword);
-        btnLogin        = findViewById(R.id.btnLogin);
+        tilEmail         = findViewById(R.id.tilEmail);
+        tilPassword      = findViewById(R.id.tilPassword);
+        etEmail          = findViewById(R.id.etEmail);
+        etPassword       = findViewById(R.id.etPassword);
+        btnLogin         = findViewById(R.id.btnLogin);
         tvForgotPassword = findViewById(R.id.tvForgotPassword);
         tvCreateAccount  = findViewById(R.id.tvCreateAccount);
+        progressBar      = findViewById(R.id.progressBar);
     }
 
     // ── Listeners ───────────────────────────────────────────────────
-    private void setupListeners() {
 
+    private void setupListeners() {
         // ── Login button ────────────────────────────────────────────
         btnLogin.setOnClickListener(v -> attemptLogin());
 
@@ -69,6 +97,11 @@ public class LoginActivity extends AppCompatActivity {
                         Toast.LENGTH_SHORT).show()
         );
     }
+
+    /**
+     * Builds the "Don't have an account? Create Account" spannable text
+     * and makes the "Create Account" portion clickable.
+     */
     private void setupCreateAccountText() {
         String fullText      = getString(R.string.no_account) + getString(R.string.create_account);
         String clickablePart = getString(R.string.create_account);
@@ -107,7 +140,7 @@ public class LoginActivity extends AppCompatActivity {
 
     /**
      * Validates the form and, if everything is correct, proceeds to
-     * authenticate the user.
+     * authenticate the user via Firebase.
      */
     private void attemptLogin() {
         // Read current input values (trim whitespace)
@@ -140,54 +173,67 @@ public class LoginActivity extends AppCompatActivity {
 
         // ── Proceed if all checks pass ──────────────────────────────
         if (isValid) {
-            Toast.makeText(this, R.string.toast_login_success, Toast.LENGTH_SHORT).show();
-
-            // Navigate to the Home Dashboard
-            startActivity(new Intent(LoginActivity.this, HomeActivity.class));
-            finish();
-
-            // Hand off to Firebase (placeholder)
             loginWithFirebase(email, password);
         }
     }
 
-    // ── Firebase Authentication (placeholder) ───────────────────────
+    // ── Firebase Authentication ─────────────────────────────────────
 
     /**
-     * Placeholder method for Firebase Authentication.
+     * Signs in the user with Firebase Auth via the {@link AuthRepository}.
      * <p>
-     * To integrate Firebase:
-     * <ol>
-     *   <li>Add the Firebase SDK to your project (google-services plugin + BOM).</li>
-     *   <li>Initialise {@code FirebaseAuth} in {@link #onCreate}.</li>
-     *   <li>Call {@code firebaseAuth.signInWithEmailAndPassword(email, password)}
-     *       and handle the {@code Task} result here.</li>
-     *   <li>On success → navigate to the main dashboard.</li>
-     *   <li>On failure → display the error message to the user.</li>
-     * </ol>
+     * On success the repository also verifies that the user's Firestore
+     * document exists (creating it if missing) before the activity
+     * navigates to {@link HomeActivity}.
      *
-     * @param email    The validated email address entered by the user.
-     * @param password The validated password entered by the user.
+     * @param email    Validated email address.
+     * @param password Validated password.
      */
     private void loginWithFirebase(String email, String password) {
-        // TODO: Implement Firebase Authentication sign-in
-        //
-        // Example (uncomment when Firebase is configured):
-        //
-        // FirebaseAuth auth = FirebaseAuth.getInstance();
-        // auth.signInWithEmailAndPassword(email, password)
-        //     .addOnCompleteListener(this, task -> {
-        //         if (task.isSuccessful()) {
-        //             // Sign-in success – navigate to dashboard
-        //             startActivity(new Intent(LoginActivity.this, MainActivity.class));
-        //             finish();
-        //         } else {
-        //             // Sign-in failed – show error
-        //             String errorMsg = task.getException() != null
-        //                     ? task.getException().getMessage()
-        //                     : "Authentication failed";
-        //             Toast.makeText(LoginActivity.this, errorMsg, Toast.LENGTH_LONG).show();
-        //         }
-        //     });
+        // Show progress spinner and disable button to prevent double-taps
+        setLoading(true);
+
+        authRepository.login(email, password, new AuthRepository.AuthCallback() {
+            @Override
+            public void onSuccess() {
+                setLoading(false);
+                Toast.makeText(LoginActivity.this,
+                        R.string.toast_login_success, Toast.LENGTH_SHORT).show();
+
+                // Navigate to the Home Dashboard
+                navigateToHome();
+            }
+
+            @Override
+            public void onFailure(String errorMessage) {
+                setLoading(false);
+                Toast.makeText(LoginActivity.this,
+                        errorMessage, Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    // ── UI helpers ──────────────────────────────────────────────────
+
+    /**
+     * Toggles the loading state: shows/hides the progress bar and
+     * enables/disables the login button.
+     *
+     * @param isLoading {@code true} to show spinner and disable button.
+     */
+    private void setLoading(boolean isLoading) {
+        progressBar.setVisibility(isLoading ? View.VISIBLE : View.GONE);
+        btnLogin.setEnabled(!isLoading);
+    }
+
+    /**
+     * Navigates to {@link HomeActivity} and clears the back stack so
+     * the user cannot press Back to return to the login screen.
+     */
+    private void navigateToHome() {
+        Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
+        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        startActivity(intent);
+        finish();
     }
 }

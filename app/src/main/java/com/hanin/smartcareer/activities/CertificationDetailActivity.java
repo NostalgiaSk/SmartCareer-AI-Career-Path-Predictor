@@ -1,6 +1,8 @@
 package com.hanin.smartcareer.activities;
 
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -10,26 +12,38 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.gson.Gson;
+import com.google.gson.annotations.SerializedName;
 import com.hanin.smartcareer.R;
 import com.hanin.smartcareer.adapters.ModuleAdapter;
 import com.hanin.smartcareer.models.Module;
+import com.hanin.smartcareer.models.OpenAIRequest;
+import com.hanin.smartcareer.models.OpenAIResponse;
+import com.hanin.smartcareer.network.OpenAIService;
+import com.hanin.smartcareer.network.RetrofitClient;
 
 import java.util.ArrayList;
 import java.util.List;
 
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+
 /**
  * Displays the full detail of a selected certification, including
- * overall progress and a list of learning modules.
+ * overall progress and a list of AI-generated learning modules.
  *
- * <p>When the student marks individual modules as completed, the
- * overall progress is recalculated dynamically and the ProgressBar
- * updates in real-time. Once all modules are done a congratulatory
- * Toast is shown.</p>
+ * <p>When the screen opens, it calls the Groq LLaMA AI API to generate
+ * relevant learning modules for the selected certification. The student
+ * can then mark individual modules as completed and the overall progress
+ * is recalculated dynamically.</p>
  *
  * <p>Data is received from the previous screen via Intent extras.</p>
  */
 public class CertificationDetailActivity extends AppCompatActivity
         implements ModuleAdapter.OnModuleCompletedListener {
+
+    private static final String TAG = "CertDetailActivity";
 
     // ── View references ─────────────────────────────────────────────
 
@@ -37,6 +51,7 @@ public class CertificationDetailActivity extends AppCompatActivity
     private TextView tvCertName, tvProvider, tvLevel;
     private TextView tvProgressPercent;
     private ProgressBar progressBar;
+    private ProgressBar loadingProgress;
     private RecyclerView rvModules;
 
     // ── Data ─────────────────────────────────────────────────────────
@@ -67,14 +82,14 @@ public class CertificationDetailActivity extends AppCompatActivity
         // 3. Populate header with Intent data
         populateHeader();
 
-        // 4. Load modules (dummy data for now)
-        loadDummyModules();
+        // 4. Initialise empty module list
+        moduleList = new ArrayList<>();
 
         // 5. Setup RecyclerView with adapter
         setupRecyclerView();
 
-        // 6. Firebase placeholder — swap with live data
-        fetchCertificationModulesFromFirestore();
+        // 6. Fetch AI-generated modules from the Groq LLaMA API
+        fetchModulesFromAI();
     }
 
     // ── Intent data retrieval ────────────────────────────────────────
@@ -106,6 +121,7 @@ public class CertificationDetailActivity extends AppCompatActivity
         tvLevel           = findViewById(R.id.tvLevel);
         tvProgressPercent = findViewById(R.id.tvProgressPercent);
         progressBar       = findViewById(R.id.progressBar);
+        loadingProgress   = findViewById(R.id.loadingProgress);
         rvModules         = findViewById(R.id.rvModules);
 
         // Back arrow navigation
@@ -191,36 +207,146 @@ public class CertificationDetailActivity extends AppCompatActivity
         progressBar.setProgress(percent);
     }
 
-    // ── Dummy data ───────────────────────────────────────────────────
+    // ══════════════════════════════════════════════════════════════════
+    // AI-POWERED MODULE GENERATION
+    // ══════════════════════════════════════════════════════════════════
 
-    private void loadDummyModules() {
-        moduleList = new ArrayList<>();
-        moduleList.add(new Module("mod_1", "Module 1: Introduction to Machine Learning", false));
-        moduleList.add(new Module("mod_2", "Module 2: Supervised Learning Algorithms", false));
-        moduleList.add(new Module("mod_3", "Module 3: Neural Networks & Deep Learning", false));
-        moduleList.add(new Module("mod_4", "Module 4: Model Deployment & MLOps", false));
-        moduleList.add(new Module("mod_5", "Module 5: Final Project & Assessment", false));
+    /**
+     * Calls the Groq LLaMA AI API to generate learning modules
+     * tailored to the current certification.
+     *
+     * <p>While the request is in flight, a loading spinner is shown.
+     * On success, the JSON response is parsed into {@link Module} objects
+     * and displayed in the RecyclerView. On failure, an error Toast is shown.</p>
+     */
+    private void fetchModulesFromAI() {
+        // Show loading, hide RecyclerView
+        loadingProgress.setVisibility(View.VISIBLE);
+        rvModules.setVisibility(View.GONE);
+
+        // Build the AI request using the certification details
+        OpenAIRequest request = OpenAIRequest.buildModulesPrompt(
+                certificationName, provider, level);
+
+        // Make the API call via Retrofit
+        OpenAIService service = RetrofitClient.createService(OpenAIService.class);
+        service.getChatCompletion(request).enqueue(new Callback<OpenAIResponse>() {
+
+            @Override
+            public void onResponse(Call<OpenAIResponse> call,
+                                   Response<OpenAIResponse> response) {
+                // Hide loading spinner
+                loadingProgress.setVisibility(View.GONE);
+
+                if (response.isSuccessful() && response.body() != null) {
+                    String content = response.body().extractContent();
+
+                    if (content != null && !content.isEmpty()) {
+                        // Parse the AI-generated JSON into Module objects
+                        parseAndDisplayModules(content);
+                    } else {
+                        // Empty response from AI
+                        Log.w(TAG, "AI returned empty content");
+                        Toast.makeText(CertificationDetailActivity.this,
+                                getString(R.string.cert_detail_ai_empty),
+                                Toast.LENGTH_LONG).show();
+                    }
+                } else {
+                    // HTTP error
+                    int code = response.code();
+                    Log.e(TAG, "API error: HTTP " + code);
+                    Toast.makeText(CertificationDetailActivity.this,
+                            getString(R.string.cert_detail_ai_error),
+                            Toast.LENGTH_LONG).show();
+                }
+            }
+
+            @Override
+            public void onFailure(Call<OpenAIResponse> call, Throwable t) {
+                // Hide loading spinner
+                loadingProgress.setVisibility(View.GONE);
+
+                Log.e(TAG, "Network error", t);
+                Toast.makeText(CertificationDetailActivity.this,
+                        getString(R.string.cert_detail_ai_error),
+                        Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    /**
+     * Parses the raw JSON string from the AI response into a list of
+     * {@link Module} objects and updates the RecyclerView.
+     *
+     * <p>Expected JSON format:
+     * <pre>
+     * {
+     *   "modules": [
+     *     { "id": "mod_1", "title": "Module 1: ..." },
+     *     ...
+     *   ]
+     * }
+     * </pre>
+     *
+     * @param jsonContent The raw JSON string from the AI.
+     */
+    private void parseAndDisplayModules(String jsonContent) {
+        try {
+            Gson gson = new Gson();
+            ModuleListWrapper wrapper = gson.fromJson(jsonContent, ModuleListWrapper.class);
+
+            if (wrapper != null && wrapper.modules != null && !wrapper.modules.isEmpty()) {
+                // Convert parsed entries into Module model objects
+                moduleList.clear();
+                for (ModuleEntry entry : wrapper.modules) {
+                    moduleList.add(new Module(entry.id, entry.title, false));
+                }
+
+                // Show the RecyclerView and refresh the adapter
+                rvModules.setVisibility(View.VISIBLE);
+                moduleAdapter.notifyDataSetChanged();
+
+                // Reset progress to 0 since all modules are fresh
+                updateProgressUI(0);
+            } else {
+                Log.w(TAG, "Parsed module list is empty");
+                Toast.makeText(this,
+                        getString(R.string.cert_detail_ai_empty),
+                        Toast.LENGTH_LONG).show();
+            }
+        } catch (Exception e) {
+            Log.e(TAG, "JSON parse error", e);
+            Toast.makeText(this,
+                    getString(R.string.cert_detail_ai_error),
+                    Toast.LENGTH_LONG).show();
+        }
+    }
+
+    // ── JSON wrapper for AI module response ──────────────────────────
+
+    /**
+     * Wrapper for deserialising the AI's JSON response into a list
+     * of module entries using Gson.
+     */
+    private static class ModuleListWrapper {
+        @SerializedName("modules")
+        List<ModuleEntry> modules;
+    }
+
+    /**
+     * A single module entry as returned by the AI.
+     */
+    private static class ModuleEntry {
+        @SerializedName("id")
+        String id;
+
+        @SerializedName("title")
+        String title;
     }
 
     // ══════════════════════════════════════════════════════════════════
     // FIREBASE INTEGRATION PLACEHOLDERS
     // ══════════════════════════════════════════════════════════════════
-
-    /**
-     * Placeholder — fetch the list of modules for this certification
-     * from Firestore.
-     *
-     * Implementation:
-     * 1. db.collection("certifications").document(certificationId)
-     *        .collection("modules")
-     *        .orderBy("order")
-     *        .get()
-     * 2. Parse documents into Module objects
-     * 3. Replace moduleList contents and call adapter.notifyDataSetChanged()
-     */
-    private void fetchCertificationModulesFromFirestore() {
-        // TODO: Implement Firestore query
-    }
 
     /**
      * Placeholder — mark a specific module as completed in Firestore.

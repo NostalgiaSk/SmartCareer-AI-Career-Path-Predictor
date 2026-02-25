@@ -154,5 +154,8 @@
     <string name="cert_detail_completed">Completed</string>
     <string name="cert_detail_pending">Pending</string>
     <string name="cert_detail_all_complete">Certification Completed 🎉</string>
+    <string name="cert_detail_loading">Generating learning modules…</string>
+    <string name="cert_detail_ai_error">Could not generate modules. Please try again.</string>
+    <string name="cert_detail_ai_empty">AI returned an empty response. Please try again.</string>
 
 </resources>

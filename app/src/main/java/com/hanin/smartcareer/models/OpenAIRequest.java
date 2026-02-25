@@ -64,7 +64,7 @@ public class OpenAIRequest {
         public String getContent() { return content; }
     }
 
-    // ── Factory method ──────────────────────────────────────────────
+    // ── Factory method: Career suggestions ─────────────────────────
 
     /**
      * Builds a complete {@link OpenAIRequest} containing a system prompt
@@ -131,6 +131,62 @@ public class OpenAIRequest {
         // Use Groq's free LLaMA model — fast inference, no billing required.
         // Alternative Groq models: "mixtral-8x7b-32768", "gemma2-9b-it"
         return new OpenAIRequest("llama-3.3-70b-versatile", messages, 0.4, 1024);
+    }
+
+    // ── Factory method: Certification modules ────────────────────────
+
+    /**
+     * Builds an {@link OpenAIRequest} that asks the AI to generate
+     * a structured set of learning modules for a specific certification.
+     *
+     * <p>The model is instructed to return strict JSON with exactly
+     * 5 modules, each containing an {@code id} and a {@code title}.
+     *
+     * @param certName  Name of the certification (e.g. "Google ML Engineer").
+     * @param provider  Issuing organisation (e.g. "Google Cloud").
+     * @param level     Difficulty level: "Beginner", "Intermediate", or "Advanced".
+     * @return A ready-to-send request object.
+     */
+    public static OpenAIRequest buildModulesPrompt(String certName,
+                                                    String provider,
+                                                    String level) {
+
+        String systemPrompt =
+                "You are an expert education curriculum designer.\n\n" +
+                "Given a professional certification, generate EXACTLY 5 learning modules " +
+                "that a student should complete to prepare for this certification.\n\n" +
+                "Return strictly valid JSON only.\n" +
+                "Do NOT include explanations, comments, markdown formatting, or text outside JSON.\n\n" +
+                "The JSON format must be:\n" +
+                "{\n" +
+                "  \"modules\": [\n" +
+                "    {\n" +
+                "      \"id\": \"mod_1\",\n" +
+                "      \"title\": \"Module 1: Descriptive Module Title\"\n" +
+                "    }\n" +
+                "  ]\n" +
+                "}\n\n" +
+                "Requirements:\n" +
+                "- Return EXACTLY 5 modules.\n" +
+                "- Module ids must be sequential: mod_1, mod_2, mod_3, mod_4, mod_5.\n" +
+                "- Each title must start with 'Module N:' followed by a concise, descriptive name.\n" +
+                "- Titles must be relevant to the specific certification content.\n" +
+                "- Order modules from foundational to advanced topics.\n" +
+                "- The last module should be a capstone/assessment module.\n" +
+                "- Return only JSON.";
+
+        String userPrompt =
+                "Certification Details:\n" +
+                "- Name: " + certName + "\n" +
+                "- Provider: " + provider + "\n" +
+                "- Level: " + level;
+
+        List<Message> messages = new ArrayList<>(Arrays.asList(
+                new Message("system", systemPrompt),
+                new Message("user", userPrompt)
+        ));
+
+        return new OpenAIRequest("llama-3.3-70b-versatile", messages, 0.4, 512);
     }
 
     // ── Getters (used by Gson serialisation) ─────────────────────────

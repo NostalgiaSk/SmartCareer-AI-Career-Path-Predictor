@@ -364,6 +364,46 @@
             android:nestedScrollingEnabled="false"
             android:overScrollMode="never" />
 
+        <ProgressBar
+            android:id="@+id/progressLatest"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="16dp"
+            android:indeterminate="true"
+            android:visibility="visible" />
+
+        <LinearLayout
+            android:id="@+id/emptyLatest"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="32dp"
+            android:visibility="gone">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="\uD83D\uDD0D"
+                android:textSize="48sp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:fontFamily="sans-serif-medium"
+                android:gravity="center"
+                android:text="@string/empty_state_message"
+                android:textColor="@color/sc_text_secondary"
+                android:textSize="15sp" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnEmptyLatest"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/empty_state_button"
+                android:textAllCaps="false" />
+        </LinearLayout>
+
         <!-- ════════════════════════════════════════════════════════════
              SECTION 5 — Saved Careers
              ════════════════════════════════════════════════════════════ -->
@@ -391,6 +431,46 @@
             android:nestedScrollingEnabled="false"
             android:overScrollMode="never" />
 
+        <ProgressBar
+            android:id="@+id/progressSaved"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="16dp"
+            android:indeterminate="true"
+            android:visibility="visible" />
+
+        <LinearLayout
+            android:id="@+id/emptySaved"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="32dp"
+            android:visibility="gone">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="\uD83D\uDD0D"
+                android:textSize="48sp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:fontFamily="sans-serif-medium"
+                android:gravity="center"
+                android:text="@string/empty_state_message"
+                android:textColor="@color/sc_text_secondary"
+                android:textSize="15sp" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnEmptySaved"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/empty_state_button"
+                android:textAllCaps="false" />
+        </LinearLayout>
+
         <!-- ════════════════════════════════════════════════════════════
              SECTION 6 — Certifications In Progress
              ════════════════════════════════════════════════════════════ -->
@@ -416,6 +496,46 @@
             android:layoutAnimation="@anim/layout_animation_fall_down"
             android:nestedScrollingEnabled="false"
             android:overScrollMode="never" />
+
+        <ProgressBar
+            android:id="@+id/progressCerts"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="16dp"
+            android:indeterminate="true"
+            android:visibility="visible" />
+
+        <LinearLayout
+            android:id="@+id/emptyCerts"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:orientation="vertical"
+            android:padding="32dp"
+            android:visibility="gone">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="\uD83D\uDD0D"
+                android:textSize="48sp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:fontFamily="sans-serif-medium"
+                android:gravity="center"
+                android:text="@string/empty_state_message"
+                android:textColor="@color/sc_text_secondary"
+                android:textSize="15sp" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnEmptyCerts"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:text="@string/empty_state_button"
+                android:textAllCaps="false" />
+        </LinearLayout>
 
     </LinearLayout>
 </ScrollView>

@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Reusable empty state layout — shown when a section has no data -->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center"
+    android:orientation="vertical"
+    android:padding="32dp"
+    android:visibility="gone">
+
+    <!-- Illustration (emoji-based, no drawable needed) -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="🔍"
+        android:textSize="48sp" />
+
+    <!-- Empty state message -->
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:fontFamily="sans-serif-medium"
+        android:gravity="center"
+        android:text="@string/empty_state_message"
+        android:textColor="@color/sc_text_secondary"
+        android:textSize="15sp" />
+
+    <!-- CTA button -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btnEmptyAction"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="@string/empty_state_button"
+        android:textAllCaps="false" />
+
+</LinearLayout>

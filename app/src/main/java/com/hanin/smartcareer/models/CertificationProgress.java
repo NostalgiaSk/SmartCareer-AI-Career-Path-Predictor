@@ -10,11 +10,9 @@ public class CertificationProgress {
     private String provider;
     private int progressPercent; // 0 – 100
 
-    /**
-     * @param certName        Display name (e.g. "Google ML Engineer").
-     * @param provider        Certification provider (e.g. "Google").
-     * @param progressPercent Completion percentage (0 – 100).
-     */
+    // No-arg constructor required by Firestore deserialization
+    public CertificationProgress() {}
+
     public CertificationProgress(String certName, String provider, int progressPercent) {
         this.certName        = certName;
         this.provider        = provider;
@@ -24,4 +22,8 @@ public class CertificationProgress {
     public String getCertName()        { return certName; }
     public String getProvider()        { return provider; }
     public int getProgressPercent()    { return progressPercent; }
+
+    public void setCertName(String certName)              { this.certName = certName; }
+    public void setProvider(String provider)              { this.provider = provider; }
+    public void setProgressPercent(int progressPercent)   { this.progressPercent = progressPercent; }
 }

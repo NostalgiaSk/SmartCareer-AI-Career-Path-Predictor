@@ -158,4 +158,11 @@
     <string name="cert_detail_ai_error">Could not generate modules. Please try again.</string>
     <string name="cert_detail_ai_empty">AI returned an empty response. Please try again.</string>
 
+    <!-- ============================================================= -->
+    <!-- Empty State                                                   -->
+    <!-- ============================================================= -->
+
+    <string name="empty_state_message">No data yet. Start your career journey!</string>
+    <string name="empty_state_button">Start New Career Path</string>
+
 </resources>

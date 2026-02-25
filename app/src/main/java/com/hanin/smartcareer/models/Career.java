@@ -15,13 +15,9 @@ public class Career implements Serializable {
     private ArrayList<String> skillGaps;
     private ArrayList<String> certifications;
 
-    /**
-     * @param careerName     Display name of the career path (e.g. "AI Engineer").
-     * @param matchScore     AI-computed match percentage (0 – 100).
-     * @param description    Brief explanation of why this career fits the student.
-     * @param skillGaps      Skills the student needs to acquire for this career.
-     * @param certifications Recommended certifications to strengthen the profile.
-     */
+    // No-arg constructor required by Firestore deserialization
+    public Career() {}
+
     public Career(String careerName, int matchScore, String description,
                   ArrayList<String> skillGaps, ArrayList<String> certifications) {
         this.careerName     = careerName;
@@ -38,4 +34,12 @@ public class Career implements Serializable {
     public String getDescription()             { return description; }
     public ArrayList<String> getSkillGaps()    { return skillGaps; }
     public ArrayList<String> getCertifications() { return certifications; }
+
+    // ── Setters (required by Firestore) ──────────────────────────────
+
+    public void setCareerName(String careerName)              { this.careerName = careerName; }
+    public void setMatchScore(int matchScore)                 { this.matchScore = matchScore; }
+    public void setDescription(String description)            { this.description = description; }
+    public void setSkillGaps(ArrayList<String> skillGaps)     { this.skillGaps = skillGaps; }
+    public void setCertifications(ArrayList<String> certifications) { this.certifications = certifications; }
 }

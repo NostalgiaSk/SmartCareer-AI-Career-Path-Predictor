@@ -2,9 +2,13 @@ package com.hanin.smartcareer.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
 import android.view.animation.AnimationUtils;
 import android.view.animation.LayoutAnimationController;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -12,7 +16,13 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.hanin.smartcareer.R;
 import com.hanin.smartcareer.adapters.CertificationProgressAdapter;
 import com.hanin.smartcareer.adapters.LatestCareerAdapter;
@@ -21,22 +31,11 @@ import com.hanin.smartcareer.models.Career;
 import com.hanin.smartcareer.models.CertificationProgress;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-/**
- * Main Home Dashboard — the first screen the user sees after login.
- *
- * <p>Redesigned with a modern 2026 startup aesthetic:</p>
- * <ul>
- *   <li>Gradient hero header with rounded bottom corners</li>
- *   <li>Featured "Top Career Match" card (highest score)</li>
- *   <li>Quick action cards with emoji icons</li>
- *   <li>Cascading entry animations on RecyclerView items</li>
- *   <li>20dp corner radius cards with soft elevation</li>
- * </ul>
- */
 public class HomeActivity extends AppCompatActivity {
+
+    private static final String TAG = "HomeActivity";
 
     // ── View references ─────────────────────────────────────────────
 
@@ -50,11 +49,29 @@ public class HomeActivity extends AppCompatActivity {
     private MaterialCardView cardTopMatch;
     private TextView tvTopMatchName, tvTopMatchScore, tvTopMatchDesc;
 
+    // Loading spinners for each section
+    private ProgressBar progressLatest, progressSaved, progressCerts;
+
+    // Empty state containers for each section
+    private LinearLayout emptyLatest, emptySaved, emptyCerts;
+
     // ── Data ─────────────────────────────────────────────────────────
 
     private List<Career> latestCareers;
     private List<Career> savedCareers;
     private List<CertificationProgress> certProgressList;
+
+    // ── Adapters ─────────────────────────────────────────────────────
+
+    private LatestCareerAdapter latestAdapter;
+    private SavedCareerAdapter savedAdapter;
+    private CertificationProgressAdapter certAdapter;
+
+    // ── Firebase ─────────────────────────────────────────────────────
+
+    private FirebaseAuth auth;
+    private FirebaseFirestore db;
+    private String uid;
 
     // ── Lifecycle ────────────────────────────────────────────────────
 
@@ -63,15 +80,31 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
+        // Initialize Firebase
+        auth = FirebaseAuth.getInstance();
+        db   = FirebaseFirestore.getInstance();
+
+        FirebaseUser currentUser = auth.getCurrentUser();
+        if (currentUser == null) {
+            // Not logged in — redirect to Login
+            startActivity(new Intent(this, LoginActivity.class));
+            finish();
+            return;
+        }
+        uid = currentUser.getUid();
+
+        // Initialize empty data lists
+        latestCareers   = new ArrayList<>();
+        savedCareers    = new ArrayList<>();
+        certProgressList = new ArrayList<>();
+
         initViews();
         setupWelcome();
         setupQuickActions();
-        loadDummyData();
-        populateTopMatchCard();
+        setupEmptyStateButtons();
         setupRecyclerViews();
-        applyEntryAnimations();
 
-        // Firebase placeholders — swap with live data when backend is ready
+        // Fetch real data from Firestore
         fetchLatestCareers();
         fetchSavedCareers();
         fetchCertificationsProgress();
@@ -99,45 +132,92 @@ public class HomeActivity extends AppCompatActivity {
         rvLatestCareers          = findViewById(R.id.rvLatestCareers);
         rvSavedCareers           = findViewById(R.id.rvSavedCareers);
         rvCertificationsProgress = findViewById(R.id.rvCertificationsProgress);
+
+        // Loading spinners
+        progressLatest = findViewById(R.id.progressLatest);
+        progressSaved  = findViewById(R.id.progressSaved);
+        progressCerts  = findViewById(R.id.progressCerts);
+
+        // Empty state containers
+        emptyLatest = findViewById(R.id.emptyLatest);
+        emptySaved  = findViewById(R.id.emptySaved);
+        emptyCerts  = findViewById(R.id.emptyCerts);
+
+        // Hide the top match card until data loads
+        cardTopMatch.setVisibility(View.GONE);
     }
 
     // ── Welcome greeting ─────────────────────────────────────────────
 
     private void setupWelcome() {
-        // TODO: Replace with real user name from Firebase Auth
-        // String userName = FirebaseAuth.getInstance().getCurrentUser().getDisplayName();
-        String userName = "Hanin";
+        // Use display name from Firebase Auth, with a fallback
+        FirebaseUser user = auth.getCurrentUser();
+        String userName = "Student";
+        if (user != null && user.getDisplayName() != null && !user.getDisplayName().isEmpty()) {
+            userName = user.getDisplayName();
+        }
         tvWelcome.setText(getString(R.string.home_welcome, userName));
     }
 
     // ── Quick action card clicks ─────────────────────────────────────
 
     private void setupQuickActions() {
-        // Start New Analysis → navigate to CareerProfileActivity
         cardNewAnalysis.setOnClickListener(v ->
                 startActivity(new Intent(this, CareerProfileActivity.class)));
 
-        // View Saved Careers → placeholder
         cardSavedCareers.setOnClickListener(v ->
                 Toast.makeText(this, "Saved Careers – coming soon!", Toast.LENGTH_SHORT).show());
 
-        // My Certifications → placeholder
         cardCertifications.setOnClickListener(v ->
                 Toast.makeText(this, "My Certifications – coming soon!", Toast.LENGTH_SHORT).show());
 
-        // My Progress → placeholder
         cardProgress.setOnClickListener(v ->
                 Toast.makeText(this, "My Progress – coming soon!", Toast.LENGTH_SHORT).show());
     }
 
+    // ── Empty state button clicks ────────────────────────────────────
+
+    private void setupEmptyStateButtons() {
+        // All empty state CTA buttons navigate to CareerProfileActivity
+        MaterialButton btnEmptyLatest = findViewById(R.id.btnEmptyLatest);
+        MaterialButton btnEmptySaved  = findViewById(R.id.btnEmptySaved);
+        MaterialButton btnEmptyCerts  = findViewById(R.id.btnEmptyCerts);
+
+        View.OnClickListener goToProfile = v ->
+                startActivity(new Intent(this, CareerProfileActivity.class));
+
+        btnEmptyLatest.setOnClickListener(goToProfile);
+        btnEmptySaved.setOnClickListener(goToProfile);
+        btnEmptyCerts.setOnClickListener(goToProfile);
+    }
+
+    // ── RecyclerView setup ───────────────────────────────────────────
+
+    private void setupRecyclerViews() {
+        // Latest careers — vertical list
+        rvLatestCareers.setLayoutManager(new LinearLayoutManager(this));
+        latestAdapter = new LatestCareerAdapter(this, latestCareers);
+        rvLatestCareers.setAdapter(latestAdapter);
+
+        // Saved careers — horizontal list
+        rvSavedCareers.setLayoutManager(
+                new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        savedAdapter = new SavedCareerAdapter(this, savedCareers);
+        rvSavedCareers.setAdapter(savedAdapter);
+
+        // Certifications in progress — vertical list
+        rvCertificationsProgress.setLayoutManager(new LinearLayoutManager(this));
+        certAdapter = new CertificationProgressAdapter(this, certProgressList);
+        rvCertificationsProgress.setAdapter(certAdapter);
+    }
+
     // ── Top Career Match card ────────────────────────────────────────
 
-    /**
-     * Populates the featured "Top Career Match" card with the
-     * highest-scoring career from the latest suggestions list.
-     */
     private void populateTopMatchCard() {
-        if (latestCareers == null || latestCareers.isEmpty()) return;
+        if (latestCareers == null || latestCareers.isEmpty()) {
+            cardTopMatch.setVisibility(View.GONE);
+            return;
+        }
 
         // Find the career with the highest match score
         Career topMatch = latestCareers.get(0);
@@ -158,32 +238,12 @@ public class HomeActivity extends AppCompatActivity {
             intent.putExtra("career_data", finalTopMatch);
             startActivity(intent);
         });
-    }
 
-    // ── RecyclerView setup ───────────────────────────────────────────
-
-    private void setupRecyclerViews() {
-        // Latest careers — vertical list
-        rvLatestCareers.setLayoutManager(new LinearLayoutManager(this));
-        rvLatestCareers.setAdapter(new LatestCareerAdapter(this, latestCareers));
-
-        // Saved careers — horizontal list
-        rvSavedCareers.setLayoutManager(
-                new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-        rvSavedCareers.setAdapter(new SavedCareerAdapter(this, savedCareers));
-
-        // Certifications in progress — vertical list
-        rvCertificationsProgress.setLayoutManager(new LinearLayoutManager(this));
-        rvCertificationsProgress.setAdapter(
-                new CertificationProgressAdapter(this, certProgressList));
+        cardTopMatch.setVisibility(View.VISIBLE);
     }
 
     // ── Entry animations ─────────────────────────────────────────────
 
-    /**
-     * Applies a cascading slide-up + fade-in animation to each
-     * RecyclerView so cards stagger in sequentially on load.
-     */
     private void applyEntryAnimations() {
         LayoutAnimationController animation = AnimationUtils.loadLayoutAnimation(
                 this, R.anim.layout_animation_fall_down);
@@ -191,94 +251,129 @@ public class HomeActivity extends AppCompatActivity {
         rvLatestCareers.setLayoutAnimation(animation);
         rvCertificationsProgress.setLayoutAnimation(animation);
 
-        // Trigger animation playback
         rvLatestCareers.scheduleLayoutAnimation();
         rvCertificationsProgress.scheduleLayoutAnimation();
     }
 
-    // ── Dummy data (will be replaced by Firebase) ────────────────────
-
-    private void loadDummyData() {
-        // Latest career suggestions
-        latestCareers = new ArrayList<>();
-        latestCareers.add(new Career("AI Engineer", 92,
-                "Design intelligent systems using machine learning and deep learning.",
-                new ArrayList<>(Arrays.asList("TensorFlow", "PyTorch")),
-                new ArrayList<>(Arrays.asList("Google ML Engineer", "AWS ML"))));
-        latestCareers.add(new Career("Data Analyst", 87,
-                "Transform raw data into actionable insights with statistical tools.",
-                new ArrayList<>(Arrays.asList("SQL", "Power BI")),
-                new ArrayList<>(Arrays.asList("Google Data Analytics", "IBM Analyst"))));
-
-        // Saved careers
-        savedCareers = new ArrayList<>();
-        savedCareers.add(new Career("Product Manager", 85,
-                "Lead product vision and roadmap execution.",
-                new ArrayList<>(Arrays.asList("Agile", "UX")),
-                new ArrayList<>(Arrays.asList("CSPO", "PMI-ACP"))));
-        savedCareers.add(new Career("UX Designer", 80,
-                "Create intuitive user experiences for digital products.",
-                new ArrayList<>(Arrays.asList("Figma", "Research")),
-                new ArrayList<>(Arrays.asList("Google UX", "Interaction Design"))));
-        savedCareers.add(new Career("Cloud Architect", 78,
-                "Design scalable cloud infrastructure solutions.",
-                new ArrayList<>(Arrays.asList("AWS", "Kubernetes")),
-                new ArrayList<>(Arrays.asList("AWS Solutions Architect", "GCP Pro"))));
-
-        // Certifications in progress
-        certProgressList = new ArrayList<>();
-        certProgressList.add(new CertificationProgress(
-                "Google ML Engineer", "Google", 65));
-        certProgressList.add(new CertificationProgress(
-                "AWS Solutions Architect", "Amazon", 40));
-        certProgressList.add(new CertificationProgress(
-                "Certified Scrum Product Owner", "Scrum Alliance", 20));
-    }
-
     // ══════════════════════════════════════════════════════════════════
-    // FIREBASE INTEGRATION PLACEHOLDERS
+    // FIRESTORE DATA LOADING
     // ══════════════════════════════════════════════════════════════════
 
-    /**
-     * Placeholder — fetch the user's latest AI-generated career suggestions
-     * from Firestore.
-     *
-     * Implementation steps:
-     * 1. Get uid from FirebaseAuth.getInstance().getCurrentUser().getUid()
-     * 2. Query: db.collection("career_suggestions")
-     *           .whereEqualTo("userId", uid)
-     *           .orderBy("createdAt", Query.Direction.DESCENDING)
-     *           .limit(3)
-     * 3. Parse documents into Career objects
-     * 4. Update latestCareers list and call adapter.notifyDataSetChanged()
-     */
+    // Fetch latest career profiles from "career_profiles" collection
     private void fetchLatestCareers() {
-        // TODO: implement Firestore query
+        progressLatest.setVisibility(View.VISIBLE);
+        emptyLatest.setVisibility(View.GONE);
+
+        db.collection("career_profiles")
+                .whereEqualTo("userId", uid)
+                .orderBy("createdAt", Query.Direction.DESCENDING)
+                .limit(3)
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    latestCareers.clear();
+
+                    for (DocumentSnapshot doc : querySnapshot.getDocuments()) {
+                        Career career = doc.toObject(Career.class);
+                        if (career != null) {
+                            latestCareers.add(career);
+                        }
+                    }
+
+                    latestAdapter.notifyDataSetChanged();
+                    progressLatest.setVisibility(View.GONE);
+
+                    if (latestCareers.isEmpty()) {
+                        emptyLatest.setVisibility(View.VISIBLE);
+                        rvLatestCareers.setVisibility(View.GONE);
+                    } else {
+                        emptyLatest.setVisibility(View.GONE);
+                        rvLatestCareers.setVisibility(View.VISIBLE);
+                        populateTopMatchCard();
+                        applyEntryAnimations();
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Log.e(TAG, "Failed to fetch latest careers", e);
+                    progressLatest.setVisibility(View.GONE);
+                    emptyLatest.setVisibility(View.VISIBLE);
+                    rvLatestCareers.setVisibility(View.GONE);
+                    Toast.makeText(this, "Could not load career profiles.", Toast.LENGTH_SHORT).show();
+                });
     }
 
-    /**
-     * Placeholder — fetch careers the user has bookmarked / saved.
-     *
-     * Implementation steps:
-     * 1. Query: db.collection("saved_careers")
-     *           .whereEqualTo("userId", uid)
-     * 2. Parse into Career objects
-     * 3. Update savedCareers list and notify adapter
-     */
+    // Fetch saved careers from "users/{uid}/saved_careers" subcollection
     private void fetchSavedCareers() {
-        // TODO: implement Firestore query
+        progressSaved.setVisibility(View.VISIBLE);
+        emptySaved.setVisibility(View.GONE);
+
+        db.collection("users").document(uid)
+                .collection("saved_careers")
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    savedCareers.clear();
+
+                    for (DocumentSnapshot doc : querySnapshot.getDocuments()) {
+                        Career career = doc.toObject(Career.class);
+                        if (career != null) {
+                            savedCareers.add(career);
+                        }
+                    }
+
+                    savedAdapter.notifyDataSetChanged();
+                    progressSaved.setVisibility(View.GONE);
+
+                    if (savedCareers.isEmpty()) {
+                        emptySaved.setVisibility(View.VISIBLE);
+                        rvSavedCareers.setVisibility(View.GONE);
+                    } else {
+                        emptySaved.setVisibility(View.GONE);
+                        rvSavedCareers.setVisibility(View.VISIBLE);
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Log.e(TAG, "Failed to fetch saved careers", e);
+                    progressSaved.setVisibility(View.GONE);
+                    emptySaved.setVisibility(View.VISIBLE);
+                    rvSavedCareers.setVisibility(View.GONE);
+                    Toast.makeText(this, "Could not load saved careers.", Toast.LENGTH_SHORT).show();
+                });
     }
 
-    /**
-     * Placeholder — fetch the user's certification progress records.
-     *
-     * Implementation steps:
-     * 1. Query: db.collection("certifications_progress")
-     *           .whereEqualTo("userId", uid)
-     * 2. Parse into CertificationProgress objects
-     * 3. Update certProgressList and notify adapter
-     */
+    // Fetch certifications from "users/{uid}/certifications" subcollection
     private void fetchCertificationsProgress() {
-        // TODO: implement Firestore query
+        progressCerts.setVisibility(View.VISIBLE);
+        emptyCerts.setVisibility(View.GONE);
+
+        db.collection("users").document(uid)
+                .collection("certifications")
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    certProgressList.clear();
+
+                    for (DocumentSnapshot doc : querySnapshot.getDocuments()) {
+                        CertificationProgress cert = doc.toObject(CertificationProgress.class);
+                        if (cert != null) {
+                            certProgressList.add(cert);
+                        }
+                    }
+
+                    certAdapter.notifyDataSetChanged();
+                    progressCerts.setVisibility(View.GONE);
+
+                    if (certProgressList.isEmpty()) {
+                        emptyCerts.setVisibility(View.VISIBLE);
+                        rvCertificationsProgress.setVisibility(View.GONE);
+                    } else {
+                        emptyCerts.setVisibility(View.GONE);
+                        rvCertificationsProgress.setVisibility(View.VISIBLE);
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Log.e(TAG, "Failed to fetch certifications", e);
+                    progressCerts.setVisibility(View.GONE);
+                    emptyCerts.setVisibility(View.VISIBLE);
+                    rvCertificationsProgress.setVisibility(View.GONE);
+                    Toast.makeText(this, "Could not load certifications.", Toast.LENGTH_SHORT).show();
+                });
     }
 }

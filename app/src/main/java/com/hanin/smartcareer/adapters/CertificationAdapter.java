@@ -17,13 +17,7 @@ import com.hanin.smartcareer.models.Certification;
 
 import java.util.List;
 
-/**
- * Adapter for the "Recommended Certifications" RecyclerView.
- * Binds {@link Certification} objects to {@code item_certification.xml} cards.
- *
- * <p>Tapping "Start Learning" navigates to {@link CertificationDetailActivity}
- * where the AI generates a tailored set of learning modules.</p>
- */
+
 public class CertificationAdapter extends RecyclerView.Adapter<CertificationAdapter.CertViewHolder> {
 
     private final List<Certification> certifications;
@@ -32,7 +26,6 @@ public class CertificationAdapter extends RecyclerView.Adapter<CertificationAdap
         this.certifications = certifications;
     }
 
-    // ── ViewHolder ──────────────────────────────────────────────────
 
     static class CertViewHolder extends RecyclerView.ViewHolder {
 

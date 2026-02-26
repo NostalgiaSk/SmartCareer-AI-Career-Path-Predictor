@@ -34,10 +34,6 @@ public class SavedCareersListAdapter
     private final FirebaseFirestore db;
     private final String uid;
 
-    /**
-     * @param context      Host activity context.
-     * @param savedCareers List of saved career objects.
-     */
     public SavedCareersListAdapter(Context context, List<Career> savedCareers) {
         this.context      = context;
         this.savedCareers = savedCareers;
@@ -49,7 +45,6 @@ public class SavedCareersListAdapter
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        // Reuse the item_latest_career layout for a consistent card look
         View view = LayoutInflater.from(context)
                 .inflate(R.layout.item_latest_career, parent, false);
         return new ViewHolder(view);
@@ -59,13 +54,11 @@ public class SavedCareersListAdapter
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Career career = savedCareers.get(position);
 
-        // Bind text fields
         holder.tvCareerName.setText(career.getCareerName());
         holder.tvMatchScore.setText(career.getMatchScore() + "%");
         holder.tvDescription.setText(
                 career.getDescription() != null ? career.getDescription() : "");
 
-        // Heart is always filled — this is the saved careers list
         holder.btnHeart.setImageResource(R.drawable.ic_heart_filled);
 
         // ── Heart click = unsave (same as delete) ───────────────────
@@ -101,7 +94,6 @@ public class SavedCareersListAdapter
     @Override
     public int getItemCount() { return savedCareers.size(); }
 
-    // ── ViewHolder ──────────────────────────────────────────────────
 
     static class ViewHolder extends RecyclerView.ViewHolder {
         TextView tvCareerName, tvMatchScore, tvDescription;
@@ -119,15 +111,11 @@ public class SavedCareersListAdapter
         }
     }
 
-    // ══════════════════════════════════════════════════════════════════
-    // FIRESTORE OPERATIONS
-    // ══════════════════════════════════════════════════════════════════
+
 
     /**
      * Deletes a saved career from Firestore and removes it from the list.
      *
-     * @param position     Adapter position of the item to remove.
-     * @param suggestionId Firestore document ID in saved_careers.
      */
     private void deleteCareer(int position, String suggestionId) {
         if (uid == null || suggestionId == null) return;

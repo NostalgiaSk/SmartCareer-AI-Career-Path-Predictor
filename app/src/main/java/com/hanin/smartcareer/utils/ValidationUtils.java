@@ -2,13 +2,7 @@ package com.hanin.smartcareer.utils;
 
 import android.util.Patterns;
 
-/**
- * Reusable validation helpers shared across activities.
- *
- * These methods can replace inline validation in LoginActivity,
- * RegisterActivity, and CareerProfileActivity when you're ready
- * to centralise form-checking logic.
- */
+
 public final class ValidationUtils {
 
     private ValidationUtils() { /* prevent instantiation */ }

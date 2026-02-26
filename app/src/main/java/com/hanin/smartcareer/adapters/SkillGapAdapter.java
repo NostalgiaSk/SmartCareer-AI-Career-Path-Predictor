@@ -13,10 +13,6 @@ import com.hanin.smartcareer.models.SkillGap;
 
 import java.util.List;
 
-/**
- * Adapter for the "Skills You Need to Improve" RecyclerView.
- * Binds {@link SkillGap} objects to {@code item_skill_gap.xml} cards.
- */
 public class SkillGapAdapter extends RecyclerView.Adapter<SkillGapAdapter.SkillGapViewHolder> {
 
     private final List<SkillGap> skillGaps;
@@ -25,7 +21,6 @@ public class SkillGapAdapter extends RecyclerView.Adapter<SkillGapAdapter.SkillG
         this.skillGaps = skillGaps;
     }
 
-    // ── ViewHolder ──────────────────────────────────────────────────
 
     static class SkillGapViewHolder extends RecyclerView.ViewHolder {
 
@@ -39,7 +34,6 @@ public class SkillGapAdapter extends RecyclerView.Adapter<SkillGapAdapter.SkillG
         }
     }
 
-    // ── Adapter overrides ───────────────────────────────────────────
 
     @NonNull
     @Override

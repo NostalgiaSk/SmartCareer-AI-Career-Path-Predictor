@@ -7,13 +7,6 @@ import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.POST;
 
-/**
- * Retrofit service interface for the OpenAI Chat Completion API.
- *
- * <p>Only one endpoint is needed — the chat completions route.
- * The {@code Authorization} header is injected automatically by the
- * OkHttp interceptor configured in {@link RetrofitClient}.
- */
 public interface OpenAIService {
 
     /**

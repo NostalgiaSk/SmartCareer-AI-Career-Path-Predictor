@@ -19,13 +19,7 @@ import com.hanin.smartcareer.models.Career;
 
 import java.util.List;
 
-/**
- * Adapter for the "Saved Careers" horizontal RecyclerView on the Home screen.
- * Displays compact cards with career name, match score, and a delete button.
- *
- * Deleting removes the career from users/{uid}/saved_careers in Firestore
- * and instantly removes it from the RecyclerView.
- */
+
 public class SavedCareerAdapter
         extends RecyclerView.Adapter<SavedCareerAdapter.ViewHolder> {
 

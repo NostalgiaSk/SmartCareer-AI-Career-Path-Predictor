@@ -11,24 +11,7 @@ import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-/**
- * Singleton Retrofit client configured for the OpenAI API.
- *
- * <h3>Key features</h3>
- * <ul>
- *   <li>Reads the API key from {@code BuildConfig.OPENAI_API_KEY}
- *       (injected at build-time from {@code local.properties}).</li>
- *   <li>Adds an {@code Authorization: Bearer <key>} header to every request
- *       via an OkHttp {@link Interceptor}.</li>
- *   <li>60-second connect / read / write timeouts.</li>
- *   <li>{@code HttpLoggingInterceptor} at {@code BODY} level in debug builds.</li>
- * </ul>
- *
- * <h3>Security note</h3>
- * Embedding the API key in the APK is acceptable <strong>for testing only</strong>.
- * In production, all OpenAI requests must be proxied through your own
- * backend server so the key is never shipped to end-user devices.
- */
+
 public final class RetrofitClient {
 
     // Groq API base URL (OpenAI-compatible, free tier)
@@ -39,9 +22,6 @@ public final class RetrofitClient {
 
     private RetrofitClient() { /* prevent instantiation */ }
 
-    /**
-     * Returns (and lazily creates) the singleton {@link Retrofit} instance.
-     */
     public static Retrofit getInstance() {
         if (retrofit == null) {
             synchronized (RetrofitClient.class) {

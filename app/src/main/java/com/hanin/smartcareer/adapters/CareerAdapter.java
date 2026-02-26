@@ -28,14 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * RecyclerView adapter for the AI career suggestions screen.
- * Each card shows career name, match score, description,
- * a "View Skill Gap" button, and a heart toggle for saving.
- *
- * The heart icon toggles between outline (unsaved) and filled (saved).
- * Saving writes to users/{uid}/saved_careers in Firestore.
- */
+
 public class CareerAdapter extends RecyclerView.Adapter<CareerAdapter.CareerViewHolder> {
 
     private static final String TAG = "CareerAdapter";
@@ -46,11 +39,7 @@ public class CareerAdapter extends RecyclerView.Adapter<CareerAdapter.CareerView
     private final FirebaseFirestore db;
     private final String uid;
 
-    /**
-     * @param context   Host activity context.
-     * @param careers   Dataset produced by the AI matching engine.
-     * @param savedIds  Set of suggestion IDs the user has already saved.
-     */
+
     public CareerAdapter(Context context, List<Career> careers, Set<String> savedIds) {
         this.context  = context;
         this.careers  = careers;
@@ -126,10 +115,7 @@ public class CareerAdapter extends RecyclerView.Adapter<CareerAdapter.CareerView
 
     // ── Heart toggle logic ──────────────────────────────────────────
 
-    /**
-     * Saves or removes a career from the user's saved_careers subcollection.
-     * Includes a scale animation on the heart icon.
-     */
+ 
     private void toggleSaveCareer(ImageButton btnHeart, Career career) {
         String id = career.getSuggestionId();
         boolean currentlySaved = savedIds.contains(id);

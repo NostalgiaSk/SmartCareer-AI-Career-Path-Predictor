@@ -28,14 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-/**
- * Adapter for "Latest Career Suggestions" on the Home screen.
- * Each card shows career name, match score, description,
- * a "View Details" button, a heart toggle, and a delete button.
- *
- * Heart toggle saves/unsaves to users/{uid}/saved_careers.
- * Delete removes from career_profiles/{profileId}/ai_suggestions.
- */
+
 public class LatestCareerAdapter
         extends RecyclerView.Adapter<LatestCareerAdapter.ViewHolder> {
 
@@ -48,12 +41,7 @@ public class LatestCareerAdapter
     private final FirebaseFirestore db;
     private final String uid;
 
-    /**
-     * @param context    Host activity context.
-     * @param careers    List of career suggestions for the latest profile.
-     * @param savedIds   Set of suggestion IDs the user has already saved.
-     * @param profileId  Firestore document ID of the current career profile.
-     */
+
     public LatestCareerAdapter(Context context, List<Career> careers,
                                 Set<String> savedIds, String profileId) {
         this.context   = context;
@@ -129,9 +117,7 @@ public class LatestCareerAdapter
         }
     }
 
-    // ══════════════════════════════════════════════════════════════════
-    // FIRESTORE OPERATIONS
-    // ══════════════════════════════════════════════════════════════════
+   
 
     /** Toggle save/unsave for a career in users/{uid}/saved_careers. */
     private void toggleSaveCareer(ImageButton btnHeart, Career career) {

@@ -17,11 +17,7 @@ import com.hanin.smartcareer.models.CertificationProgress;
 
 import java.util.List;
 
-/**
- * Adapter for the "Certifications In Progress" section on the Home
- * dashboard. Each card shows certification name, provider, percentage
- * text, and a horizontal ProgressBar. Tapping a card opens the detail screen.
- */
+
 public class CertificationProgressAdapter
         extends RecyclerView.Adapter<CertificationProgressAdapter.ViewHolder> {
 

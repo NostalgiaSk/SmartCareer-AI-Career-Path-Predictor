@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<!-- ──────────────────────────────────────────────────────────────
-     activity_quiz.xml — Quiz screen for module assessment.
-     Shows question counter, question text, 4 selectable options,
-     Next/Submit button, and a result card overlay.
-     ────────────────────────────────────────────────────────────── -->
+
 
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -15,7 +11,7 @@
     android:background="@color/sc_background"
     tools:context=".activities.QuizActivity">
 
-    <!-- ── Back arrow ──────────────────────────────────────── -->
+    
 
     <ImageView
         android:id="@+id/ivBack"
@@ -30,7 +26,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- ── Quiz title ──────────────────────────────────────── -->
+    
 
     <TextView
         android:id="@+id/tvQuizTitle"
@@ -48,7 +44,7 @@
         app:layout_constraintStart_toEndOf="@id/ivBack"
         app:layout_constraintTop_toTopOf="@id/ivBack" />
 
-    <!-- ── Question counter ────────────────────────────────── -->
+    
 
     <TextView
         android:id="@+id/tvQuestionCounter"
@@ -66,7 +62,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/ivBack" />
 
-    <!-- ── Progress bar (question progress) ────────────────── -->
 
     <ProgressBar
         android:id="@+id/progressQuiz"
@@ -83,7 +78,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tvQuestionCounter" />
 
-    <!-- ── Question card ───────────────────────────────────── -->
 
     <com.google.android.material.card.MaterialCardView
         android:id="@+id/cardQuestion"
@@ -114,7 +108,7 @@
 
     </com.google.android.material.card.MaterialCardView>
 
-    <!-- ── Answer options ──────────────────────────────────── -->
+    
 
     <LinearLayout
         android:id="@+id/layoutOptions"
@@ -178,8 +172,7 @@
 
     </LinearLayout>
 
-    <!-- ── Next / Submit button ────────────────────────────── -->
-
+   
     <Button
         android:id="@+id/btnNext"
         android:layout_width="0dp"
@@ -199,10 +192,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
-
-    <!-- ══════════════════════════════════════════════════════ -->
-    <!-- RESULT OVERLAY (shown after quiz submission)          -->
-    <!-- ══════════════════════════════════════════════════════ -->
 
     <FrameLayout
         android:id="@+id/resultOverlay"
@@ -231,7 +220,6 @@
                 android:orientation="vertical"
                 android:padding="32dp">
 
-                <!-- Result title (pass/fail) -->
                 <TextView
                     android:id="@+id/tvResultTitle"
                     android:layout_width="wrap_content"
@@ -242,7 +230,7 @@
                     android:textStyle="bold"
                     tools:text="🎉 Quiz Passed!" />
 
-                <!-- Score text -->
+                
                 <TextView
                     android:id="@+id/tvResultScore"
                     android:layout_width="wrap_content"
@@ -253,7 +241,6 @@
                     android:textSize="15sp"
                     tools:text="You scored 100% (3 out of 3 correct)" />
 
-                <!-- Pass threshold note -->
                 <TextView
                     android:id="@+id/tvPassThreshold"
                     android:layout_width="wrap_content"
@@ -264,7 +251,7 @@
                     android:textColor="@color/sc_text_hint"
                     android:textSize="12sp" />
 
-                <!-- Continue / Retry button -->
+                
                 <Button
                     android:id="@+id/btnResultAction"
                     android:layout_width="match_parent"

@@ -4,16 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Represents a single learning module within a certification path.
- *
- * <p>Each module contains structured content, a duration estimate,
- * a sequential order index, and an embedded quiz. Modules follow
- * a locked → unlocked → completed lifecycle.</p>
- *
- * <p>Implements {@link Serializable} so it can be passed between
- * Activities via Intent extras.</p>
- */
+
 public class Module implements Serializable {
 
     private String moduleId;       // Unique identifier (e.g. "mod_1")
@@ -27,11 +18,10 @@ public class Module implements Serializable {
     private int quizScore;         // Latest quiz score percentage (0 – 100)
     private ArrayList<QuizQuestion> quizQuestions; // Embedded quiz questions
 
-    // ── No-arg constructor (required for Gson / Firestore) ──────────
+    
 
     public Module() {}
 
-    // ── Full constructor ────────────────────────────────────────────
 
     public Module(String moduleId, String title, String content,
                   String duration, int orderIndex,

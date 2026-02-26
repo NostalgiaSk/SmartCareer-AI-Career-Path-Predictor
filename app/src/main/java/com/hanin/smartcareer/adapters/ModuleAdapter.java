@@ -16,22 +16,10 @@ import com.hanin.smartcareer.models.Module;
 
 import java.util.List;
 
-/**
- * Adapter for displaying learning modules in the certification detail screen.
- *
- * <p>Each module card has one of three visual states:</p>
- * <ul>
- *   <li><b>LOCKED</b> — grey background, lock icon, "Locked" badge. Not clickable.</li>
- *   <li><b>UNLOCKED</b> — white background, module number badge, "Start" badge. Clickable.</li>
- *   <li><b>COMPLETED</b> — green check icon, "Passed" badge with quiz score. Clickable.</li>
- * </ul>
- */
+
 public class ModuleAdapter extends RecyclerView.Adapter<ModuleAdapter.ViewHolder> {
 
-    // ── Callback interface ──────────────────────────────────────────
-    /**
-     * Called when the user taps an unlocked or completed module card.
-     */
+   
     public interface OnModuleClickListener {
         void onModuleClicked(int position);
     }
@@ -40,7 +28,6 @@ public class ModuleAdapter extends RecyclerView.Adapter<ModuleAdapter.ViewHolder
     private final List<Module> modules;
     private final OnModuleClickListener listener;
 
-    // ── Constructor ─────────────────────────────────────────────────
 
     public ModuleAdapter(Context context, List<Module> modules,
                          OnModuleClickListener listener) {
@@ -49,8 +36,7 @@ public class ModuleAdapter extends RecyclerView.Adapter<ModuleAdapter.ViewHolder
         this.listener = listener;
     }
 
-    // ── ViewHolder creation ─────────────────────────────────────────
-
+   
     @NonNull
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
@@ -59,7 +45,6 @@ public class ModuleAdapter extends RecyclerView.Adapter<ModuleAdapter.ViewHolder
         return new ViewHolder(view);
     }
 
-    // ── Binding logic: three visual states ───────────────────────────
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
@@ -177,7 +162,6 @@ public class ModuleAdapter extends RecyclerView.Adapter<ModuleAdapter.ViewHolder
     @Override
     public int getItemCount() { return modules.size(); }
 
-    // ── ViewHolder ──────────────────────────────────────────────────
 
     static class ViewHolder extends RecyclerView.ViewHolder {
         com.google.android.material.card.MaterialCardView cardModule;

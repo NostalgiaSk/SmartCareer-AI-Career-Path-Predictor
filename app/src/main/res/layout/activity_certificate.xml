@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<!-- ──────────────────────────────────────────────────────────────
-     activity_certificate.xml — Certification completion celebration.
-     Shows congratulations message, certification name, provider,
-     completion date, and a "Back to Home" button.
-     ────────────────────────────────────────────────────────────── -->
+
 
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -21,7 +17,6 @@
         android:layout_height="wrap_content"
         android:paddingBottom="32dp">
 
-        <!-- ── Trophy / celebration emoji ─────────────────────── -->
 
         <TextView
             android:id="@+id/tvTrophy"
@@ -34,7 +29,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <!-- ── Congratulations heading ────────────────────────── -->
 
         <TextView
             android:id="@+id/tvCongrats"
@@ -53,7 +47,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tvTrophy" />
 
-        <!-- ── "You have successfully completed" ──────────────── -->
 
         <TextView
             android:id="@+id/tvCompletedMessage"
@@ -71,7 +64,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tvCongrats" />
 
-        <!-- ── Certificate card ───────────────────────────────── -->
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cardCertificate"
@@ -96,14 +88,12 @@
                 android:orientation="vertical"
                 android:padding="28dp">
 
-                <!-- Certificate star icon -->
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="⭐"
                     android:textSize="36sp" />
 
-                <!-- Certification name -->
                 <TextView
                     android:id="@+id/tvCertName"
                     android:layout_width="wrap_content"
@@ -116,7 +106,6 @@
                     android:textStyle="bold"
                     tools:text="Google ML Engineer" />
 
-                <!-- Provider -->
                 <TextView
                     android:id="@+id/tvProvider"
                     android:layout_width="wrap_content"
@@ -127,7 +116,6 @@
                     android:textSize="15sp"
                     tools:text="Issued by Google Cloud" />
 
-                <!-- Completion date -->
                 <TextView
                     android:id="@+id/tvDate"
                     android:layout_width="wrap_content"
@@ -141,7 +129,6 @@
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- ── Back to Home button ────────────────────────────── -->
 
         <Button
             android:id="@+id/btnBackHome"

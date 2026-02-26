@@ -19,22 +19,11 @@ import com.hanin.smartcareer.models.QuizQuestion;
 
 import java.util.ArrayList;
 
-/**
- * Quiz screen for module assessment.
- *
- * <p>Displays questions one at a time with 4 selectable options.
- * After the last question, a result overlay shows the score and
- * whether the student passed (≥ 70%). Results are returned to
- * the calling activity via {@code setResult()}.</p>
- *
- * <p>Pass threshold: 70% (at least 2 out of 3 correct).</p>
- */
+
 public class QuizActivity extends AppCompatActivity {
 
-    // ── Constants ───────────────────────────────────────────────────
     private static final int PASS_THRESHOLD = 70; // 70% required to pass
 
-    // ── Views ───────────────────────────────────────────────────────
     private TextView tvQuestionCounter, tvQuestion;
     private ProgressBar progressQuiz;
     private TextView[] optionViews;        // The 4 option TextViews
@@ -43,21 +32,18 @@ public class QuizActivity extends AppCompatActivity {
     private TextView tvResultTitle, tvResultScore;
     private Button btnResultAction;
 
-    // ── Data ────────────────────────────────────────────────────────
     private Module module;
     private ArrayList<QuizQuestion> questions;
     private int currentQuestionIndex = 0;
     private int selectedOptionIndex  = -1;  // -1 = nothing selected
     private int correctAnswers       = 0;
 
-    // ── Lifecycle ────────────────────────────────────────────────────
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_quiz);
 
-        // 1. Retrieve module data
         module = (Module) getIntent().getSerializableExtra("module_data");
         if (module == null || module.getQuizQuestions() == null
                 || module.getQuizQuestions().isEmpty()) {
@@ -68,17 +54,11 @@ public class QuizActivity extends AppCompatActivity {
 
         questions = module.getQuizQuestions();
 
-        // 2. Bind all views
         initViews();
-
-        // 3. Set up click listeners
         setupListeners();
-
-        // 4. Display the first question
         showQuestion(0);
     }
 
-    // ── View initialisation ─────────────────────────────────────────
 
     private void initViews() {
         ImageView ivBack   = findViewById(R.id.ivBack);
@@ -91,18 +71,16 @@ public class QuizActivity extends AppCompatActivity {
         tvResultScore      = findViewById(R.id.tvResultScore);
         btnResultAction    = findViewById(R.id.btnResultAction);
 
-        // The 4 option TextViews
         optionViews = new TextView[4];
         optionViews[0] = findViewById(R.id.tvOption0);
         optionViews[1] = findViewById(R.id.tvOption1);
         optionViews[2] = findViewById(R.id.tvOption2);
         optionViews[3] = findViewById(R.id.tvOption3);
 
-        // Back arrow
         ivBack.setOnClickListener(v -> finish());
     }
 
-    // ── Click listeners ─────────────────────────────────────────────
+   
 
     private void setupListeners() {
         // Option selection — each option is a clickable TextView
@@ -145,11 +123,6 @@ public class QuizActivity extends AppCompatActivity {
 
     // ── Display a question ──────────────────────────────────────────
 
-    /**
-     * Populates the UI with the question at the given index.
-     *
-     * @param index 0-based index into the questions list.
-     */
     private void showQuestion(int index) {
         QuizQuestion q = questions.get(index);
 
@@ -189,11 +162,6 @@ public class QuizActivity extends AppCompatActivity {
 
     // ── Option selection ────────────────────────────────────────────
 
-    /**
-     * Highlights the selected option and deselects all others.
-     *
-     * @param index The 0-based index of the selected option.
-     */
     private void selectOption(int index) {
         selectedOptionIndex = index;
 
@@ -206,12 +174,6 @@ public class QuizActivity extends AppCompatActivity {
 
     // ── Answer feedback ─────────────────────────────────────────────
 
-    /**
-     * Shows green/red backgrounds on the correct and selected options.
-     * Disables further clicks while feedback is shown.
-     *
-     * @param correctIndex The 0-based index of the correct answer.
-     */
     private void showAnswerFeedback(int correctIndex) {
         // Disable all options during feedback
         for (int i = 0; i < 4; i++) {

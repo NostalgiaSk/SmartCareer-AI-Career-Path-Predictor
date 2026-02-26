@@ -20,21 +20,6 @@ import com.hanin.smartcareer.R;
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- * Displays the quiz result in a dedicated full-screen activity.
- *
- * <h3>Two states</h3>
- * <ul>
- *   <li><b>PASSED (score ≥ 70%)</b> — green theme, "✅" icon, "Continue" button.
- *       Returns {@code RESULT_OK} with quiz_passed=true.</li>
- *   <li><b>FAILED (score &lt; 70%)</b> — red theme, "❌" icon, "Retry" + "Quit" buttons.
- *       Saves failed attempt to Firestore. Retry returns {@code RESULT_FIRST_USER}
- *       (QuizActivity resets). Quit returns {@code RESULT_CANCELED}.</li>
- * </ul>
- *
- * <p>Every quiz attempt (pass or fail) is saved to Firestore under:
- * {@code users/{uid}/certification_progress/{certId}/moduleAttempts/{moduleId}}</p>
- */
 public class QuizResultActivity extends AppCompatActivity {
 
     private static final String TAG = "QuizResultActivity";
@@ -50,12 +35,10 @@ public class QuizResultActivity extends AppCompatActivity {
     // Result code for "retry" — distinct from RESULT_OK and RESULT_CANCELED
     public static final int RESULT_RETRY = RESULT_FIRST_USER;
 
-    // ── Views ────────────────────────────────────────────────────────
     private TextView tvResultIcon, tvResultTitle, tvScorePercent;
     private TextView tvCorrectCount, tvMinRequired;
     private Button btnPrimaryAction, btnSecondaryAction;
 
-    // ── Data ─────────────────────────────────────────────────────────
     private boolean passed;
     private int score, correct, total;
     private String moduleId, certName;
@@ -82,24 +65,21 @@ public class QuizResultActivity extends AppCompatActivity {
         btnPrimaryAction   = findViewById(R.id.btnPrimaryAction);
         btnSecondaryAction = findViewById(R.id.btnSecondaryAction);
 
-        // 3. Configure UI based on pass/fail state
+        
         if (passed) {
             setupPassState();
         } else {
             setupFailState();
         }
 
-        // 4. Animate the result icon
+        
         animateIcon();
 
-        // 5. Save attempt to Firestore
         saveAttemptToFirestore();
     }
 
-    // ══════════════════════════════════════════════════════════════════
     // PASS STATE
-    // ══════════════════════════════════════════════════════════════════
-
+    
     private void setupPassState() {
         // Green theme
         tvResultIcon.setText("✅");
@@ -127,9 +107,7 @@ public class QuizResultActivity extends AppCompatActivity {
         btnSecondaryAction.setVisibility(View.GONE);
     }
 
-    // ══════════════════════════════════════════════════════════════════
     // FAIL STATE
-    // ══════════════════════════════════════════════════════════════════
 
     private void setupFailState() {
         // Red theme
@@ -159,10 +137,7 @@ public class QuizResultActivity extends AppCompatActivity {
         });
     }
 
-    // ══════════════════════════════════════════════════════════════════
-    // ICON ANIMATION
-    // ══════════════════════════════════════════════════════════════════
-
+   
     /**
      * Animates the result icon with a scale-up + overshoot effect
      * to draw attention to the pass/fail status.
@@ -189,12 +164,7 @@ public class QuizResultActivity extends AppCompatActivity {
     // FIRESTORE: SAVE ATTEMPT
     // ══════════════════════════════════════════════════════════════════
 
-    /**
-     * Saves every quiz attempt (pass or fail) to Firestore under:
-     * {@code users/{uid}/certification_progress/{certId}/moduleAttempts/{moduleId}}
-     *
-     * <p>Each attempt record includes score, passed boolean, and timestamp.</p>
-     */
+
     private void saveAttemptToFirestore() {
         String uid = FirebaseAuth.getInstance().getCurrentUser() != null
                 ? FirebaseAuth.getInstance().getCurrentUser().getUid() : null;

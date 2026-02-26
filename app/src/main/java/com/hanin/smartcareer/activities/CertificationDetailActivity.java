@@ -37,30 +37,13 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-/**
- * Displays the full detail of a selected certification, including
- * overall progress, a list of AI-generated learning modules with
- * locked progression, an embedded quiz system, and Firestore-backed
- * progress tracking.
- *
- * <h3>Learning flow</h3>
- * <ol>
- *   <li>AI generates 5 structured modules with content and quiz questions.</li>
- *   <li>Only the first module is unlocked; subsequent modules unlock
- *       after passing the previous module's quiz (≥ 70%).</li>
- *   <li>Progress is saved to Firestore after each quiz pass.</li>
- *   <li>When all modules are completed and quizzes passed,
- *       the student is navigated to {@link CertificateActivity}.</li>
- *   <li>On re-entry, saved progress is restored (resume logic).</li>
- * </ol>
- */
 public class CertificationDetailActivity extends AppCompatActivity
         implements ModuleAdapter.OnModuleClickListener {
 
     private static final String TAG = "CertDetailActivity";
     private static final int MODULE_REQUEST_CODE = 1001;
 
-    // ── View references ─────────────────────────────────────────────
+   
 
     private ImageView ivBack;
     private TextView tvCertName, tvProvider, tvLevel;
@@ -70,28 +53,21 @@ public class CertificationDetailActivity extends AppCompatActivity
     private Button btnResume;
     private RecyclerView rvModules;
 
-    // ── Data ─────────────────────────────────────────────────────────
-
     private List<Module> moduleList;
     private ModuleAdapter moduleAdapter;
 
-    // Intent extras
     private String certificationName;
     private String provider;
     private String level;
     private int progress;
 
-    // Firestore
     private FirebaseFirestore db;
     private String uid;
-    private String progressDocId; // Sanitised cert name for Firestore doc ID
-
-    // Saved progress state loaded from Firestore
+    private String progressDocId;
     private List<String> savedCompletedModules;
     private Map<String, Long> savedQuizScores;
     private int savedCurrentModuleIndex;
 
-    // ── Lifecycle ────────────────────────────────────────────────────
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -129,7 +105,6 @@ public class CertificationDetailActivity extends AppCompatActivity
         loadProgressFromFirestore();
     }
 
-    // ── Intent data retrieval ────────────────────────────────────────
 
     /**
      * Extracts all data passed from the calling activity.
@@ -183,16 +158,8 @@ public class CertificationDetailActivity extends AppCompatActivity
         rvModules.setAdapter(moduleAdapter);
     }
 
-    // ══════════════════════════════════════════════════════════════════
     // MODULE CLICK CALLBACK
-    // ══════════════════════════════════════════════════════════════════
 
-    /**
-     * Called when the student taps an unlocked or completed module card.
-     * Opens {@link ModuleActivity} to display the module content.
-     *
-     * @param position Adapter position of the tapped module.
-     */
     @Override
     public void onModuleClicked(int position) {
         if (position < 0 || position >= moduleList.size()) return;
@@ -206,9 +173,7 @@ public class CertificationDetailActivity extends AppCompatActivity
         startActivityForResult(intent, MODULE_REQUEST_CODE);
     }
 
-    // ══════════════════════════════════════════════════════════════════
     // QUIZ RESULT HANDLING
-    // ══════════════════════════════════════════════════════════════════
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -263,14 +228,7 @@ public class CertificationDetailActivity extends AppCompatActivity
         }
     }
 
-    // ══════════════════════════════════════════════════════════════════
     // RESUME LEARNING
-    // ══════════════════════════════════════════════════════════════════
-
-    /**
-     * Finds the first incomplete, unlocked module and opens it.
-     * If all modules are completed, does nothing.
-     */
     private void resumeLearning() {
         for (int i = 0; i < moduleList.size(); i++) {
             Module m = moduleList.get(i);
@@ -299,7 +257,6 @@ public class CertificationDetailActivity extends AppCompatActivity
         btnResume.setVisibility(hasIncomplete ? View.VISIBLE : View.GONE);
     }
 
-    // ── Progress calculation ─────────────────────────────────────────
 
     /**
      * Calculates progress as: (completedModules / totalModules) × 100
@@ -322,9 +279,7 @@ public class CertificationDetailActivity extends AppCompatActivity
         progressBar.setProgress(percent);
     }
 
-    // ══════════════════════════════════════════════════════════════════
-    // FIRESTORE: PROGRESS PERSISTENCE
-    // ══════════════════════════════════════════════════════════════════
+
 
     /**
      * Loads the user's saved progress for this certification from Firestore.
@@ -385,10 +340,7 @@ public class CertificationDetailActivity extends AppCompatActivity
 
     /**
      * Saves the current progress state to Firestore after a quiz pass.
-     *
-     * @param completedModuleId The module ID that was just completed.
-     * @param quizScore         The quiz score percentage.
-     * @param overallProgress   The recalculated overall progress percentage.
+
      */
     private void saveProgressToFirestore(String completedModuleId,
                                           int quizScore,
@@ -434,9 +386,6 @@ public class CertificationDetailActivity extends AppCompatActivity
                         Log.e(TAG, "Failed to save progress", e));
     }
 
-    // ══════════════════════════════════════════════════════════════════
-    // AI-POWERED MODULE GENERATION
-    // ══════════════════════════════════════════════════════════════════
 
     /**
      * Calls the Groq LLaMA AI API to generate learning modules
@@ -496,9 +445,6 @@ public class CertificationDetailActivity extends AppCompatActivity
      * Parses the AI JSON response into {@link Module} objects, applies
      * saved progress (completed/locked states), and updates the UI.
      *
-     * <p>If the JSON is truncated (common when the AI hits the token limit),
-     * this method attempts to repair it by extracting all complete modules
-     * before the truncation point.</p>
      */
     private void parseAndDisplayModules(String jsonContent) {
         // First, try a direct parse
@@ -579,12 +525,6 @@ public class CertificationDetailActivity extends AppCompatActivity
     /**
      * Attempts to repair truncated JSON from a cut-off AI response.
      *
-     * <p>Strategy: find the last complete module object (identified by
-     * the pattern {@code "id": "mod_N"} followed by a complete block),
-     * then trim the JSON there and close the structure properly.</p>
-     *
-     * @param truncatedJson The truncated JSON string.
-     * @return A parsed wrapper, or null if repair failed.
      */
     private ModuleListWrapper attemptTruncatedJsonRepair(String truncatedJson) {
         try {
@@ -633,13 +573,9 @@ public class CertificationDetailActivity extends AppCompatActivity
     /**
      * Finds the end position of the last complete quiz array + module closing
      * brace in the given string fragment.
-     *
-     * @param fragment A substring starting from a module's "id" field.
-     * @return The position after the module's closing brace, or -1 if incomplete.
      */
     private int findLastCompleteQuizEnd(String fragment) {
         // Look for the quiz array closing pattern: ] followed by }
-        // We need to find a complete "quiz": [...] } pattern
         int searchFrom = 0;
         int lastValid = -1;
 

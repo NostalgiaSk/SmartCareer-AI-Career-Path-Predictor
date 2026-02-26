@@ -39,7 +39,6 @@ public class HomeActivity extends AppCompatActivity {
 
     private static final String TAG = "HomeActivity";
 
-    // ── View references ─────────────────────────────────────────────
 
     private TextView tvWelcome;
     private ImageView ivProfile;
@@ -47,17 +46,14 @@ public class HomeActivity extends AppCompatActivity {
             cardCertifications, cardProgress;
     private RecyclerView rvLatestCareers, rvSavedCareers, rvCertificationsProgress;
 
-    // Top Career Match card views
     private MaterialCardView cardTopMatch;
     private TextView tvTopMatchName, tvTopMatchScore, tvTopMatchDesc;
 
-    // Loading spinners for each section
     private ProgressBar progressLatest, progressSaved, progressCerts;
 
     // Empty state containers for each section
     private LinearLayout emptyLatest, emptySaved, emptyCerts;
 
-    // ── Data ─────────────────────────────────────────────────────────
 
     private List<Career> latestCareers;
     private List<Career> savedCareers;
@@ -65,19 +61,15 @@ public class HomeActivity extends AppCompatActivity {
     private Set<String> savedCareerIds;   // Pre-loaded set of saved career IDs
     private String latestProfileId;       // Firestore ID of the latest career profile
 
-    // ── Adapters ─────────────────────────────────────────────────────
-
     private LatestCareerAdapter latestAdapter;
     private SavedCareerAdapter savedAdapter;
     private CertificationProgressAdapter certAdapter;
 
-    // ── Firebase ─────────────────────────────────────────────────────
 
     private FirebaseAuth auth;
     private FirebaseFirestore db;
     private String uid;
 
-    // ── Lifecycle ────────────────────────────────────────────────────
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -97,8 +89,7 @@ public class HomeActivity extends AppCompatActivity {
         }
         uid = currentUser.getUid();
 
-        // Initialize empty data lists
-        latestCareers    = new ArrayList<>();
+       
         savedCareers     = new ArrayList<>();
         certProgressList = new ArrayList<>();
         savedCareerIds   = new HashSet<>();
@@ -108,11 +99,11 @@ public class HomeActivity extends AppCompatActivity {
         setupQuickActions();
         setupEmptyStateButtons();
 
-        // Preload saved IDs first, then set up adapters and fetch data
+        
         preloadSavedIdsAndFetch();
     }
 
-    // ── View initialisation ──────────────────────────────────────────
+   
 
     private void initViews() {
         tvWelcome     = findViewById(R.id.tvWelcome);
@@ -149,10 +140,8 @@ public class HomeActivity extends AppCompatActivity {
         cardTopMatch.setVisibility(View.GONE);
     }
 
-    // ── Welcome greeting ─────────────────────────────────────────────
 
     private void setupWelcome() {
-        // Use display name from Firebase Auth, with a fallback
         FirebaseUser user = auth.getCurrentUser();
         String userName = "Student";
         if (user != null && user.getDisplayName() != null && !user.getDisplayName().isEmpty()) {
@@ -161,7 +150,6 @@ public class HomeActivity extends AppCompatActivity {
         tvWelcome.setText(getString(R.string.home_welcome, userName));
     }
 
-    // ── Quick action card clicks ─────────────────────────────────────
 
     private void setupQuickActions() {
         cardNewAnalysis.setOnClickListener(v ->
@@ -180,7 +168,6 @@ public class HomeActivity extends AppCompatActivity {
     // ── Empty state button clicks ────────────────────────────────────
 
     private void setupEmptyStateButtons() {
-        // All empty state CTA buttons navigate to CareerProfileActivity
         MaterialButton btnEmptyLatest = findViewById(R.id.btnEmptyLatest);
         MaterialButton btnEmptySaved  = findViewById(R.id.btnEmptySaved);
         MaterialButton btnEmptyCerts  = findViewById(R.id.btnEmptyCerts);
@@ -195,11 +182,7 @@ public class HomeActivity extends AppCompatActivity {
 
     // ── Preload saved IDs, then set up adapters ──────────────────────
 
-    /**
-     * Loads the user's saved career IDs from Firestore FIRST,
-     * then sets up all RecyclerViews with the correct adapter state.
-     * This ensures heart icons show the correct filled/outline state.
-     */
+
     private void preloadSavedIdsAndFetch() {
         db.collection("users").document(uid)
                 .collection("saved_careers")

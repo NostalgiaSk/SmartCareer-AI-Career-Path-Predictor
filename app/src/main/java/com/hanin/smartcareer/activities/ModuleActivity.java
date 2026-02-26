@@ -11,15 +11,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.hanin.smartcareer.R;
 import com.hanin.smartcareer.models.Module;
 
-/**
- * Displays the full content of a single learning module.
- *
- * <p>Shows the module title, estimated duration, and a scrollable
- * lesson body. A "Take Quiz" button at the bottom launches
- * {@link QuizActivity} for assessment.</p>
- *
- * <p>Data is received via Intent as a {@link Module} Serializable object.</p>
- */
+
 public class ModuleActivity extends AppCompatActivity {
 
     // Request code for quiz result
@@ -27,24 +19,22 @@ public class ModuleActivity extends AppCompatActivity {
 
     private Module module;
 
-    // ── Lifecycle ────────────────────────────────────────────────────
-
+    
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_module);
 
-        // 1. Retrieve module data from intent
+       
         module = (Module) getIntent().getSerializableExtra("module_data");
 
-        // 2. Bind views
         ImageView ivBack     = findViewById(R.id.ivBack);
         TextView tvTitle     = findViewById(R.id.tvModuleTitle);
         TextView tvDuration  = findViewById(R.id.tvDuration);
         TextView tvContent   = findViewById(R.id.tvContent);
         Button btnTakeQuiz   = findViewById(R.id.btnTakeQuiz);
 
-        // 3. Populate UI
+        
         if (module != null) {
             tvTitle.setText(module.getTitle());
 
@@ -58,10 +48,10 @@ public class ModuleActivity extends AppCompatActivity {
             }
         }
 
-        // 4. Back arrow → finish activity
+
         ivBack.setOnClickListener(v -> finish());
 
-        // 5. Take Quiz → launch QuizActivity
+       
         btnTakeQuiz.setOnClickListener(v -> {
             if (module != null && module.getQuizQuestions() != null
                     && !module.getQuizQuestions().isEmpty()) {

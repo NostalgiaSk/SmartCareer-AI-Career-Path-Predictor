@@ -1,10 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<!-- ──────────────────────────────────────────────────────────────
-     activity_quiz_result.xml — Full-screen quiz result screen.
-     Shows animated icon, score, pass/fail status, and action buttons.
-     Two states: SUCCESS (green) and FAILURE (red).
-     ────────────────────────────────────────────────────────────── -->
 
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -21,7 +16,6 @@
         android:layout_height="wrap_content"
         android:paddingBottom="32dp">
 
-        <!-- ── Animated result icon (emoji) ────────────────────── -->
 
         <TextView
             android:id="@+id/tvResultIcon"
@@ -34,7 +28,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <!-- ── Result title (Pass / Fail) ──────────────────────── -->
 
         <TextView
             android:id="@+id/tvResultTitle"
@@ -52,7 +45,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tvResultIcon" />
 
-        <!-- ── Score card ──────────────────────────────────────── -->
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cardScore"
@@ -76,7 +68,6 @@
                 android:orientation="vertical"
                 android:padding="24dp">
 
-                <!-- Score percentage (large) -->
                 <TextView
                     android:id="@+id/tvScorePercent"
                     android:layout_width="wrap_content"
@@ -86,7 +77,6 @@
                     android:textStyle="bold"
                     tools:text="100%" />
 
-                <!-- Correct answers count -->
                 <TextView
                     android:id="@+id/tvCorrectCount"
                     android:layout_width="wrap_content"
@@ -97,7 +87,6 @@
                     android:textSize="15sp"
                     tools:text="3 out of 3 correct" />
 
-                <!-- Minimum required (shown on failure) -->
                 <TextView
                     android:id="@+id/tvMinRequired"
                     android:layout_width="wrap_content"
@@ -112,7 +101,6 @@
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
 
-        <!-- ── Primary action button ───────────────────────────── -->
 
         <Button
             android:id="@+id/btnPrimaryAction"
@@ -134,7 +122,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/cardScore" />
 
-        <!-- ── Secondary action button (Quit / shown on failure) ── -->
 
         <Button
             android:id="@+id/btnSecondaryAction"

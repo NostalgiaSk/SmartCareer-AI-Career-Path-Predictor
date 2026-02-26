@@ -1,10 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<!-- ──────────────────────────────────────────────────────────────
-     item_module.xml — Single module card in the certification detail list.
-     Shows three visual states: LOCKED (grey + lock icon),
-     UNLOCKED (active + module number), COMPLETED (green + check).
-     ────────────────────────────────────────────────────────────── -->
 
 <com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -28,9 +23,7 @@
         android:layout_height="wrap_content"
         android:padding="16dp">
 
-        <!-- ── Module number / lock / check indicator ─────────── -->
-
-        <!-- Lock icon (visible when LOCKED) -->
+       
         <ImageView
             android:id="@+id/ivLock"
             android:layout_width="36dp"
@@ -42,7 +35,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <!-- Module number badge (visible when UNLOCKED, not completed) -->
+
         <TextView
             android:id="@+id/tvModuleNumber"
             android:layout_width="36dp"
@@ -58,7 +51,7 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <!-- Check icon (visible when COMPLETED) -->
+
         <ImageView
             android:id="@+id/ivCheck"
             android:layout_width="36dp"
@@ -72,7 +65,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <!-- ── Module title ─────────────────────────────────────── -->
 
         <TextView
             android:id="@+id/tvModuleTitle"
@@ -89,7 +81,7 @@
             app:layout_constraintStart_toEndOf="@id/tvModuleNumber"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <!-- ── Duration text ────────────────────────────────────── -->
+     
 
         <TextView
             android:id="@+id/tvDuration"
@@ -104,7 +96,7 @@
             app:layout_constraintStart_toEndOf="@id/tvModuleNumber"
             app:layout_constraintTop_toBottomOf="@id/tvModuleTitle" />
 
-        <!-- ── Status badge ─────────────────────────────────────── -->
+       
 
         <TextView
             android:id="@+id/tvStatus"
@@ -116,8 +108,6 @@
             tools:text="Start"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
-
-        <!-- ── Quiz score (shown only for completed modules) ──── -->
 
         <TextView
             android:id="@+id/tvQuizScore"

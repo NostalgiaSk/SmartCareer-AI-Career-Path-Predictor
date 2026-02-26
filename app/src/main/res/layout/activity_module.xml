@@ -1,10 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<!-- ──────────────────────────────────────────────────────────────
-     activity_module.xml — Full-screen module content viewer.
-     Shows module title, duration badge, scrollable lesson body,
-     and a "Take Quiz" button at the bottom.
-     ────────────────────────────────────────────────────────────── -->
 
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -15,7 +10,6 @@
     android:background="@color/sc_background"
     tools:context=".activities.ModuleActivity">
 
-    <!-- ── Back arrow ──────────────────────────────────────── -->
 
     <ImageView
         android:id="@+id/ivBack"
@@ -30,7 +24,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- ── Module Title ────────────────────────────────────── -->
+  
 
     <TextView
         android:id="@+id/tvModuleTitle"
@@ -48,7 +42,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/ivBack" />
 
-    <!-- ── Duration badge ──────────────────────────────────── -->
+    
 
     <TextView
         android:id="@+id/tvDuration"
@@ -64,7 +58,7 @@
         app:layout_constraintStart_toStartOf="@id/tvModuleTitle"
         app:layout_constraintTop_toBottomOf="@id/tvModuleTitle" />
 
-    <!-- ── Scrollable content area ─────────────────────────── -->
+    
 
     <ScrollView
         android:id="@+id/scrollContent"
@@ -102,7 +96,6 @@
         </com.google.android.material.card.MaterialCardView>
     </ScrollView>
 
-    <!-- ── Take Quiz button ────────────────────────────────── -->
 
     <Button
         android:id="@+id/btnTakeQuiz"

@@ -111,6 +111,13 @@
             android:label="@string/app_name"
             android:theme="@style/Theme.SmartCareer" />
 
+        <!-- Quiz result screen (pass/fail) -->
+        <activity
+            android:name=".activities.QuizResultActivity"
+            android:exported="false"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.SmartCareer" />
+
     </application>
 
 </manifest>

@@ -234,12 +234,14 @@ public class QuizActivity extends AppCompatActivity {
 
     // ── Show quiz result ────────────────────────────────────────────
 
+    // Request code for QuizResultActivity
+    private static final int RESULT_REQUEST_CODE = 3001;
+
     /**
-     * Calculates the score percentage and displays the result overlay.
-     * Shows pass/fail status with appropriate Continue/Retry action.
+     * Calculates the score and launches {@link QuizResultActivity}
+     * instead of showing an in-line overlay.
      */
     private void showResult() {
-        // Calculate score
         int totalQuestions = questions.size();
         int scorePercent = (int) ((correctAnswers / (float) totalQuestions) * 100);
         boolean passed = scorePercent >= PASS_THRESHOLD;
@@ -247,41 +249,52 @@ public class QuizActivity extends AppCompatActivity {
         // Update progress bar to 100%
         progressQuiz.setProgress(100);
 
-        // Populate result overlay
-        tvResultTitle.setText(passed
-                ? getString(R.string.quiz_result_pass)
-                : getString(R.string.quiz_result_fail));
-        tvResultTitle.setTextColor(ContextCompat.getColor(this,
-                passed ? R.color.sc_success : R.color.sc_error));
+        // Get certification name from the intent chain (passed from CertificationDetailActivity)
+        String certName = getIntent().getStringExtra("certification_name");
 
-        tvResultScore.setText(getString(R.string.quiz_score_text,
-                scorePercent, correctAnswers, totalQuestions));
+        // Launch QuizResultActivity
+        Intent intent = new Intent(this, QuizResultActivity.class);
+        intent.putExtra(QuizResultActivity.EXTRA_PASSED, passed);
+        intent.putExtra(QuizResultActivity.EXTRA_SCORE, scorePercent);
+        intent.putExtra(QuizResultActivity.EXTRA_CORRECT, correctAnswers);
+        intent.putExtra(QuizResultActivity.EXTRA_TOTAL, totalQuestions);
+        intent.putExtra(QuizResultActivity.EXTRA_MODULE_ID, module.getModuleId());
+        intent.putExtra(QuizResultActivity.EXTRA_CERT_NAME, certName);
+        startActivityForResult(intent, RESULT_REQUEST_CODE);
+    }
 
-        btnResultAction.setText(passed
-                ? getString(R.string.quiz_continue)
-                : getString(R.string.quiz_retry));
+    // ── Handle QuizResultActivity response ──────────────────────────
 
-        // Show overlay
-        resultOverlay.setVisibility(View.VISIBLE);
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
 
-        // Button action
-        btnResultAction.setOnClickListener(v -> {
-            if (passed) {
-                // Return result to ModuleActivity → CertificationDetailActivity
+        if (requestCode == RESULT_REQUEST_CODE) {
+            if (resultCode == RESULT_OK && data != null) {
+                // PASSED → forward result back to ModuleActivity
                 Intent resultIntent = new Intent();
-                resultIntent.putExtra("quiz_passed", true);
-                resultIntent.putExtra("quiz_score", scorePercent);
-                resultIntent.putExtra("module_id", module.getModuleId());
+                resultIntent.putExtra("quiz_passed", data.getBooleanExtra(
+                        QuizResultActivity.EXTRA_PASSED, true));
+                resultIntent.putExtra("quiz_score", data.getIntExtra(
+                        QuizResultActivity.EXTRA_SCORE, 0));
+                resultIntent.putExtra("module_id", data.getStringExtra(
+                        QuizResultActivity.EXTRA_MODULE_ID));
                 setResult(RESULT_OK, resultIntent);
                 finish();
-            } else {
-                // Retry — reset quiz state
+
+            } else if (resultCode == QuizResultActivity.RESULT_RETRY) {
+                // RETRY → reset quiz state and start over
                 currentQuestionIndex = 0;
                 correctAnswers = 0;
                 selectedOptionIndex = -1;
-                resultOverlay.setVisibility(View.GONE);
                 showQuestion(0);
+
+            } else {
+                // QUIT → return to CertificationDetailActivity (cancel)
+                setResult(RESULT_CANCELED);
+                finish();
             }
-        });
+        }
     }
 }
+

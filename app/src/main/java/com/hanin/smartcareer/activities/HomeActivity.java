@@ -417,41 +417,103 @@ public class HomeActivity extends AppCompatActivity {
                 });
     }
 
-    // Fetch certifications from "users/{uid}/certifications" subcollection
+    // Fetch certifications in progress from "users/{uid}/certification_progress"
     private void fetchCertificationsProgress() {
         progressCerts.setVisibility(View.VISIBLE);
         emptyCerts.setVisibility(View.GONE);
 
         db.collection("users").document(uid)
-                .collection("certifications")
+                .collection("certification_progress")
+                .whereEqualTo("completed", false)
                 .get()
                 .addOnSuccessListener(querySnapshot -> {
                     certProgressList.clear();
 
                     for (DocumentSnapshot doc : querySnapshot.getDocuments()) {
-                        CertificationProgress cert = doc.toObject(CertificationProgress.class);
-                        if (cert != null) {
+                        // Build CertificationProgress from progress data
+                        String certName = doc.getString("certificationName");
+                        String provider = doc.getString("provider");
+                        String level    = doc.getString("level");
+
+                        // Calculate progress percentage
+                        Long totalModules = doc.getLong("totalModules");
+                        List<?> completedModules = (List<?>) doc.get("completedModules");
+                        int total     = totalModules != null ? totalModules.intValue() : 5;
+                        int completed = completedModules != null ? completedModules.size() : 0;
+                        int percent   = total > 0
+                                ? (int) ((completed / (float) total) * 100) : 0;
+
+                        if (certName != null) {
+                            CertificationProgress cert = new CertificationProgress();
+                            cert.setCertName(certName);
+                            cert.setProvider(provider != null ? provider : "");
+                            cert.setProgressPercent(percent);
                             certProgressList.add(cert);
                         }
                     }
 
-                    certAdapter.notifyDataSetChanged();
-                    progressCerts.setVisibility(View.GONE);
+                    // Also check for docs without "completed" field (treated as in-progress)
+                    db.collection("users").document(uid)
+                            .collection("certification_progress")
+                            .get()
+                            .addOnSuccessListener(allDocs -> {
+                                for (DocumentSnapshot doc : allDocs.getDocuments()) {
+                                    Boolean isCompleted = doc.getBoolean("completed");
+                                    // If "completed" field doesn't exist, treat as in-progress
+                                    if (isCompleted == null) {
+                                        String certName2 = doc.getString("certificationName");
+                                        String provider2 = doc.getString("provider");
+                                        Long totalModules2 = doc.getLong("totalModules");
+                                        List<?> completedModules2 =
+                                                (List<?>) doc.get("completedModules");
+                                        int total2     = totalModules2 != null
+                                                ? totalModules2.intValue() : 5;
+                                        int completed2 = completedModules2 != null
+                                                ? completedModules2.size() : 0;
+                                        int percent2   = total2 > 0
+                                                ? (int) ((completed2 / (float) total2) * 100) : 0;
 
-                    if (certProgressList.isEmpty()) {
-                        emptyCerts.setVisibility(View.VISIBLE);
-                        rvCertificationsProgress.setVisibility(View.GONE);
-                    } else {
-                        emptyCerts.setVisibility(View.GONE);
-                        rvCertificationsProgress.setVisibility(View.VISIBLE);
-                    }
+                                        if (certName2 != null) {
+                                            // Avoid duplicates
+                                            boolean exists = false;
+                                            for (CertificationProgress c : certProgressList) {
+                                                if (certName2.equals(c.getCertName())) {
+                                                    exists = true;
+                                                    break;
+                                                }
+                                            }
+                                            if (!exists) {
+                                                CertificationProgress cert2 =
+                                                        new CertificationProgress();
+                                                cert2.setCertName(certName2);
+                                                cert2.setProvider(
+                                                        provider2 != null ? provider2 : "");
+                                                cert2.setProgressPercent(percent2);
+                                                certProgressList.add(cert2);
+                                            }
+                                        }
+                                    }
+                                }
+
+                                certAdapter.notifyDataSetChanged();
+                                progressCerts.setVisibility(View.GONE);
+
+                                if (certProgressList.isEmpty()) {
+                                    emptyCerts.setVisibility(View.VISIBLE);
+                                    rvCertificationsProgress.setVisibility(View.GONE);
+                                } else {
+                                    emptyCerts.setVisibility(View.GONE);
+                                    rvCertificationsProgress.setVisibility(View.VISIBLE);
+                                }
+                            });
                 })
                 .addOnFailureListener(e -> {
-                    Log.e(TAG, "Failed to fetch certifications", e);
+                    Log.e(TAG, "Failed to fetch certifications progress", e);
                     progressCerts.setVisibility(View.GONE);
                     emptyCerts.setVisibility(View.VISIBLE);
                     rvCertificationsProgress.setVisibility(View.GONE);
-                    Toast.makeText(this, "Could not load certifications.", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(this, "Could not load certifications.",
+                            Toast.LENGTH_SHORT).show();
                 });
     }
 }

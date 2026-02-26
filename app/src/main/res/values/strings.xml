@@ -194,6 +194,9 @@
     <string name="quiz_pass_threshold">You need at least 70%% to pass.</string>
     <string name="quiz_continue">Continue</string>
     <string name="quiz_retry">Retry Quiz</string>
+    <string name="quiz_correct_count">%1$d out of %2$d correct</string>
+    <string name="quiz_continue_next">Continue to Next Module</string>
+    <string name="quiz_quit">Quit</string>
 
     <!-- ============================================================= -->
     <!-- Certificate Screen Strings                                    -->

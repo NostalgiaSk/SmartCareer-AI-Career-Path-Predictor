@@ -68,6 +68,9 @@ public class ModuleActivity extends AppCompatActivity {
 
                 Intent intent = new Intent(ModuleActivity.this, QuizActivity.class);
                 intent.putExtra("module_data", module);
+                // Forward certification name for Firestore attempt tracking
+                intent.putExtra("certification_name",
+                        getIntent().getStringExtra("certification_name"));
                 startActivityForResult(intent, QUIZ_REQUEST_CODE);
             }
         });

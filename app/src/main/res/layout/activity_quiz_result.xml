@@ -1,0 +1,161 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- ──────────────────────────────────────────────────────────────
+     activity_quiz_result.xml — Full-screen quiz result screen.
+     Shows animated icon, score, pass/fail status, and action buttons.
+     Two states: SUCCESS (green) and FAILURE (red).
+     ────────────────────────────────────────────────────────────── -->
+
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/sc_background"
+    android:fillViewport="true"
+    tools:context=".activities.QuizResultActivity">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="32dp">
+
+        <!-- ── Animated result icon (emoji) ────────────────────── -->
+
+        <TextView
+            android:id="@+id/tvResultIcon"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="100dp"
+            android:textSize="80sp"
+            tools:text="✅"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- ── Result title (Pass / Fail) ──────────────────────── -->
+
+        <TextView
+            android:id="@+id/tvResultTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="32dp"
+            android:fontFamily="sans-serif-medium"
+            android:gravity="center"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            tools:text="Quiz Passed!"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvResultIcon" />
+
+        <!-- ── Score card ──────────────────────────────────────── -->
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardScore"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="28dp"
+            android:layout_marginTop="28dp"
+            android:layout_marginEnd="28dp"
+            app:cardBackgroundColor="@color/sc_surface"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="4dp"
+            app:strokeWidth="0dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvResultTitle">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:orientation="vertical"
+                android:padding="24dp">
+
+                <!-- Score percentage (large) -->
+                <TextView
+                    android:id="@+id/tvScorePercent"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-medium"
+                    android:textSize="48sp"
+                    android:textStyle="bold"
+                    tools:text="100%" />
+
+                <!-- Correct answers count -->
+                <TextView
+                    android:id="@+id/tvCorrectCount"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:fontFamily="sans-serif"
+                    android:textColor="@color/sc_text_secondary"
+                    android:textSize="15sp"
+                    tools:text="3 out of 3 correct" />
+
+                <!-- Minimum required (shown on failure) -->
+                <TextView
+                    android:id="@+id/tvMinRequired"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:fontFamily="sans-serif"
+                    android:text="@string/quiz_pass_threshold"
+                    android:textColor="@color/sc_text_hint"
+                    android:textSize="13sp"
+                    android:visibility="gone" />
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- ── Primary action button ───────────────────────────── -->
+
+        <Button
+            android:id="@+id/btnPrimaryAction"
+            android:layout_width="0dp"
+            android:layout_height="54dp"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="32dp"
+            android:layout_marginEnd="32dp"
+            android:background="@drawable/bg_primary_button"
+            android:fontFamily="sans-serif-medium"
+            android:letterSpacing="0.04"
+            android:stateListAnimator="@null"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            tools:text="Continue to Next Module"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/cardScore" />
+
+        <!-- ── Secondary action button (Quit / shown on failure) ── -->
+
+        <Button
+            android:id="@+id/btnSecondaryAction"
+            android:layout_width="0dp"
+            android:layout_height="54dp"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="32dp"
+            android:background="@android:color/transparent"
+            android:fontFamily="sans-serif-medium"
+            android:letterSpacing="0.04"
+            android:stateListAnimator="@null"
+            android:textAllCaps="false"
+            android:textColor="@color/sc_text_secondary"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:visibility="gone"
+            tools:text="Quit"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/btnPrimaryAction" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

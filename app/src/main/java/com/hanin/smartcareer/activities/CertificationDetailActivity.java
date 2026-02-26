@@ -202,6 +202,7 @@ public class CertificationDetailActivity extends AppCompatActivity
 
         Intent intent = new Intent(this, ModuleActivity.class);
         intent.putExtra("module_data", module);
+        intent.putExtra("certification_name", certificationName);
         startActivityForResult(intent, MODULE_REQUEST_CODE);
     }
 

@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 
+<!--
+    AI Career Suggestion card — used in CareerSuggestionsActivity.
+    Shows career name, match score, description, skill gap button, and heart toggle.
+-->
 
 <com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -21,6 +25,33 @@
         android:layout_height="wrap_content"
         android:padding="20dp">
 
+        <!-- ── Career name ───────────────────────────────────────── -->
+        <TextView
+            android:id="@+id/tvCareerName"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:fontFamily="sans-serif-medium"
+            android:textColor="@color/sc_text_primary"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            tools:text="AI Engineer"
+            app:layout_constraintEnd_toStartOf="@id/btnHeart"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- ── Heart toggle (save/unsave) ────────────────────────── -->
+        <ImageButton
+            android:id="@+id/btnHeart"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Save career"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_heart_outline"
+            app:layout_constraintEnd_toStartOf="@id/tvMatchScore"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <!-- ── Match score badge (top-end corner) ────────────────── -->
         <TextView
             android:id="@+id/tvMatchScore"
@@ -33,21 +64,6 @@
             android:textStyle="bold"
             tools:text="92 %"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <!-- ── Career name ───────────────────────────────────────── -->
-        <TextView
-            android:id="@+id/tvCareerName"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="12dp"
-            android:fontFamily="sans-serif-medium"
-            android:textColor="@color/sc_text_primary"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            tools:text="AI Engineer"
-            app:layout_constraintEnd_toStartOf="@id/tvMatchScore"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <!-- ── Short description (max 2 lines) ───────────────────── -->

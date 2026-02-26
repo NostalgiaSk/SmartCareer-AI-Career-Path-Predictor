@@ -1,27 +1,57 @@
 package com.hanin.smartcareer.activities;
 
 import android.os.Bundle;
+import android.util.Log;
+import android.view.View;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.hanin.smartcareer.R;
 import com.hanin.smartcareer.adapters.CareerAdapter;
 import com.hanin.smartcareer.models.Career;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
-
+/**
+ * Displays AI-generated career suggestions loaded from Firestore.
+ *
+ * Receives a "profile_id" via Intent, then queries the
+ * career_profiles/{profileId}/ai_suggestions subcollection.
+ * NO AI call is made here — data comes entirely from Firestore.
+ *
+ * Heart toggle (save/unsave) is handled by CareerAdapter.
+ * Saved career IDs are pre-loaded so hearts show correct state.
+ */
 public class CareerSuggestionsActivity extends AppCompatActivity {
+
+    private static final String TAG = "CareerSuggestionsAct";
 
     // ── View references ─────────────────────────────────────────────
 
     private RecyclerView rvCareers;
+    private ProgressBar progressLoading;
+    private LinearLayout emptyState;
+
     private CareerAdapter careerAdapter;
     private List<Career> careerList;
+    private Set<String> savedIds;
+
+    // ── Firebase ─────────────────────────────────────────────────────
+
+    private FirebaseFirestore db;
+    private String uid;
 
     // ── Lifecycle ───────────────────────────────────────────────────
 
@@ -30,74 +60,137 @@ public class CareerSuggestionsActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_career_suggestions);
 
-        initViews();
+        db = FirebaseFirestore.getInstance();
+        careerList = new ArrayList<>();
+        savedIds   = new HashSet<>();
 
-        // Get AI-generated career data from the Intent
-        ArrayList<Career> intentCareers =
-                (ArrayList<Career>) getIntent().getSerializableExtra("career_list");
-
-        if (intentCareers != null && !intentCareers.isEmpty()) {
-            careerList = intentCareers;
-        } else {
-            // No data received — show empty state
-            careerList = new ArrayList<>();
-            Toast.makeText(this, "No career suggestions available.", Toast.LENGTH_SHORT).show();
+        // Get the current user's UID for saved career checks
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         }
 
-        setupRecyclerView();
+        initViews();
+
+        // Get the profile ID from the Intent
+        String profileId = getIntent().getStringExtra("profile_id");
+
+        if (profileId != null && !profileId.isEmpty()) {
+            // Preload saved IDs, then set up adapter and fetch suggestions
+            preloadSavedIdsThenFetch(profileId);
+        } else {
+            // No profile ID — show empty state
+            setupRecyclerView();
+            showEmptyState();
+            Toast.makeText(this, "No profile data available.", Toast.LENGTH_SHORT).show();
+        }
     }
 
     // ── View initialisation ─────────────────────────────────────────
 
     private void initViews() {
-        rvCareers = findViewById(R.id.rvCareers);
+        rvCareers       = findViewById(R.id.rvCareers);
+        progressLoading = findViewById(R.id.progressLoading);
+        emptyState      = findViewById(R.id.emptyState);
     }
 
     // ── RecyclerView setup ──────────────────────────────────────────
 
     private void setupRecyclerView() {
-        careerAdapter = new CareerAdapter(this, careerList);
+        careerAdapter = new CareerAdapter(this, careerList, savedIds);
         rvCareers.setLayoutManager(new LinearLayoutManager(this));
         rvCareers.setAdapter(careerAdapter);
     }
 
-    // ── Firestore Integration (placeholder) ─────────────────────────
+    // ══════════════════════════════════════════════════════════════════
+    // PRELOAD SAVED IDS + FIRESTORE DATA LOADING
+    // ══════════════════════════════════════════════════════════════════
 
     /**
-     * Placeholder for loading career suggestions from Cloud Firestore.
-     * <p>
-     * Integration steps:
-     * <ol>
-     *   <li>Add the Firebase Firestore SDK to {@code build.gradle}:
-     *       {@code implementation 'com.google.firebase:firebase-firestore'}.</li>
-     *
-     *   <li>Obtain the current user's UID from Firebase Auth:
-     *       {@code String uid = FirebaseAuth.getInstance().getCurrentUser().getUid();}.</li>
-     *
-     *   <li>Query the user's personalised career matches:
-     *       <pre>
-     *       FirebaseFirestore db = FirebaseFirestore.getInstance();
-     *       db.collection("career_suggestions")
-     *         .whereEqualTo("userId", uid)
-     *         .orderBy("matchScore", Query.Direction.DESCENDING)
-     *         .get()
-     *         .addOnSuccessListener(querySnapshot -> {
-     *             careerList.clear();
-     *             for (DocumentSnapshot doc : querySnapshot) {
-     *                 Career c = doc.toObject(Career.class);
-     *                 careerList.add(c);
-     *             }
-     *             careerAdapter.notifyDataSetChanged();
-     *         })
-     *         .addOnFailureListener(e -> {
-     *             // Show error state or retry prompt
-     *         });
-     *       </pre></li>
-     *
-     *   <li>Optionally show a loading spinner while the query is in flight.</li>
-     * </ol>
+     * Loads the user's saved career IDs first, then sets up the adapter
+     * and fetches the AI suggestions. This ensures heart icons are
+     * correct from the first render.
      */
-    private void fetchCareerSuggestionsFromFirestore() {
-        // TODO: Replace loadDummyCareers() call with the Firestore query above.
+    private void preloadSavedIdsThenFetch(String profileId) {
+        progressLoading.setVisibility(View.VISIBLE);
+
+        if (uid == null) {
+            // No authenticated user — just set up and fetch
+            setupRecyclerView();
+            fetchSuggestionsFromFirestore(profileId);
+            return;
+        }
+
+        db.collection("users").document(uid)
+                .collection("saved_careers")
+                .get()
+                .addOnSuccessListener(snapshot -> {
+                    for (DocumentSnapshot doc : snapshot.getDocuments()) {
+                        savedIds.add(doc.getId());
+                    }
+                    setupRecyclerView();
+                    fetchSuggestionsFromFirestore(profileId);
+                })
+                .addOnFailureListener(e -> {
+                    Log.e(TAG, "Failed to preload saved IDs", e);
+                    setupRecyclerView();
+                    fetchSuggestionsFromFirestore(profileId);
+                });
+    }
+
+    /**
+     * Loads AI suggestions from the Firestore subcollection:
+     * career_profiles/{profileId}/ai_suggestions
+     *
+     * Ordered by matchScore descending so the best match appears first.
+     */
+    private void fetchSuggestionsFromFirestore(String profileId) {
+        // Show loading, hide everything else
+        progressLoading.setVisibility(View.VISIBLE);
+        rvCareers.setVisibility(View.GONE);
+        emptyState.setVisibility(View.GONE);
+
+        db.collection("career_profiles")
+                .document(profileId)
+                .collection("ai_suggestions")
+                .orderBy("matchScore", Query.Direction.DESCENDING)
+                .get()
+                .addOnSuccessListener(querySnapshot -> {
+                    careerList.clear();
+
+                    // Parse each Firestore document into a Career object
+                    for (DocumentSnapshot doc : querySnapshot.getDocuments()) {
+                        Career career = doc.toObject(Career.class);
+                        if (career != null) {
+                            // Set the Firestore document ID as suggestionId
+                            career.setSuggestionId(doc.getId());
+                            careerList.add(career);
+                        }
+                    }
+
+                    careerAdapter.notifyDataSetChanged();
+                    progressLoading.setVisibility(View.GONE);
+
+                    if (careerList.isEmpty()) {
+                        showEmptyState();
+                    } else {
+                        rvCareers.setVisibility(View.VISIBLE);
+                        emptyState.setVisibility(View.GONE);
+                    }
+                })
+                .addOnFailureListener(e -> {
+                    Log.e(TAG, "Failed to fetch suggestions", e);
+                    progressLoading.setVisibility(View.GONE);
+                    showEmptyState();
+                    Toast.makeText(this,
+                            "Could not load career suggestions.",
+                            Toast.LENGTH_SHORT).show();
+                });
+    }
+
+    // ── Empty state helper ──────────────────────────────────────────
+
+    private void showEmptyState() {
+        rvCareers.setVisibility(View.GONE);
+        emptyState.setVisibility(View.VISIBLE);
     }
 }

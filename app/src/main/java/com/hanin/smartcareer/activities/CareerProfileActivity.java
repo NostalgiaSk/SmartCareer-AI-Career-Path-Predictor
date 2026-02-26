@@ -3,7 +3,9 @@ package com.hanin.smartcareer.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
 import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -11,6 +13,12 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.WriteBatch;
 import com.google.gson.Gson;
 import com.hanin.smartcareer.R;
 import com.hanin.smartcareer.models.Career;
@@ -20,6 +28,9 @@ import com.hanin.smartcareer.network.OpenAIService;
 import com.hanin.smartcareer.network.RetrofitClient;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -27,18 +38,14 @@ import retrofit2.Response;
 
 /**
  * Collects the student's career profile (skills, interests, GPA,
- * projects) and sends it to the OpenAI API via Retrofit.
+ * projects), sends it to the OpenAI API, saves the profile + AI
+ * suggestions to Firestore, and navigates to CareerSuggestionsActivity.
  *
- * <h3>Flow</h3>
- * <ol>
- *   <li>User fills in the form and taps "Generate Career Suggestions".</li>
- *   <li>{@link #attemptSubmitProfile()} validates all fields.</li>
- *   <li>If valid, {@link #callOpenAI(String, String, double, String)}
- *       sends a POST to OpenAI and receives structured JSON.</li>
- *   <li>On success the JSON is parsed into {@link Career} objects and
- *       passed to {@link CareerSuggestionsActivity} via Intent.</li>
- *   <li>On failure a Toast shows the error message.</li>
- * </ol>
+ * Flow:
+ * 1. User fills in the form and taps "Generate Career Suggestions".
+ * 2. OpenAI returns 5 career suggestions as JSON.
+ * 3. Profile + all suggestions are saved to Firestore via batch write.
+ * 4. On success → navigate to CareerSuggestionsActivity with profileId.
  */
 public class CareerProfileActivity extends AppCompatActivity {
 
@@ -46,15 +53,15 @@ public class CareerProfileActivity extends AppCompatActivity {
 
     // ── View references ─────────────────────────────────────────────
 
-    private TextInputLayout tilSkills;
-    private TextInputLayout tilInterests;
-    private TextInputLayout tilGpa;
-    private TextInputLayout tilProjects;
-    private TextInputEditText etSkills;
-    private TextInputEditText etInterests;
-    private TextInputEditText etGpa;
-    private TextInputEditText etProjects;
+    private TextInputLayout tilSkills, tilInterests, tilGpa, tilProjects;
+    private TextInputEditText etSkills, etInterests, etGpa, etProjects;
     private Button btnGenerateSuggestions;
+    private ProgressBar progressSaving;
+
+    // ── Firebase ─────────────────────────────────────────────────────
+
+    private FirebaseAuth auth;
+    private FirebaseFirestore db;
 
     // ── Lifecycle ───────────────────────────────────────────────────
 
@@ -62,6 +69,11 @@ public class CareerProfileActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_career_profile);
+
+        // Initialize Firebase instances
+        auth = FirebaseAuth.getInstance();
+        db   = FirebaseFirestore.getInstance();
+
         initViews();
         setupListeners();
     }
@@ -80,6 +92,7 @@ public class CareerProfileActivity extends AppCompatActivity {
         etProjects    = findViewById(R.id.etProjects);
 
         btnGenerateSuggestions = findViewById(R.id.btnGenerateSuggestions);
+        progressSaving         = findViewById(R.id.progressSaving);
     }
 
     private void setupListeners() {
@@ -142,67 +155,41 @@ public class CareerProfileActivity extends AppCompatActivity {
 
         // Proceed if all checks pass
         if (isValid) {
-            Toast.makeText(this, R.string.toast_profile_saved, Toast.LENGTH_SHORT).show();
-
             // Call the OpenAI API to generate career suggestions
             callOpenAI(skills, interests, gpa, projects);
-
-            // Firestore placeholder (for future backend persistence)
-            saveProfileToFirestore(skills, interests, gpa, projects);
         }
+    }
+
+    // ── Loading state helper ────────────────────────────────────────
+
+    private void setLoading(boolean loading) {
+        btnGenerateSuggestions.setEnabled(!loading);
+        btnGenerateSuggestions.setText(loading ? R.string.btn_generating : R.string.btn_generate_suggestions);
+        progressSaving.setVisibility(loading ? View.VISIBLE : View.GONE);
     }
 
     // ══════════════════════════════════════════════════════════════════
     // OPENAI API CALL
     // ══════════════════════════════════════════════════════════════════
 
-    /**
-     * Sends the student's profile to the OpenAI Chat Completion API
-     * and navigates to {@link CareerSuggestionsActivity} with the
-     * parsed result.
-     *
-     * <h3>How it works</h3>
-     * <ol>
-     *   <li>{@link OpenAIRequest#buildCareerPrompt} constructs a system
-     *       + user message pair with a strict JSON schema.</li>
-     *   <li>The request is sent asynchronously via Retrofit's
-     *       {@link Call#enqueue} (runs on a background thread).</li>
-     *   <li>On success, the assistant's JSON content is parsed with
-     *       Gson into a {@link OpenAIResponse.CareerListWrapper},
-     *       converted to {@code ArrayList<Career>}, and passed to the
-     *       next activity via Intent.</li>
-     *   <li>On failure, a Toast displays the error.</li>
-     * </ol>
-     *
-     * @param skills    Comma-separated skills string.
-     * @param interests Comma-separated interests string.
-     * @param gpa       Student GPA (0.0 – 4.0).
-     * @param projects  Free-text description of academic projects.
-     */
     private void callOpenAI(String skills, String interests,
                             double gpa, String projects) {
 
-        // Disable the button to prevent duplicate requests
-        btnGenerateSuggestions.setEnabled(false);
-        btnGenerateSuggestions.setText(R.string.btn_generating);
+        // Disable the button and show spinner
+        setLoading(true);
 
-        // 1. Build the request body
+        // Build the request body
         OpenAIRequest request = OpenAIRequest.buildCareerPrompt(
                 skills, interests, gpa, projects);
 
-        // 2. Create the Retrofit service
+        // Create the Retrofit service and enqueue the async call
         OpenAIService service = RetrofitClient.createService(OpenAIService.class);
 
-        // 3. Enqueue the async call
         service.getChatCompletion(request).enqueue(new Callback<OpenAIResponse>() {
 
             @Override
             public void onResponse(@NonNull Call<OpenAIResponse> call,
                                    @NonNull Response<OpenAIResponse> response) {
-
-                // Re-enable the button regardless of outcome
-                btnGenerateSuggestions.setEnabled(true);
-                btnGenerateSuggestions.setText(R.string.btn_generate_suggestions);
 
                 if (response.isSuccessful() && response.body() != null) {
 
@@ -216,25 +203,23 @@ public class CareerProfileActivity extends AppCompatActivity {
                         ArrayList<Career> careers = parseCareerJson(content);
 
                         if (careers != null && !careers.isEmpty()) {
-                            // Navigate to CareerSuggestionsActivity with real data
-                            Intent intent = new Intent(
-                                    CareerProfileActivity.this,
-                                    CareerSuggestionsActivity.class);
-                            intent.putExtra("career_list", careers);
-                            startActivity(intent);
-                            finish();
+                            // Save profile + suggestions to Firestore
+                            saveToFirestore(skills, interests, gpa, projects, careers);
                         } else {
+                            setLoading(false);
                             Toast.makeText(CareerProfileActivity.this,
                                     R.string.toast_openai_parse_error,
                                     Toast.LENGTH_LONG).show();
                         }
                     } else {
+                        setLoading(false);
                         Toast.makeText(CareerProfileActivity.this,
                                 R.string.toast_openai_empty,
                                 Toast.LENGTH_LONG).show();
                     }
 
                 } else {
+                    setLoading(false);
                     // HTTP error (4xx / 5xx)
                     String errorBody = "";
                     try {
@@ -253,10 +238,7 @@ public class CareerProfileActivity extends AppCompatActivity {
             @Override
             public void onFailure(@NonNull Call<OpenAIResponse> call,
                                   @NonNull Throwable t) {
-
-                // Re-enable the button
-                btnGenerateSuggestions.setEnabled(true);
-                btnGenerateSuggestions.setText(R.string.btn_generate_suggestions);
+                setLoading(false);
 
                 // Network error (timeout, no connection, DNS failure, etc.)
                 Log.e(TAG, "OpenAI call failed", t);
@@ -269,14 +251,6 @@ public class CareerProfileActivity extends AppCompatActivity {
 
     // ── JSON parsing helper ─────────────────────────────────────────
 
-    /**
-     * Parses the raw JSON string returned by the OpenAI model into
-     * a list of {@link Career} objects.
-     *
-     * @param json The JSON string from the assistant (should match
-     *             the schema defined in the system prompt).
-     * @return An {@code ArrayList<Career>}, or {@code null} if parsing fails.
-     */
     private ArrayList<Career> parseCareerJson(String json) {
         try {
             Gson gson = new Gson();
@@ -306,14 +280,93 @@ public class CareerProfileActivity extends AppCompatActivity {
         }
     }
 
-    // ── Firestore Integration (placeholder) ─────────────────────────
+    // ══════════════════════════════════════════════════════════════════
+    // FIRESTORE BATCH WRITE
+    // ══════════════════════════════════════════════════════════════════
 
     /**
-     * Placeholder for saving the career profile to Cloud Firestore.
-     * See previous implementation for full Javadoc and integration steps.
+     * Saves the career profile document and ALL AI suggestions as a
+     * subcollection using a Firestore batch write (atomic operation).
+     *
+     * Structure:
+     *   career_profiles/{profileId}
+     *     └── ai_suggestions/{suggestionId}
      */
-    private void saveProfileToFirestore(String skills, String interests,
-                                        double gpa, String projects) {
-        // TODO: Implement Firestore document creation
+    private void saveToFirestore(String skills, String interests,
+                                 double gpa, String projects,
+                                 ArrayList<Career> careers) {
+
+        // Get current user's UID
+        FirebaseUser user = auth.getCurrentUser();
+        if (user == null) {
+            setLoading(false);
+            Toast.makeText(this, "Please log in first.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        String uid = user.getUid();
+
+        // Generate a new profile document reference
+        DocumentReference profileRef = db.collection("career_profiles").document();
+        String profileId = profileRef.getId();
+
+        // Build the profile document data
+        Map<String, Object> profileData = new HashMap<>();
+        profileData.put("profileId", profileId);
+        profileData.put("userId", uid);
+        profileData.put("skills", Arrays.asList(skills.split("\\s*,\\s*")));      // "Java, Python" → ["Java","Python"]
+        profileData.put("interests", Arrays.asList(interests.split("\\s*,\\s*")));
+        profileData.put("gpa", gpa);
+        profileData.put("projects", projects);
+        profileData.put("createdAt", FieldValue.serverTimestamp());
+
+        // Create a batch write — all documents succeed or all fail together
+        WriteBatch batch = db.batch();
+
+        // 1. Set the profile document
+        batch.set(profileRef, profileData);
+
+        // 2. Add each AI suggestion to the "ai_suggestions" subcollection
+        for (int i = 0; i < careers.size(); i++) {
+            Career career = careers.get(i);
+
+            // Generate a new suggestion document reference
+            DocumentReference suggestionRef = profileRef
+                    .collection("ai_suggestions")
+                    .document();
+
+            Map<String, Object> suggestionData = new HashMap<>();
+            suggestionData.put("suggestionId", suggestionRef.getId());
+            suggestionData.put("careerName", career.getCareerName());
+            suggestionData.put("description", career.getDescription());
+            suggestionData.put("matchScore", career.getMatchScore());
+            suggestionData.put("skillGaps", career.getSkillGaps());
+            suggestionData.put("certifications", career.getCertifications());
+            suggestionData.put("aiGenerated", true);
+            suggestionData.put("createdAt", FieldValue.serverTimestamp());
+
+            batch.set(suggestionRef, suggestionData);
+        }
+
+        // 3. Commit the batch — atomic write
+        batch.commit()
+                .addOnSuccessListener(aVoid -> {
+                    setLoading(false);
+                    Log.d(TAG, "Firestore batch write successful, profileId: " + profileId);
+
+                    // Navigate to CareerSuggestionsActivity with the profileId
+                    Intent intent = new Intent(
+                            CareerProfileActivity.this,
+                            CareerSuggestionsActivity.class);
+                    intent.putExtra("profile_id", profileId);
+                    startActivity(intent);
+                    finish();
+                })
+                .addOnFailureListener(e -> {
+                    setLoading(false);
+                    Log.e(TAG, "Firestore batch write failed", e);
+                    Toast.makeText(CareerProfileActivity.this,
+                            "Failed to save career data. Please try again.",
+                            Toast.LENGTH_LONG).show();
+                });
     }
 }

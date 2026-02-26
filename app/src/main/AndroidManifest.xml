@@ -76,6 +76,20 @@
             android:label="@string/app_name"
             android:theme="@style/Theme.SmartCareer" />
 
+        <!-- Saved careers full-screen list -->
+        <activity
+            android:name=".activities.SavedCareersActivity"
+            android:exported="false"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.SmartCareer" />
+
+        <!-- Career detail screen (launched from saved careers) -->
+        <activity
+            android:name=".activities.CareerDetailActivity"
+            android:exported="false"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.SmartCareer" />
+
     </application>
 
 </manifest>

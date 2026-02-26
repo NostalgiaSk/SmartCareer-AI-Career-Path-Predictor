@@ -31,7 +31,9 @@ import com.hanin.smartcareer.models.Career;
 import com.hanin.smartcareer.models.CertificationProgress;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class HomeActivity extends AppCompatActivity {
 
@@ -60,6 +62,8 @@ public class HomeActivity extends AppCompatActivity {
     private List<Career> latestCareers;
     private List<Career> savedCareers;
     private List<CertificationProgress> certProgressList;
+    private Set<String> savedCareerIds;   // Pre-loaded set of saved career IDs
+    private String latestProfileId;       // Firestore ID of the latest career profile
 
     // ── Adapters ─────────────────────────────────────────────────────
 
@@ -94,20 +98,18 @@ public class HomeActivity extends AppCompatActivity {
         uid = currentUser.getUid();
 
         // Initialize empty data lists
-        latestCareers   = new ArrayList<>();
-        savedCareers    = new ArrayList<>();
+        latestCareers    = new ArrayList<>();
+        savedCareers     = new ArrayList<>();
         certProgressList = new ArrayList<>();
+        savedCareerIds   = new HashSet<>();
 
         initViews();
         setupWelcome();
         setupQuickActions();
         setupEmptyStateButtons();
-        setupRecyclerViews();
 
-        // Fetch real data from Firestore
-        fetchLatestCareers();
-        fetchSavedCareers();
-        fetchCertificationsProgress();
+        // Preload saved IDs first, then set up adapters and fetch data
+        preloadSavedIdsAndFetch();
     }
 
     // ── View initialisation ──────────────────────────────────────────
@@ -166,7 +168,7 @@ public class HomeActivity extends AppCompatActivity {
                 startActivity(new Intent(this, CareerProfileActivity.class)));
 
         cardSavedCareers.setOnClickListener(v ->
-                Toast.makeText(this, "Saved Careers – coming soon!", Toast.LENGTH_SHORT).show());
+                startActivity(new Intent(this, SavedCareersActivity.class)));
 
         cardCertifications.setOnClickListener(v ->
                 Toast.makeText(this, "My Certifications – coming soon!", Toast.LENGTH_SHORT).show());
@@ -191,12 +193,46 @@ public class HomeActivity extends AppCompatActivity {
         btnEmptyCerts.setOnClickListener(goToProfile);
     }
 
+    // ── Preload saved IDs, then set up adapters ──────────────────────
+
+    /**
+     * Loads the user's saved career IDs from Firestore FIRST,
+     * then sets up all RecyclerViews with the correct adapter state.
+     * This ensures heart icons show the correct filled/outline state.
+     */
+    private void preloadSavedIdsAndFetch() {
+        db.collection("users").document(uid)
+                .collection("saved_careers")
+                .get()
+                .addOnSuccessListener(snapshot -> {
+                    // Populate the saved IDs set
+                    for (DocumentSnapshot doc : snapshot.getDocuments()) {
+                        savedCareerIds.add(doc.getId());
+                    }
+                    Log.d(TAG, "Preloaded " + savedCareerIds.size() + " saved career IDs");
+
+                    // Now set up adapters and fetch data
+                    setupRecyclerViews();
+                    fetchLatestCareers();
+                    fetchSavedCareers();
+                    fetchCertificationsProgress();
+                })
+                .addOnFailureListener(e -> {
+                    Log.e(TAG, "Failed to preload saved IDs", e);
+                    // Still set up adapters with empty set
+                    setupRecyclerViews();
+                    fetchLatestCareers();
+                    fetchSavedCareers();
+                    fetchCertificationsProgress();
+                });
+    }
+
     // ── RecyclerView setup ───────────────────────────────────────────
 
     private void setupRecyclerViews() {
-        // Latest careers — vertical list
+        // Latest careers — vertical list (savedIds + profileId set later)
         rvLatestCareers.setLayoutManager(new LinearLayoutManager(this));
-        latestAdapter = new LatestCareerAdapter(this, latestCareers);
+        latestAdapter = new LatestCareerAdapter(this, latestCareers, savedCareerIds, null);
         rvLatestCareers.setAdapter(latestAdapter);
 
         // Saved careers — horizontal list
@@ -255,45 +291,83 @@ public class HomeActivity extends AppCompatActivity {
         rvCertificationsProgress.scheduleLayoutAnimation();
     }
 
-    // ══════════════════════════════════════════════════════════════════
-    // FIRESTORE DATA LOADING
-    // ══════════════════════════════════════════════════════════════════
-
-    // Fetch latest career profiles from "career_profiles" collection
+    // Fetch latest career suggestions from the most recent profile's "ai_suggestions" subcollection
     private void fetchLatestCareers() {
         progressLatest.setVisibility(View.VISIBLE);
         emptyLatest.setVisibility(View.GONE);
 
+        // Step 1: Get all career profiles for this user
         db.collection("career_profiles")
                 .whereEqualTo("userId", uid)
-                .orderBy("createdAt", Query.Direction.DESCENDING)
-                .limit(3)
                 .get()
-                .addOnSuccessListener(querySnapshot -> {
-                    latestCareers.clear();
+                .addOnSuccessListener(profileSnapshot -> {
 
-                    for (DocumentSnapshot doc : querySnapshot.getDocuments()) {
-                        Career career = doc.toObject(Career.class);
-                        if (career != null) {
-                            latestCareers.add(career);
+                    if (profileSnapshot.isEmpty()) {
+                        progressLatest.setVisibility(View.GONE);
+                        emptyLatest.setVisibility(View.VISIBLE);
+                        rvLatestCareers.setVisibility(View.GONE);
+                        return;
+                    }
+
+                    // Find the profile with the latest createdAt timestamp
+                    DocumentSnapshot latestProfile = profileSnapshot.getDocuments().get(0);
+                    for (DocumentSnapshot doc : profileSnapshot.getDocuments()) {
+                        com.google.firebase.Timestamp ts = doc.getTimestamp("createdAt");
+                        com.google.firebase.Timestamp latestTs = latestProfile.getTimestamp("createdAt");
+                        if (ts != null && (latestTs == null || ts.compareTo(latestTs) > 0)) {
+                            latestProfile = doc;
                         }
                     }
 
-                    latestAdapter.notifyDataSetChanged();
-                    progressLatest.setVisibility(View.GONE);
+                    // Step 2: Store the profile ID and recreate the adapter with it
+                    latestProfileId = latestProfile.getId();
+                    latestAdapter = new LatestCareerAdapter(
+                            this, latestCareers, savedCareerIds, latestProfileId);
+                    rvLatestCareers.setAdapter(latestAdapter);
 
-                    if (latestCareers.isEmpty()) {
-                        emptyLatest.setVisibility(View.VISIBLE);
-                        rvLatestCareers.setVisibility(View.GONE);
-                    } else {
-                        emptyLatest.setVisibility(View.GONE);
-                        rvLatestCareers.setVisibility(View.VISIBLE);
-                        populateTopMatchCard();
-                        applyEntryAnimations();
-                    }
+                    Log.d(TAG, "Loading ai_suggestions from profile: " + latestProfileId);
+
+                    db.collection("career_profiles")
+                            .document(latestProfileId)
+                            .collection("ai_suggestions")
+                            .orderBy("matchScore", Query.Direction.DESCENDING)
+                            .get()
+                            .addOnSuccessListener(suggestionsSnapshot -> {
+                                latestCareers.clear();
+                                Log.d(TAG, "Fetched " + suggestionsSnapshot.size() + " suggestions");
+
+                                for (DocumentSnapshot doc : suggestionsSnapshot.getDocuments()) {
+                                    Career career = doc.toObject(Career.class);
+                                    if (career != null) {
+                                        // Set the Firestore document ID as suggestionId
+                                        career.setSuggestionId(doc.getId());
+                                        latestCareers.add(career);
+                                    }
+                                }
+
+                                latestAdapter.notifyDataSetChanged();
+                                progressLatest.setVisibility(View.GONE);
+
+                                if (latestCareers.isEmpty()) {
+                                    emptyLatest.setVisibility(View.VISIBLE);
+                                    rvLatestCareers.setVisibility(View.GONE);
+                                } else {
+                                    emptyLatest.setVisibility(View.GONE);
+                                    rvLatestCareers.setVisibility(View.VISIBLE);
+                                    populateTopMatchCard();
+                                    applyEntryAnimations();
+                                }
+                            })
+                            .addOnFailureListener(e -> {
+                                Log.e(TAG, "Failed to fetch ai_suggestions", e);
+                                progressLatest.setVisibility(View.GONE);
+                                emptyLatest.setVisibility(View.VISIBLE);
+                                rvLatestCareers.setVisibility(View.GONE);
+                                Toast.makeText(this, "Could not load career suggestions.", Toast.LENGTH_SHORT).show();
+                            });
                 })
                 .addOnFailureListener(e -> {
-                    Log.e(TAG, "Failed to fetch latest careers", e);
+                    Log.e(TAG, "Failed to fetch career profiles", e);
                     progressLatest.setVisibility(View.GONE);
                     emptyLatest.setVisibility(View.VISIBLE);
                     rvLatestCareers.setVisibility(View.GONE);
@@ -313,10 +387,14 @@ public class HomeActivity extends AppCompatActivity {
                     savedCareers.clear();
 
                     for (DocumentSnapshot doc : querySnapshot.getDocuments()) {
-                        Career career = doc.toObject(Career.class);
-                        if (career != null) {
-                            savedCareers.add(career);
-                        }
+                        // Map saved career fields back to Career model
+                        Career career = new Career();
+                        career.setSuggestionId(doc.getString("suggestionId"));
+                        career.setCareerName(doc.getString("careerTitle"));
+                        career.setDescription(doc.getString("description"));
+                        Long score = doc.getLong("matchScore");
+                        career.setMatchScore(score != null ? score.intValue() : 0);
+                        savedCareers.add(career);
                     }
 
                     savedAdapter.notifyDataSetChanged();

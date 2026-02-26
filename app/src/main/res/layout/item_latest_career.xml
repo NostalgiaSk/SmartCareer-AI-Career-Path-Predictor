@@ -2,7 +2,7 @@
 
 <!--
     REDESIGNED latest career card — cleaner, with 20dp radius,
-    soft 4dp elevation, larger match badge, and better spacing.
+    soft 4dp elevation, heart toggle, and delete icon.
 -->
 
 <com.google.android.material.card.MaterialCardView
@@ -29,13 +29,26 @@
             android:id="@+id/tvCareerName"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
             android:fontFamily="sans-serif-medium"
             android:textColor="@color/sc_text_primary"
             android:textSize="17sp"
             android:textStyle="bold"
             tools:text="Data Analyst"
-            app:layout_constraintEnd_toStartOf="@id/tvMatchScore"
+            app:layout_constraintEnd_toStartOf="@id/btnHeart"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- Heart toggle — save/unsave -->
+        <ImageButton
+            android:id="@+id/btnHeart"
+            android:layout_width="34dp"
+            android:layout_height="34dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Save career"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_heart_outline"
+            app:layout_constraintEnd_toStartOf="@id/tvMatchScore"
             app:layout_constraintTop_toTopOf="parent" />
 
         <!-- Match score badge — rounded pill -->
@@ -92,6 +105,19 @@
             android:textSize="13sp"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tvDescription" />
+
+        <!-- Delete button -->
+        <ImageButton
+            android:id="@+id/btnDelete"
+            android:layout_width="34dp"
+            android:layout_height="34dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Delete career"
+            android:scaleType="centerInside"
+            android:src="@drawable/ic_delete"
+            app:layout_constraintBottom_toBottomOf="@id/btnViewDetails"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="@id/btnViewDetails" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

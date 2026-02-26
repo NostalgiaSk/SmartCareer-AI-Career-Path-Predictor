@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<!--
-    CareerDetailActivity layout — displays full details of a saved career
-    fetched from users/{uid}/saved_careers/{suggestionId}.
-    Includes title, description, match score, skills, and certifications.
--->
+
 
 <ScrollView
     xmlns:android="http://schemas.android.com/apk/res/android"
@@ -21,7 +17,6 @@
         android:layout_height="wrap_content"
         android:paddingBottom="32dp">
 
-        <!-- ── Back button ───────────────────────────────────── -->
 
         <ImageButton
             android:id="@+id/btnBack"
@@ -36,7 +31,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <!-- ── Match score badge ─────────────────────────────── -->
 
         <TextView
             android:id="@+id/tvMatchScore"
@@ -57,7 +51,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <!-- ── Career title ──────────────────────────────────── -->
 
         <TextView
             android:id="@+id/tvCareerTitle"
@@ -75,7 +68,6 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/btnBack" />
 
-        <!-- ── Full description ──────────────────────────────── -->
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/cardDescription"

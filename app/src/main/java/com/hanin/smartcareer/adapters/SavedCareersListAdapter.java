@@ -23,18 +23,7 @@ import com.hanin.smartcareer.models.Career;
 
 import java.util.List;
 
-/**
- * Adapter for the SavedCareersActivity full-screen list.
- *
- * Each card shows:
- * - Career title, description, and match score
- * - A filled heart icon (already saved)
- * - A delete icon to remove from saved_careers
- *
- * Tapping a card opens CareerDetailActivity with the suggestionId.
- * Tapping the delete icon removes the career from Firestore and the list.
- * Tapping the heart icon unsaves the career (same as delete here).
- */
+
 public class SavedCareersListAdapter
         extends RecyclerView.Adapter<SavedCareersListAdapter.ViewHolder> {
 

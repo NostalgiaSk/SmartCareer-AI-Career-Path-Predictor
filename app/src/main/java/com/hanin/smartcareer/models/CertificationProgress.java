@@ -1,9 +1,5 @@
 package com.hanin.smartcareer.models;
 
-/**
- * Model representing a certification the student is currently progressing through.
- * Used by the "Certifications In Progress" section on the Home dashboard.
- */
 public class CertificationProgress {
 
     private String certName;

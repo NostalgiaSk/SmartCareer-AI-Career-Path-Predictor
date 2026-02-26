@@ -1,11 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<!--
-    SavedCareersActivity layout — displays the user's saved careers
-    from Firestore (users/{uid}/saved_careers) in a vertical RecyclerView.
-    Includes a header, a loading spinner, and an empty state.
--->
-
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -15,7 +9,6 @@
     android:background="@color/sc_background"
     tools:context=".activities.SavedCareersActivity">
 
-    <!-- ── Back button ────────────────────────────────────────── -->
 
     <ImageButton
         android:id="@+id/btnBack"
@@ -30,7 +23,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <!-- ── Header section ────────────────────────────────────── -->
 
     <TextView
         android:id="@+id/tvTitle"

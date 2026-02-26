@@ -24,22 +24,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-/**
- * Displays AI-generated career suggestions loaded from Firestore.
- *
- * Receives a "profile_id" via Intent, then queries the
- * career_profiles/{profileId}/ai_suggestions subcollection.
- * NO AI call is made here — data comes entirely from Firestore.
- *
- * Heart toggle (save/unsave) is handled by CareerAdapter.
- * Saved career IDs are pre-loaded so hearts show correct state.
- */
+
 public class CareerSuggestionsActivity extends AppCompatActivity {
 
     private static final String TAG = "CareerSuggestionsAct";
-
-    // ── View references ─────────────────────────────────────────────
-
     private RecyclerView rvCareers;
     private ProgressBar progressLoading;
     private LinearLayout emptyState;
@@ -48,12 +36,9 @@ public class CareerSuggestionsActivity extends AppCompatActivity {
     private List<Career> careerList;
     private Set<String> savedIds;
 
-    // ── Firebase ─────────────────────────────────────────────────────
-
     private FirebaseFirestore db;
     private String uid;
 
-    // ── Lifecycle ───────────────────────────────────────────────────
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -85,7 +70,6 @@ public class CareerSuggestionsActivity extends AppCompatActivity {
         }
     }
 
-    // ── View initialisation ─────────────────────────────────────────
 
     private void initViews() {
         rvCareers       = findViewById(R.id.rvCareers);
@@ -93,7 +77,6 @@ public class CareerSuggestionsActivity extends AppCompatActivity {
         emptyState      = findViewById(R.id.emptyState);
     }
 
-    // ── RecyclerView setup ──────────────────────────────────────────
 
     private void setupRecyclerView() {
         careerAdapter = new CareerAdapter(this, careerList, savedIds);
@@ -101,10 +84,7 @@ public class CareerSuggestionsActivity extends AppCompatActivity {
         rvCareers.setAdapter(careerAdapter);
     }
 
-    // ══════════════════════════════════════════════════════════════════
-    // PRELOAD SAVED IDS + FIRESTORE DATA LOADING
-    // ══════════════════════════════════════════════════════════════════
-
+    
     /**
      * Loads the user's saved career IDs first, then sets up the adapter
      * and fetches the AI suggestions. This ensures heart icons are

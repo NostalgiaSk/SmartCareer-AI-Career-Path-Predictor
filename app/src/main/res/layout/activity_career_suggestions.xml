@@ -9,7 +9,6 @@
     android:background="@color/sc_background"
     tools:context=".CareerSuggestionsActivity">
 
-    <!-- ── Header section ────────────────────────────────────────── -->
 
     <ImageView
         android:id="@+id/ivLogo"
@@ -53,7 +52,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tvTitle" />
 
-    <!-- ── Career list (fills remaining space below the header) ──── -->
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvCareers"

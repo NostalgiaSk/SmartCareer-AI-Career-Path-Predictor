@@ -24,31 +24,15 @@ import com.hanin.smartcareer.models.Career;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Full-screen activity displaying all saved careers.
- *
- * Fetches saved career documents from:
- *   users/{uid}/saved_careers
- *
- * Each career card supports:
- * - Tap → opens CareerDetailActivity
- * - Delete → removes from Firestore and RecyclerView
- * - Heart (unsave) → same as delete
- *
- * Shows an empty state with a CTA if no careers are saved.
- */
 public class SavedCareersActivity extends AppCompatActivity {
 
     private static final String TAG = "SavedCareersActivity";
 
-    // ── View references ─────────────────────────────────────────────
 
     private RecyclerView rvSavedCareers;
     private ProgressBar progressLoading;
     private LinearLayout emptyState;
     private ImageButton btnBack;
-
-    // ── Data ─────────────────────────────────────────────────────────
 
     private List<Career> savedCareers;
     private SavedCareersListAdapter adapter;
@@ -58,7 +42,6 @@ public class SavedCareersActivity extends AppCompatActivity {
     private FirebaseFirestore db;
     private String uid;
 
-    // ── Lifecycle ────────────────────────────────────────────────────
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,10 +64,7 @@ public class SavedCareersActivity extends AppCompatActivity {
         fetchSavedCareers();
     }
 
-    /**
-     * Refresh data when returning from CareerDetailActivity
-     * in case the user deleted a career from the detail screen.
-     */
+ 
     @Override
     protected void onResume() {
         super.onResume();
@@ -94,7 +74,6 @@ public class SavedCareersActivity extends AppCompatActivity {
         }
     }
 
-    // ── View initialisation ─────────────────────────────────────────
 
     private void initViews() {
         rvSavedCareers  = findViewById(R.id.rvSavedCareers);
@@ -103,7 +82,6 @@ public class SavedCareersActivity extends AppCompatActivity {
         btnBack         = findViewById(R.id.btnBack);
     }
 
-    // ── RecyclerView setup ──────────────────────────────────────────
 
     private void setupRecyclerView() {
         adapter = new SavedCareersListAdapter(this, savedCareers);
@@ -111,7 +89,6 @@ public class SavedCareersActivity extends AppCompatActivity {
         rvSavedCareers.setAdapter(adapter);
     }
 
-    // ── Click listeners ─────────────────────────────────────────────
 
     private void setupListeners() {
         // Back button → finish activity
@@ -127,10 +104,6 @@ public class SavedCareersActivity extends AppCompatActivity {
     // FIRESTORE DATA LOADING
     // ══════════════════════════════════════════════════════════════════
 
-    /**
-     * Fetches all saved careers from users/{uid}/saved_careers.
-     * Maps Firestore fields back to Career objects and updates the adapter.
-     */
     private void fetchSavedCareers() {
         if (uid == null) {
             showEmptyState();

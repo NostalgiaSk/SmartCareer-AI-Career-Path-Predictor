@@ -36,49 +36,29 @@ import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 
-/**
- * Collects the student's career profile (skills, interests, GPA,
- * projects), sends it to the OpenAI API, saves the profile + AI
- * suggestions to Firestore, and navigates to CareerSuggestionsActivity.
- *
- * Flow:
- * 1. User fills in the form and taps "Generate Career Suggestions".
- * 2. OpenAI returns 5 career suggestions as JSON.
- * 3. Profile + all suggestions are saved to Firestore via batch write.
- * 4. On success → navigate to CareerSuggestionsActivity with profileId.
- */
+
 public class CareerProfileActivity extends AppCompatActivity {
 
     private static final String TAG = "CareerProfileActivity";
-
-    // ── View references ─────────────────────────────────────────────
 
     private TextInputLayout tilSkills, tilInterests, tilGpa, tilProjects;
     private TextInputEditText etSkills, etInterests, etGpa, etProjects;
     private Button btnGenerateSuggestions;
     private ProgressBar progressSaving;
 
-    // ── Firebase ─────────────────────────────────────────────────────
-
     private FirebaseAuth auth;
     private FirebaseFirestore db;
-
-    // ── Lifecycle ───────────────────────────────────────────────────
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_career_profile);
-
-        // Initialize Firebase instances
         auth = FirebaseAuth.getInstance();
         db   = FirebaseFirestore.getInstance();
 
         initViews();
         setupListeners();
     }
-
-    // ── View initialisation ─────────────────────────────────────────
 
     private void initViews() {
         tilSkills     = findViewById(R.id.tilSkills);
@@ -175,7 +155,6 @@ public class CareerProfileActivity extends AppCompatActivity {
     private void callOpenAI(String skills, String interests,
                             double gpa, String projects) {
 
-        // Disable the button and show spinner
         setLoading(true);
 
         // Build the request body
@@ -220,7 +199,6 @@ public class CareerProfileActivity extends AppCompatActivity {
 
                 } else {
                     setLoading(false);
-                    // HTTP error (4xx / 5xx)
                     String errorBody = "";
                     try {
                         if (response.errorBody() != null) {
@@ -280,13 +258,10 @@ public class CareerProfileActivity extends AppCompatActivity {
         }
     }
 
-    // ══════════════════════════════════════════════════════════════════
-    // FIRESTORE BATCH WRITE
-    // ══════════════════════════════════════════════════════════════════
 
     /**
      * Saves the career profile document and ALL AI suggestions as a
-     * subcollection using a Firestore batch write (atomic operation).
+     * subcollection using a Firestore batch write.
      *
      * Structure:
      *   career_profiles/{profileId}
@@ -347,7 +322,7 @@ public class CareerProfileActivity extends AppCompatActivity {
             batch.set(suggestionRef, suggestionData);
         }
 
-        // 3. Commit the batch — atomic write
+        // 3. Commit the batch 
         batch.commit()
                 .addOnSuccessListener(aVoid -> {
                     setLoading(false);

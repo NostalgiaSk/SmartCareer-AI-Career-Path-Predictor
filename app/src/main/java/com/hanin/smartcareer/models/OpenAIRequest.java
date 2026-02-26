@@ -6,22 +6,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-/**
- * Request body for the OpenAI Chat Completion API.
- *
- * <p>Maps to the JSON structure expected by
- * {@code POST https://api.openai.com/v1/chat/completions}.
- *
- * <h3>Usage</h3>
- * <pre>
- * OpenAIRequest req = OpenAIRequest.buildCareerPrompt(
- *     "Java, Python", "AI, Data", 3.8, "ML chatbot project"
- * );
- * </pre>
- */
+
 public class OpenAIRequest {
 
-    // ── JSON fields ─────────────────────────────────────────────────
 
     @SerializedName("model")
     private String model;
@@ -129,7 +116,6 @@ public class OpenAIRequest {
         ));
 
         // Use Groq's free LLaMA model — fast inference, no billing required.
-        // Alternative Groq models: "mixtral-8x7b-32768", "gemma2-9b-it"
         return new OpenAIRequest("llama-3.3-70b-versatile", messages, 0.4, 1024);
     }
 

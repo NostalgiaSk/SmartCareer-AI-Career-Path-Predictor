@@ -4,27 +4,7 @@ import com.google.gson.annotations.SerializedName;
 
 import java.util.List;
 
-/**
- * Maps the JSON response from the OpenAI Chat Completion API.
- *
- * <h3>Relevant response structure</h3>
- * <pre>
- * {
- *   "choices": [
- *     {
- *       "message": {
- *         "role": "assistant",
- *         "content": "{ ... actual JSON string ... }"
- *       }
- *     }
- *   ]
- * }
- * </pre>
- *
- * The {@code content} field contains the raw JSON string produced by
- * the model, which should then be parsed into a list of {@link Career}
- * objects using Gson.
- */
+
 public class OpenAIResponse {
 
     @SerializedName("choices")

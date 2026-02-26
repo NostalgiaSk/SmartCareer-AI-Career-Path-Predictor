@@ -130,6 +130,22 @@ public class SavedCareersActivity extends AppCompatActivity {
                         Long score = doc.getLong("matchScore");
                         career.setMatchScore(score != null ? score.intValue() : 0);
 
+                        // Load skill gaps (stored as "requiredSkills" in Firestore)
+                        List<?> rawSkills = (List<?>) doc.get("requiredSkills");
+                        if (rawSkills != null) {
+                            ArrayList<String> skills = new ArrayList<>();
+                            for (Object s : rawSkills) skills.add(String.valueOf(s));
+                            career.setSkillGaps(skills);
+                        }
+
+                        // Load certifications (stored as "recommendedCertifications")
+                        List<?> rawCerts = (List<?>) doc.get("recommendedCertifications");
+                        if (rawCerts != null) {
+                            ArrayList<String> certs = new ArrayList<>();
+                            for (Object c : rawCerts) certs.add(String.valueOf(c));
+                            career.setCertifications(certs);
+                        }
+
                         savedCareers.add(career);
                     }
 

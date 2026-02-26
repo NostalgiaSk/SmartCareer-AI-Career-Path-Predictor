@@ -18,7 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.hanin.smartcareer.R;
-import com.hanin.smartcareer.activities.CareerDetailActivity;
+import com.hanin.smartcareer.activities.SkillGapActivity;
 import com.hanin.smartcareer.models.Career;
 
 import java.util.List;
@@ -76,17 +76,17 @@ public class SavedCareersListAdapter
             deleteCareer(adapterPos, career.getSuggestionId());
         });
 
-        // ── View Details → navigates to CareerDetailActivity ────────
+        // ── View Details → navigates to SkillGapActivity ─────────────
         holder.btnViewDetails.setOnClickListener(v -> {
-            Intent intent = new Intent(context, CareerDetailActivity.class);
-            intent.putExtra("suggestion_id", career.getSuggestionId());
+            Intent intent = new Intent(context, SkillGapActivity.class);
+            intent.putExtra("career_data", career);
             context.startActivity(intent);
         });
 
         // ── Card click → same as View Details ───────────────────────
         holder.itemView.setOnClickListener(v -> {
-            Intent intent = new Intent(context, CareerDetailActivity.class);
-            intent.putExtra("suggestion_id", career.getSuggestionId());
+            Intent intent = new Intent(context, SkillGapActivity.class);
+            intent.putExtra("career_data", career);
             context.startActivity(intent);
         });
     }

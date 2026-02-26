@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- ──────────────────────────────────────────────────────────────
+     activity_certificate.xml — Certification completion celebration.
+     Shows congratulations message, certification name, provider,
+     completion date, and a "Back to Home" button.
+     ────────────────────────────────────────────────────────────── -->
+
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/sc_background"
+    android:fillViewport="true"
+    tools:context=".activities.CertificateActivity">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingBottom="32dp">
+
+        <!-- ── Trophy / celebration emoji ─────────────────────── -->
+
+        <TextView
+            android:id="@+id/tvTrophy"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="80dp"
+            android:text="🏆"
+            android:textSize="72sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- ── Congratulations heading ────────────────────────── -->
+
+        <TextView
+            android:id="@+id/tvCongrats"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="32dp"
+            android:fontFamily="sans-serif-medium"
+            android:gravity="center"
+            android:text="@string/cert_congratulations"
+            android:textColor="@color/sc_text_primary"
+            android:textSize="28sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvTrophy" />
+
+        <!-- ── "You have successfully completed" ──────────────── -->
+
+        <TextView
+            android:id="@+id/tvCompletedMessage"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="12dp"
+            android:layout_marginEnd="32dp"
+            android:fontFamily="sans-serif"
+            android:gravity="center"
+            android:text="@string/cert_completed_message"
+            android:textColor="@color/sc_text_secondary"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvCongrats" />
+
+        <!-- ── Certificate card ───────────────────────────────── -->
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/cardCertificate"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="28dp"
+            android:layout_marginTop="28dp"
+            android:layout_marginEnd="28dp"
+            app:cardBackgroundColor="@color/sc_surface"
+            app:cardCornerRadius="20dp"
+            app:cardElevation="4dp"
+            app:strokeColor="@color/sc_gold"
+            app:strokeWidth="2dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvCompletedMessage">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:orientation="vertical"
+                android:padding="28dp">
+
+                <!-- Certificate star icon -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="⭐"
+                    android:textSize="36sp" />
+
+                <!-- Certification name -->
+                <TextView
+                    android:id="@+id/tvCertName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:fontFamily="sans-serif-medium"
+                    android:gravity="center"
+                    android:textColor="@color/sc_text_primary"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    tools:text="Google ML Engineer" />
+
+                <!-- Provider -->
+                <TextView
+                    android:id="@+id/tvProvider"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:fontFamily="sans-serif"
+                    android:textColor="@color/sc_text_secondary"
+                    android:textSize="15sp"
+                    tools:text="Issued by Google Cloud" />
+
+                <!-- Completion date -->
+                <TextView
+                    android:id="@+id/tvDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:fontFamily="sans-serif"
+                    android:textColor="@color/sc_text_hint"
+                    android:textSize="13sp"
+                    tools:text="Completed on Feb 27, 2026" />
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- ── Back to Home button ────────────────────────────── -->
+
+        <Button
+            android:id="@+id/btnBackHome"
+            android:layout_width="0dp"
+            android:layout_height="54dp"
+            android:layout_marginStart="32dp"
+            android:layout_marginTop="36dp"
+            android:layout_marginEnd="32dp"
+            android:background="@drawable/bg_primary_button"
+            android:fontFamily="sans-serif-medium"
+            android:letterSpacing="0.04"
+            android:stateListAnimator="@null"
+            android:text="@string/cert_back_home"
+            android:textAllCaps="false"
+            android:textColor="@android:color/white"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/cardCertificate" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

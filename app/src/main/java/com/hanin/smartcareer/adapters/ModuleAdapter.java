@@ -4,7 +4,6 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -17,26 +16,40 @@ import com.hanin.smartcareer.models.Module;
 
 import java.util.List;
 
+/**
+ * Adapter for displaying learning modules in the certification detail screen.
+ *
+ * <p>Each module card has one of three visual states:</p>
+ * <ul>
+ *   <li><b>LOCKED</b> — grey background, lock icon, "Locked" badge. Not clickable.</li>
+ *   <li><b>UNLOCKED</b> — white background, module number badge, "Start" badge. Clickable.</li>
+ *   <li><b>COMPLETED</b> — green check icon, "Passed" badge with quiz score. Clickable.</li>
+ * </ul>
+ */
 public class ModuleAdapter extends RecyclerView.Adapter<ModuleAdapter.ViewHolder> {
 
-
-    public interface OnModuleCompletedListener {
-        void onModuleCompleted(int position);
+    // ── Callback interface ──────────────────────────────────────────
+    /**
+     * Called when the user taps an unlocked or completed module card.
+     */
+    public interface OnModuleClickListener {
+        void onModuleClicked(int position);
     }
-
 
     private final Context context;
     private final List<Module> modules;
-    private final OnModuleCompletedListener listener;
+    private final OnModuleClickListener listener;
+
+    // ── Constructor ─────────────────────────────────────────────────
 
     public ModuleAdapter(Context context, List<Module> modules,
-                         OnModuleCompletedListener listener) {
+                         OnModuleClickListener listener) {
         this.context  = context;
         this.modules  = modules;
         this.listener = listener;
     }
 
-    
+    // ── ViewHolder creation ─────────────────────────────────────────
 
     @NonNull
     @Override
@@ -46,28 +59,116 @@ public class ModuleAdapter extends RecyclerView.Adapter<ModuleAdapter.ViewHolder
         return new ViewHolder(view);
     }
 
+    // ── Binding logic: three visual states ───────────────────────────
+
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Module module = modules.get(position);
 
-        
+        // Set title and duration
         holder.tvModuleTitle.setText(module.getTitle());
 
-        if (module.isCompleted()) {
-            holder.tvStatus.setText(R.string.cert_detail_completed);
+        String duration = module.getDuration();
+        if (duration != null && !duration.isEmpty()) {
+            holder.tvDuration.setText(
+                    context.getString(R.string.module_duration_prefix, duration));
+            holder.tvDuration.setVisibility(View.VISIBLE);
+        } else {
+            holder.tvDuration.setVisibility(View.GONE);
+        }
+
+        // ── STATE 1: LOCKED ─────────────────────────────────────────
+        if (module.isLocked()) {
+            // Greyed-out appearance
+            holder.ivLock.setVisibility(View.VISIBLE);
+            holder.tvModuleNumber.setVisibility(View.GONE);
+            holder.ivCheck.setVisibility(View.GONE);
+
+            holder.tvModuleTitle.setTextColor(
+                    ContextCompat.getColor(context, R.color.sc_text_hint));
+            holder.tvDuration.setTextColor(
+                    ContextCompat.getColor(context, R.color.sc_text_hint));
+
+            // Status badge
+            holder.tvStatus.setText(R.string.module_locked);
+            holder.tvStatus.setTextColor(
+                    ContextCompat.getColor(context, R.color.sc_locked));
+
+            // Hide quiz score
+            holder.tvQuizScore.setVisibility(View.GONE);
+
+            // Set locked card alpha
+            holder.cardModule.setAlpha(0.6f);
+
+            // Not clickable
+            holder.itemView.setOnClickListener(null);
+            holder.itemView.setClickable(false);
+
+        // ── STATE 2: COMPLETED ──────────────────────────────────────
+        } else if (module.isCompleted()) {
+            // Green check appearance
+            holder.ivLock.setVisibility(View.GONE);
+            holder.tvModuleNumber.setVisibility(View.GONE);
+            holder.ivCheck.setVisibility(View.VISIBLE);
+
+            holder.tvModuleTitle.setTextColor(
+                    ContextCompat.getColor(context, R.color.sc_text_primary));
+            holder.tvDuration.setTextColor(
+                    ContextCompat.getColor(context, R.color.sc_text_secondary));
+
+            // Status badge
+            holder.tvStatus.setText(R.string.module_passed);
             holder.tvStatus.setTextColor(
                     ContextCompat.getColor(context, R.color.sc_success));
-            holder.ivCheck.setVisibility(View.VISIBLE);
-            holder.btnMarkComplete.setVisibility(View.GONE);
-        } else {
-            holder.tvStatus.setText(R.string.cert_detail_pending);
-            holder.tvStatus.setTextColor(
-                    ContextCompat.getColor(context, R.color.sc_text_hint));
-            holder.ivCheck.setVisibility(View.GONE);
-            holder.btnMarkComplete.setVisibility(View.VISIBLE);
-            holder.btnMarkComplete.setOnClickListener(v -> {
+
+            // Show quiz score
+            if (module.getQuizScore() > 0) {
+                holder.tvQuizScore.setText(
+                        context.getString(R.string.module_score_label, module.getQuizScore()));
+                holder.tvQuizScore.setVisibility(View.VISIBLE);
+            } else {
+                holder.tvQuizScore.setVisibility(View.GONE);
+            }
+
+            // Full alpha
+            holder.cardModule.setAlpha(1.0f);
+
+            // Clickable — can review module content
+            holder.itemView.setOnClickListener(v -> {
                 if (listener != null) {
-                    listener.onModuleCompleted(holder.getAdapterPosition());
+                    listener.onModuleClicked(holder.getAdapterPosition());
+                }
+            });
+
+        // ── STATE 3: UNLOCKED (not yet completed) ───────────────────
+        } else {
+            // Active appearance with module number
+            holder.ivLock.setVisibility(View.GONE);
+            holder.tvModuleNumber.setVisibility(View.VISIBLE);
+            holder.tvModuleNumber.setText(
+                    String.valueOf(module.getOrderIndex() + 1));
+            holder.ivCheck.setVisibility(View.GONE);
+
+            holder.tvModuleTitle.setTextColor(
+                    ContextCompat.getColor(context, R.color.sc_text_primary));
+            holder.tvDuration.setTextColor(
+                    ContextCompat.getColor(context, R.color.sc_text_secondary));
+
+            // Status badge
+            holder.tvStatus.setText(R.string.module_start);
+            holder.tvStatus.setTextColor(
+                    ContextCompat.getColor(context, R.color.sc_primary));
+
+            // Hide quiz score
+            holder.tvQuizScore.setVisibility(View.GONE);
+
+            // Full alpha
+            holder.cardModule.setAlpha(1.0f);
+
+            // Clickable — opens module content
+            holder.itemView.setOnClickListener(v -> {
+                if (listener != null) {
+                    listener.onModuleClicked(holder.getAdapterPosition());
                 }
             });
         }
@@ -76,18 +177,23 @@ public class ModuleAdapter extends RecyclerView.Adapter<ModuleAdapter.ViewHolder
     @Override
     public int getItemCount() { return modules.size(); }
 
+    // ── ViewHolder ──────────────────────────────────────────────────
 
     static class ViewHolder extends RecyclerView.ViewHolder {
-        ImageView ivCheck;
-        TextView tvModuleTitle, tvStatus;
-        Button btnMarkComplete;
+        com.google.android.material.card.MaterialCardView cardModule;
+        ImageView ivLock, ivCheck;
+        TextView tvModuleNumber, tvModuleTitle, tvDuration, tvStatus, tvQuizScore;
 
         ViewHolder(@NonNull View itemView) {
             super(itemView);
-            ivCheck         = itemView.findViewById(R.id.ivCheck);
-            tvModuleTitle   = itemView.findViewById(R.id.tvModuleTitle);
-            tvStatus        = itemView.findViewById(R.id.tvStatus);
-            btnMarkComplete = itemView.findViewById(R.id.btnMarkComplete);
+            cardModule     = itemView.findViewById(R.id.cardModule);
+            ivLock         = itemView.findViewById(R.id.ivLock);
+            ivCheck        = itemView.findViewById(R.id.ivCheck);
+            tvModuleNumber = itemView.findViewById(R.id.tvModuleNumber);
+            tvModuleTitle  = itemView.findViewById(R.id.tvModuleTitle);
+            tvDuration     = itemView.findViewById(R.id.tvDuration);
+            tvStatus       = itemView.findViewById(R.id.tvStatus);
+            tvQuizScore    = itemView.findViewById(R.id.tvQuizScore);
         }
     }
 }

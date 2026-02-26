@@ -1,0 +1,127 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- ──────────────────────────────────────────────────────────────
+     activity_module.xml — Full-screen module content viewer.
+     Shows module title, duration badge, scrollable lesson body,
+     and a "Take Quiz" button at the bottom.
+     ────────────────────────────────────────────────────────────── -->
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/sc_background"
+    tools:context=".activities.ModuleActivity">
+
+    <!-- ── Back arrow ──────────────────────────────────────── -->
+
+    <ImageView
+        android:id="@+id/ivBack"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="44dp"
+        android:contentDescription="@string/module_back"
+        android:padding="6dp"
+        android:src="@android:drawable/ic_menu_revert"
+        app:tint="@color/sc_text_primary"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- ── Module Title ────────────────────────────────────── -->
+
+    <TextView
+        android:id="@+id/tvModuleTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="24dp"
+        android:fontFamily="sans-serif-medium"
+        android:textColor="@color/sc_text_primary"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        tools:text="Module 1: Introduction to ML"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/ivBack" />
+
+    <!-- ── Duration badge ──────────────────────────────────── -->
+
+    <TextView
+        android:id="@+id/tvDuration"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:background="@drawable/bg_difficulty_badge"
+        android:fontFamily="sans-serif-medium"
+        android:textColor="@color/sc_primary"
+        android:textSize="12sp"
+        android:textStyle="bold"
+        tools:text="⏱ 25 min"
+        app:layout_constraintStart_toStartOf="@id/tvModuleTitle"
+        app:layout_constraintTop_toBottomOf="@id/tvModuleTitle" />
+
+    <!-- ── Scrollable content area ─────────────────────────── -->
+
+    <ScrollView
+        android:id="@+id/scrollContent"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginBottom="8dp"
+        android:fillViewport="true"
+        app:layout_constraintBottom_toTopOf="@id/btnTakeQuiz"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvDuration">
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="20dp"
+            android:layout_marginEnd="20dp"
+            app:cardBackgroundColor="@color/sc_surface"
+            app:cardCornerRadius="18dp"
+            app:cardElevation="2dp"
+            app:strokeWidth="0dp">
+
+            <TextView
+                android:id="@+id/tvContent"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif"
+                android:lineSpacingMultiplier="1.5"
+                android:padding="20dp"
+                android:textColor="@color/sc_text_primary"
+                android:textSize="15sp"
+                tools:text="Module content goes here..." />
+
+        </com.google.android.material.card.MaterialCardView>
+    </ScrollView>
+
+    <!-- ── Take Quiz button ────────────────────────────────── -->
+
+    <Button
+        android:id="@+id/btnTakeQuiz"
+        android:layout_width="0dp"
+        android:layout_height="54dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="24dp"
+        android:background="@drawable/bg_primary_button"
+        android:fontFamily="sans-serif-medium"
+        android:letterSpacing="0.04"
+        android:stateListAnimator="@null"
+        android:text="@string/module_take_quiz"
+        android:textAllCaps="false"
+        android:textColor="@android:color/white"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

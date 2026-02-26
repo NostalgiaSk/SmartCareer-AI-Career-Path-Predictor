@@ -1,14 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 
+<!-- ──────────────────────────────────────────────────────────────
+     item_module.xml — Single module card in the certification detail list.
+     Shows three visual states: LOCKED (grey + lock icon),
+     UNLOCKED (active + module number), COMPLETED (green + check).
+     ────────────────────────────────────────────────────────────── -->
+
 <com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/cardModule"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_marginStart="20dp"
     android:layout_marginEnd="20dp"
     android:layout_marginBottom="12dp"
+    android:clickable="true"
+    android:focusable="true"
     app:cardBackgroundColor="@color/sc_surface"
     app:cardCornerRadius="16dp"
     app:cardElevation="2dp"
@@ -19,70 +28,109 @@
         android:layout_height="wrap_content"
         android:padding="16dp">
 
-        <!-- ── Check icon (visible when completed) ─────────────── -->
+        <!-- ── Module number / lock / check indicator ─────────── -->
 
+        <!-- Lock icon (visible when LOCKED) -->
+        <ImageView
+            android:id="@+id/ivLock"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:contentDescription="@string/module_locked"
+            android:padding="6dp"
+            android:src="@drawable/ic_lock"
+            android:visibility="gone"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- Module number badge (visible when UNLOCKED, not completed) -->
+        <TextView
+            android:id="@+id/tvModuleNumber"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="@drawable/bg_module_number"
+            android:fontFamily="sans-serif-medium"
+            android:gravity="center"
+            android:textColor="@color/sc_primary"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:visibility="gone"
+            tools:text="1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <!-- Check icon (visible when COMPLETED) -->
         <ImageView
             android:id="@+id/ivCheck"
-            android:layout_width="24dp"
-            android:layout_height="24dp"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="@drawable/bg_module_completed"
             android:contentDescription="@string/cert_detail_completed"
+            android:padding="6dp"
             android:src="@android:drawable/checkbox_on_background"
             android:visibility="gone"
             app:tint="#27AE60"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <!-- ── Module title ────────────────────────────────────── -->
+        <!-- ── Module title ─────────────────────────────────────── -->
 
         <TextView
             android:id="@+id/tvModuleTitle"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
+            android:layout_marginStart="12dp"
             android:layout_marginEnd="8dp"
             android:fontFamily="sans-serif-medium"
             android:textColor="@color/sc_text_primary"
-            android:textSize="15sp"
+            android:textSize="14sp"
             android:textStyle="bold"
             tools:text="Module 1: Introduction to ML"
             app:layout_constraintEnd_toStartOf="@id/tvStatus"
-            app:layout_constraintStart_toEndOf="@id/ivCheck"
+            app:layout_constraintStart_toEndOf="@id/tvModuleNumber"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <!-- ── Status text ─────────────────────────────────────── -->
+        <!-- ── Duration text ────────────────────────────────────── -->
+
+        <TextView
+            android:id="@+id/tvDuration"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="12dp"
+            android:layout_marginTop="4dp"
+            android:fontFamily="sans-serif"
+            android:textColor="@color/sc_text_secondary"
+            android:textSize="12sp"
+            tools:text="⏱ 25 min"
+            app:layout_constraintStart_toEndOf="@id/tvModuleNumber"
+            app:layout_constraintTop_toBottomOf="@id/tvModuleTitle" />
+
+        <!-- ── Status badge ─────────────────────────────────────── -->
 
         <TextView
             android:id="@+id/tvStatus"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:fontFamily="sans-serif-medium"
-            android:textSize="12sp"
+            android:textSize="11sp"
             android:textStyle="bold"
-            tools:text="Pending"
-            tools:textColor="@color/sc_text_hint"
+            tools:text="Start"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <!-- ── Mark as Completed button ────────────────────────── -->
+        <!-- ── Quiz score (shown only for completed modules) ──── -->
 
-        <Button
-            android:id="@+id/btnMarkComplete"
+        <TextView
+            android:id="@+id/tvQuizScore"
             android:layout_width="wrap_content"
-            android:layout_height="36dp"
-            android:layout_marginTop="12dp"
-            android:background="@drawable/bg_outlined_button_ripple"
-            android:fontFamily="sans-serif-medium"
-            android:letterSpacing="0.02"
-            android:minWidth="0dp"
-            android:paddingStart="16dp"
-            android:paddingEnd="16dp"
-            android:stateListAnimator="@null"
-            android:text="@string/cert_detail_mark_complete"
-            android:textAllCaps="false"
-            android:textColor="@color/sc_primary"
-            android:textSize="12sp"
-            app:layout_constraintStart_toStartOf="@id/tvModuleTitle"
-            app:layout_constraintTop_toBottomOf="@id/tvModuleTitle" />
+            android:layout_height="wrap_content"
+            android:layout_marginTop="4dp"
+            android:fontFamily="sans-serif"
+            android:textColor="@color/sc_text_secondary"
+            android:textSize="11sp"
+            android:visibility="gone"
+            tools:text="Score: 100%"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/tvStatus" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </com.google.android.material.card.MaterialCardView>

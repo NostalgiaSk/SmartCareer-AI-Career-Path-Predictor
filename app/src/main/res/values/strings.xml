@@ -165,4 +165,44 @@
     <string name="empty_state_message">No data yet. Start your career journey!</string>
     <string name="empty_state_button">Start New Career Path</string>
 
+    <!-- ============================================================= -->
+    <!-- Module Screen Strings                                         -->
+    <!-- ============================================================= -->
+
+    <string name="module_back">Go back</string>
+    <string name="module_duration_prefix">⏱ %1$s</string>
+    <string name="module_take_quiz">Take Quiz</string>
+    <string name="module_locked">🔒 Locked</string>
+    <string name="module_start">Start</string>
+    <string name="module_passed">✅ Passed</string>
+    <string name="module_score_label">Score: %1$d%%</string>
+    <string name="module_number">%1$d</string>
+    <string name="cert_detail_resume">Resume Learning</string>
+
+    <!-- ============================================================= -->
+    <!-- Quiz Screen Strings                                           -->
+    <!-- ============================================================= -->
+
+    <string name="quiz_title">Module Quiz</string>
+    <string name="quiz_question_counter">Question %1$d of %2$d</string>
+    <string name="quiz_next">Next</string>
+    <string name="quiz_submit">Submit</string>
+    <string name="quiz_select_answer">Please select an answer</string>
+    <string name="quiz_result_pass">🎉 Quiz Passed!</string>
+    <string name="quiz_result_fail">❌ Quiz Failed</string>
+    <string name="quiz_score_text">You scored %1$d%% (%2$d out of %3$d correct)</string>
+    <string name="quiz_pass_threshold">You need at least 70%% to pass.</string>
+    <string name="quiz_continue">Continue</string>
+    <string name="quiz_retry">Retry Quiz</string>
+
+    <!-- ============================================================= -->
+    <!-- Certificate Screen Strings                                    -->
+    <!-- ============================================================= -->
+
+    <string name="cert_congratulations">🎉 Congratulations!</string>
+    <string name="cert_completed_message">You have successfully completed</string>
+    <string name="cert_provider_label">Issued by %1$s</string>
+    <string name="cert_date_label">Completed on %1$s</string>
+    <string name="cert_back_home">Back to Home</string>
+
 </resources>

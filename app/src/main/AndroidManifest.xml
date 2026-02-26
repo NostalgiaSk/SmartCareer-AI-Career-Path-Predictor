@@ -90,6 +90,27 @@
             android:label="@string/app_name"
             android:theme="@style/Theme.SmartCareer" />
 
+        <!-- Module content screen (launched from certification detail) -->
+        <activity
+            android:name=".activities.ModuleActivity"
+            android:exported="false"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.SmartCareer" />
+
+        <!-- Quiz screen (launched from module screen) -->
+        <activity
+            android:name=".activities.QuizActivity"
+            android:exported="false"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.SmartCareer" />
+
+        <!-- Certificate completion screen -->
+        <activity
+            android:name=".activities.CertificateActivity"
+            android:exported="false"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.SmartCareer" />
+
     </application>
 
 </manifest>

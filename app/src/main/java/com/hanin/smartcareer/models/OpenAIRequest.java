@@ -119,14 +119,12 @@ public class OpenAIRequest {
         return new OpenAIRequest("llama-3.3-70b-versatile", messages, 0.4, 1024);
     }
 
-    // ── Factory method: Certification modules ────────────────────────
-
     /**
      * Builds an {@link OpenAIRequest} that asks the AI to generate
      * a structured set of learning modules for a specific certification.
      *
-     * <p>The model is instructed to return strict JSON with exactly
-     * 5 modules, each containing an {@code id} and a {@code title}.
+     * <p>Each module includes a lesson body, estimated duration, and
+     * 3 embedded quiz questions (4 options each).</p>
      *
      * @param certName  Name of the certification (e.g. "Google ML Engineer").
      * @param provider  Issuing organisation (e.g. "Google Cloud").
@@ -139,7 +137,7 @@ public class OpenAIRequest {
 
         String systemPrompt =
                 "You are an expert education curriculum designer.\n\n" +
-                "Given a professional certification, generate EXACTLY 5 learning modules " +
+                "Given a professional certification, generate EXACTLY 5 structured learning modules " +
                 "that a student should complete to prepare for this certification.\n\n" +
                 "Return strictly valid JSON only.\n" +
                 "Do NOT include explanations, comments, markdown formatting, or text outside JSON.\n\n" +
@@ -148,7 +146,17 @@ public class OpenAIRequest {
                 "  \"modules\": [\n" +
                 "    {\n" +
                 "      \"id\": \"mod_1\",\n" +
-                "      \"title\": \"Module 1: Descriptive Module Title\"\n" +
+                "      \"title\": \"Module 1: Descriptive Module Title\",\n" +
+                "      \"content\": \"A detailed 3-5 paragraph lesson explaining this topic. " +
+                "Include key concepts, real-world applications, and practical examples.\",\n" +
+                "      \"duration\": \"25 min\",\n" +
+                "      \"quiz\": [\n" +
+                "        {\n" +
+                "          \"question\": \"Clear quiz question about the module content?\",\n" +
+                "          \"options\": [\"Option A\", \"Option B\", \"Option C\", \"Option D\"],\n" +
+                "          \"correctIndex\": 0\n" +
+                "        }\n" +
+                "      ]\n" +
                 "    }\n" +
                 "  ]\n" +
                 "}\n\n" +
@@ -156,7 +164,12 @@ public class OpenAIRequest {
                 "- Return EXACTLY 5 modules.\n" +
                 "- Module ids must be sequential: mod_1, mod_2, mod_3, mod_4, mod_5.\n" +
                 "- Each title must start with 'Module N:' followed by a concise, descriptive name.\n" +
-                "- Titles must be relevant to the specific certification content.\n" +
+                "- Content must be 3-5 informative paragraphs per module.\n" +
+                "- Duration must be realistic (e.g. '20 min', '30 min', '45 min').\n" +
+                "- Each module must have EXACTLY 3 quiz questions.\n" +
+                "- Each quiz question must have EXACTLY 4 options.\n" +
+                "- correctIndex must be a valid 0-based index (0, 1, 2, or 3).\n" +
+                "- Quiz questions must directly test the module content.\n" +
                 "- Order modules from foundational to advanced topics.\n" +
                 "- The last module should be a capstone/assessment module.\n" +
                 "- Return only JSON.";
@@ -172,7 +185,8 @@ public class OpenAIRequest {
                 new Message("user", userPrompt)
         ));
 
-        return new OpenAIRequest("llama-3.3-70b-versatile", messages, 0.4, 512);
+        // Increased max_tokens to 4096 to accommodate full content + quiz data
+        return new OpenAIRequest("llama-3.3-70b-versatile", messages, 0.4, 4096);
     }
 
     // ── Getters (used by Gson serialisation) ─────────────────────────

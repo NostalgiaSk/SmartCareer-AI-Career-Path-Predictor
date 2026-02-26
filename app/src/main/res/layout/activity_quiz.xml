@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<!-- ──────────────────────────────────────────────────────────────
+     activity_quiz.xml — Quiz screen for module assessment.
+     Shows question counter, question text, 4 selectable options,
+     Next/Submit button, and a result card overlay.
+     ────────────────────────────────────────────────────────────── -->
+
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/sc_background"
+    tools:context=".activities.QuizActivity">
+
+    <!-- ── Back arrow ──────────────────────────────────────── -->
+
+    <ImageView
+        android:id="@+id/ivBack"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="44dp"
+        android:contentDescription="@string/module_back"
+        android:padding="6dp"
+        android:src="@android:drawable/ic_menu_revert"
+        app:tint="@color/sc_text_primary"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <!-- ── Quiz title ──────────────────────────────────────── -->
+
+    <TextView
+        android:id="@+id/tvQuizTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginEnd="24dp"
+        android:fontFamily="sans-serif-medium"
+        android:text="@string/quiz_title"
+        android:textColor="@color/sc_text_primary"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="@id/ivBack"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@id/ivBack"
+        app:layout_constraintTop_toTopOf="@id/ivBack" />
+
+    <!-- ── Question counter ────────────────────────────────── -->
+
+    <TextView
+        android:id="@+id/tvQuestionCounter"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="28dp"
+        android:layout_marginEnd="24dp"
+        android:fontFamily="sans-serif-medium"
+        android:textColor="@color/sc_primary"
+        android:textSize="14sp"
+        android:textStyle="bold"
+        tools:text="Question 1 of 3"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/ivBack" />
+
+    <!-- ── Progress bar (question progress) ────────────────── -->
+
+    <ProgressBar
+        android:id="@+id/progressQuiz"
+        style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+        android:layout_width="0dp"
+        android:layout_height="6dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="24dp"
+        android:max="100"
+        android:progressDrawable="@drawable/bg_progress_bar"
+        tools:progress="33"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/tvQuestionCounter" />
+
+    <!-- ── Question card ───────────────────────────────────── -->
+
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/cardQuestion"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="20dp"
+        app:cardBackgroundColor="@color/sc_surface"
+        app:cardCornerRadius="18dp"
+        app:cardElevation="3dp"
+        app:strokeWidth="0dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/progressQuiz">
+
+        <TextView
+            android:id="@+id/tvQuestion"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif-medium"
+            android:lineSpacingMultiplier="1.4"
+            android:padding="20dp"
+            android:textColor="@color/sc_text_primary"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            tools:text="What is supervised learning?" />
+
+    </com.google.android.material.card.MaterialCardView>
+
+    <!-- ── Answer options ──────────────────────────────────── -->
+
+    <LinearLayout
+        android:id="@+id/layoutOptions"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="20dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="20dp"
+        android:orientation="vertical"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/cardQuestion">
+
+        <TextView
+            android:id="@+id/tvOption0"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/bg_quiz_option"
+            android:fontFamily="sans-serif"
+            android:padding="16dp"
+            android:textColor="@color/sc_text_primary"
+            android:textSize="14sp"
+            tools:text="A. Option one" />
+
+        <TextView
+            android:id="@+id/tvOption1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/bg_quiz_option"
+            android:fontFamily="sans-serif"
+            android:padding="16dp"
+            android:textColor="@color/sc_text_primary"
+            android:textSize="14sp"
+            tools:text="B. Option two" />
+
+        <TextView
+            android:id="@+id/tvOption2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/bg_quiz_option"
+            android:fontFamily="sans-serif"
+            android:padding="16dp"
+            android:textColor="@color/sc_text_primary"
+            android:textSize="14sp"
+            tools:text="C. Option three" />
+
+        <TextView
+            android:id="@+id/tvOption3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/bg_quiz_option"
+            android:fontFamily="sans-serif"
+            android:padding="16dp"
+            android:textColor="@color/sc_text_primary"
+            android:textSize="14sp"
+            tools:text="D. Option four" />
+
+    </LinearLayout>
+
+    <!-- ── Next / Submit button ────────────────────────────── -->
+
+    <Button
+        android:id="@+id/btnNext"
+        android:layout_width="0dp"
+        android:layout_height="54dp"
+        android:layout_marginStart="24dp"
+        android:layout_marginEnd="24dp"
+        android:layout_marginBottom="24dp"
+        android:background="@drawable/bg_primary_button"
+        android:fontFamily="sans-serif-medium"
+        android:letterSpacing="0.04"
+        android:stateListAnimator="@null"
+        android:text="@string/quiz_next"
+        android:textAllCaps="false"
+        android:textColor="@android:color/white"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <!-- ══════════════════════════════════════════════════════ -->
+    <!-- RESULT OVERLAY (shown after quiz submission)          -->
+    <!-- ══════════════════════════════════════════════════════ -->
+
+    <FrameLayout
+        android:id="@+id/resultOverlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#CC000000"
+        android:clickable="true"
+        android:focusable="true"
+        android:visibility="gone">
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginStart="32dp"
+            android:layout_marginEnd="32dp"
+            app:cardBackgroundColor="@color/sc_surface"
+            app:cardCornerRadius="24dp"
+            app:cardElevation="8dp"
+            app:strokeWidth="0dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:orientation="vertical"
+                android:padding="32dp">
+
+                <!-- Result title (pass/fail) -->
+                <TextView
+                    android:id="@+id/tvResultTitle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:fontFamily="sans-serif-medium"
+                    android:textColor="@color/sc_text_primary"
+                    android:textSize="24sp"
+                    android:textStyle="bold"
+                    tools:text="🎉 Quiz Passed!" />
+
+                <!-- Score text -->
+                <TextView
+                    android:id="@+id/tvResultScore"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:fontFamily="sans-serif"
+                    android:textColor="@color/sc_text_secondary"
+                    android:textSize="15sp"
+                    tools:text="You scored 100% (3 out of 3 correct)" />
+
+                <!-- Pass threshold note -->
+                <TextView
+                    android:id="@+id/tvPassThreshold"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="6dp"
+                    android:fontFamily="sans-serif"
+                    android:text="@string/quiz_pass_threshold"
+                    android:textColor="@color/sc_text_hint"
+                    android:textSize="12sp" />
+
+                <!-- Continue / Retry button -->
+                <Button
+                    android:id="@+id/btnResultAction"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="24dp"
+                    android:background="@drawable/bg_primary_button"
+                    android:fontFamily="sans-serif-medium"
+                    android:stateListAnimator="@null"
+                    android:text="@string/quiz_continue"
+                    android:textAllCaps="false"
+                    android:textColor="@android:color/white"
+                    android:textSize="15sp"
+                    android:textStyle="bold" />
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+    </FrameLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

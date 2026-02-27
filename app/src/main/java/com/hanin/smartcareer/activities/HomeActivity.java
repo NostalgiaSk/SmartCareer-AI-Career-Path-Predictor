@@ -1,5 +1,6 @@
 package com.hanin.smartcareer.activities;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -110,6 +111,10 @@ public class HomeActivity extends AppCompatActivity {
         tvWelcome     = findViewById(R.id.tvWelcome);
         ivProfile     = findViewById(R.id.ivProfile);
 
+        // Logout button in hero header
+        ImageView ivLogout = findViewById(R.id.ivLogout);
+        ivLogout.setOnClickListener(v -> showLogoutConfirmation());
+
         // Top Career Match card
         cardTopMatch    = findViewById(R.id.cardTopMatch);
         tvTopMatchName  = findViewById(R.id.tvTopMatchName);
@@ -141,6 +146,21 @@ public class HomeActivity extends AppCompatActivity {
         cardTopMatch.setVisibility(View.GONE);
     }
 
+    private void showLogoutConfirmation() {
+        new AlertDialog.Builder(this)
+                .setTitle(getString(R.string.home_logout))
+                .setMessage(getString(R.string.home_logout_confirm))
+                .setPositiveButton(getString(R.string.home_logout), (dialog, which) -> {
+                    FirebaseAuth.getInstance().signOut();
+                    Intent intent = new Intent(this, LoginActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                            | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                    finish();
+                })
+                .setNegativeButton(getString(R.string.home_logout_cancel), null)
+                .show();
+    }
 
     private void setupWelcome() {
         FirebaseUser user = auth.getCurrentUser();

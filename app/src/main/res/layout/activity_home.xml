@@ -53,8 +53,21 @@
                 android:textColor="#FFFFFF"
                 android:textSize="26sp"
                 tools:text="Welcome back, Hanin 👋"
-                app:layout_constraintEnd_toStartOf="@id/ivProfile"
+                app:layout_constraintEnd_toStartOf="@id/ivLogout"
                 app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/ivLogout"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginEnd="12dp"
+                android:background="@drawable/bg_score_badge"
+                android:contentDescription="@string/home_logout"
+                android:padding="9dp"
+                android:src="@android:drawable/ic_lock_power_off"
+                app:tint="#FFFFFF"
+                app:layout_constraintEnd_toStartOf="@id/ivProfile"
                 app:layout_constraintTop_toTopOf="parent" />
 
             <!-- Profile icon — top-right -->

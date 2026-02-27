@@ -44,12 +44,12 @@ public class ObtainedCertificationsAdapter
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
         Map<String, Object> cert = certifications.get(position);
 
-        // Title
+
         String title = cert.get("certificationName") != null
                 ? cert.get("certificationName").toString() : "Certification";
         holder.tvCertTitle.setText(title);
 
-        // Completion date
+ 
         String dateStr = "—";
         Object completedAt = cert.get("completedAt");
         if (completedAt instanceof com.google.firebase.Timestamp) {
@@ -67,7 +67,7 @@ public class ObtainedCertificationsAdapter
         }
         holder.tvScore.setText(context.getString(R.string.obtained_cert_score, score));
 
-        // View Details button
+
         final String finalTitle = title;
         final String finalDate = dateStr;
         final int finalScore = score;

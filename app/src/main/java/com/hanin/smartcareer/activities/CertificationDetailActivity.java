@@ -74,54 +74,45 @@ public class CertificationDetailActivity extends AppCompatActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_certification_detail);
 
-        // 1. Firebase init
+        
         db  = FirebaseFirestore.getInstance();
         uid = FirebaseAuth.getInstance().getCurrentUser() != null
                 ? FirebaseAuth.getInstance().getCurrentUser().getUid() : null;
 
-        // 2. Retrieve data passed from the previous screen
+    
         retrieveIntentData();
 
-        // 3. Build Firestore document ID from cert name
         progressDocId = certificationName.replaceAll("[^a-zA-Z0-9 ]", "")
                 .trim().replaceAll("\\s+", "_");
 
-        // 4. Bind views
         initViews();
 
-        // 5. Populate header with Intent data
         populateHeader();
 
-        // 6. Initialise empty module list
         moduleList = new ArrayList<>();
         savedCompletedModules = new ArrayList<>();
         savedQuizScores = new HashMap<>();
         savedCurrentModuleIndex = 0;
 
-        // 7. Setup RecyclerView with adapter
         setupRecyclerView();
 
-        // 8. Load saved progress from Firestore, then fetch modules
         loadProgressFromFirestore();
     }
 
 
-    /**
-     * Extracts all data passed from the calling activity.
-     */
+
     private void retrieveIntentData() {
         certificationName = getIntent().getStringExtra("certificationName");
         provider          = getIntent().getStringExtra("provider");
         level             = getIntent().getStringExtra("level");
         progress          = getIntent().getIntExtra("progress", 0);
 
-        // Fallbacks for standalone testing
         if (certificationName == null) certificationName = "Google ML Engineer";
         if (provider == null)          provider = "Google";
         if (level == null)             level = "Intermediate";
     }
 
-    // ── View initialisation ──────────────────────────────────────────
+
 
     private void initViews() {
         ivBack            = findViewById(R.id.ivBack);
@@ -134,14 +125,11 @@ public class CertificationDetailActivity extends AppCompatActivity
         btnResume         = findViewById(R.id.btnResume);
         rvModules         = findViewById(R.id.rvModules);
 
-        // Back arrow navigation
         ivBack.setOnClickListener(v -> finish());
 
-        // Resume Learning button → scrolls to and opens first incomplete module
         btnResume.setOnClickListener(v -> resumeLearning());
     }
 
-    // ── Header population ────────────────────────────────────────────
 
     private void populateHeader() {
         tvCertName.setText(certificationName);
@@ -150,15 +138,14 @@ public class CertificationDetailActivity extends AppCompatActivity
         updateProgressUI(progress);
     }
 
-    // ── RecyclerView setup ───────────────────────────────────────────
-
+    
     private void setupRecyclerView() {
         moduleAdapter = new ModuleAdapter(this, moduleList, this);
         rvModules.setLayoutManager(new LinearLayoutManager(this));
         rvModules.setAdapter(moduleAdapter);
     }
 
-    // MODULE CLICK CALLBACK
+
 
     @Override
     public void onModuleClicked(int position) {
@@ -540,13 +527,11 @@ public class CertificationDetailActivity extends AppCompatActivity
     private ModuleListWrapper attemptTruncatedJsonRepair(String truncatedJson) {
         try {
             // Find the last occurrence of a complete module boundary
-            // Each module ends with "}" followed by optional whitespace and ","
-            // We look for the pattern "]" closing quiz array + "}" closing module
+          
             int lastCompleteModule = -1;
 
             // Scan for complete module entries by tracking brace depth
-            // A simpler approach: find each "mod_N" and check if it has a
-            // complete quiz array (ends with "]}")
+            
             for (int modNum = 5; modNum >= 1; modNum--) {
                 String marker = "\"id\": \"mod_" + modNum + "\"";
                 // Also try without space after colon

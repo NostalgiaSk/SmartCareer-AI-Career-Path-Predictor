@@ -55,31 +55,25 @@ public class ObtainedCertificationsActivity extends AppCompatActivity {
         }
         uid = user.getUid();
 
-        // Bind views
         ImageView ivBack     = findViewById(R.id.ivBack);
         rvObtainedCerts      = findViewById(R.id.rvObtainedCerts);
         progressLoading      = findViewById(R.id.progressLoading);
         layoutEmpty          = findViewById(R.id.layoutEmpty);
         btnStartLearning     = findViewById(R.id.btnStartLearning);
 
-        // Back button
         ivBack.setOnClickListener(v -> finish());
 
-        // Empty state — navigate to career profile to start learning
         btnStartLearning.setOnClickListener(v ->
                 startActivity(new Intent(this, CareerProfileActivity.class)));
 
-        // Setup RecyclerView
         certList = new ArrayList<>();
         adapter = new ObtainedCertificationsAdapter(this, certList);
         rvObtainedCerts.setLayoutManager(new LinearLayoutManager(this));
         rvObtainedCerts.setAdapter(adapter);
 
-        // Fetch completed certifications
         fetchObtainedCertifications();
     }
 
-    // Fetches certifications where completedAt != null from certification_progress
     private void fetchObtainedCertifications() {
         progressLoading.setVisibility(View.VISIBLE);
         rvObtainedCerts.setVisibility(View.GONE);
@@ -93,7 +87,7 @@ public class ObtainedCertificationsActivity extends AppCompatActivity {
                     certList.clear();
 
                     for (DocumentSnapshot doc : querySnapshot.getDocuments()) {
-                        // Only include docs that have a completedAt timestamp
+
                         if (doc.get("completedAt") != null) {
                             Map<String, Object> certData = new HashMap<>();
                             certData.put("certificationName",
@@ -102,13 +96,12 @@ public class ObtainedCertificationsActivity extends AppCompatActivity {
                             certData.put("completedAt", doc.get("completedAt"));
                             certData.put("totalModules", doc.get("totalModules"));
 
-                            // Get totalScore; if missing, compute from quizScores map
                             Object scoreObj = doc.get("totalScore");
                             int score = scoreObj instanceof Number
                                     ? ((Number) scoreObj).intValue() : 0;
 
                             if (score == 0) {
-                                // Fallback: average all quiz scores
+
                                 Map<String, Object> quizScores =
                                         (Map<String, Object>) doc.get("quizScores");
                                 if (quizScores != null && !quizScores.isEmpty()) {

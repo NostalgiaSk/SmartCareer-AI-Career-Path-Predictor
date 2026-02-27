@@ -367,6 +367,16 @@ public class CertificationDetailActivity extends AppCompatActivity
             }
         }
 
+        // Calculate average score across all quizzes
+        int totalScore = 0;
+        if (!quizScoresMap.isEmpty()) {
+            int sum = 0;
+            for (Object s : quizScoresMap.values()) {
+                if (s instanceof Number) sum += ((Number) s).intValue();
+            }
+            totalScore = sum / quizScoresMap.size();
+        }
+
         Map<String, Object> data = new HashMap<>();
         data.put("certificationName", certificationName);
         data.put("provider", provider);
@@ -376,6 +386,7 @@ public class CertificationDetailActivity extends AppCompatActivity
         data.put("quizScores", quizScoresMap);
         data.put("currentModuleIndex", currentIdx);
         data.put("completed", overallProgress == 100);
+        data.put("totalScore", totalScore);
 
         db.collection("users").document(uid)
                 .collection("certification_progress").document(progressDocId)

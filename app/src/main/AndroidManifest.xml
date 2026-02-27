@@ -118,6 +118,20 @@
             android:label="@string/app_name"
             android:theme="@style/Theme.SmartCareer" />
 
+        <!-- Obtained certifications list -->
+        <activity
+            android:name=".activities.ObtainedCertificationsActivity"
+            android:exported="false"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.SmartCareer" />
+
+        <!-- Certification result detail -->
+        <activity
+            android:name=".activities.CertificationResultActivity"
+            android:exported="false"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.SmartCareer" />
+
     </application>
 
 </manifest>

@@ -208,4 +208,25 @@
     <string name="cert_date_label">Completed on %1$s</string>
     <string name="cert_back_home">Back to Home</string>
 
+    <!-- ============================================================= -->
+    <!-- Obtained Certifications Screen Strings                        -->
+    <!-- ============================================================= -->
+
+    <string name="obtained_certs_title">My Certifications</string>
+    <string name="obtained_certs_empty">No certifications obtained yet.</string>
+    <string name="obtained_certs_start">Start Learning</string>
+    <string name="obtained_cert_date">Completed: %1$s</string>
+    <string name="obtained_cert_score">Score: %1$d%%</string>
+    <string name="obtained_cert_view">View Details</string>
+
+    <!-- ============================================================= -->
+    <!-- Certification Result Screen Strings                           -->
+    <!-- ============================================================= -->
+
+    <string name="cert_result_completed">✅ Completed</string>
+    <string name="cert_result_score_label">Final Score</string>
+    <string name="cert_result_date_label">Completion Date</string>
+    <string name="cert_result_modules_label">Modules Completed</string>
+    <string name="cert_result_provider_label">Provider</string>
+
 </resources>

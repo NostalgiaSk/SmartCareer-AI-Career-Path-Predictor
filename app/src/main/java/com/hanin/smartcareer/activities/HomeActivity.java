@@ -90,6 +90,7 @@ public class HomeActivity extends AppCompatActivity {
         uid = currentUser.getUid();
 
        
+        latestCareers    = new ArrayList<>();
         savedCareers     = new ArrayList<>();
         certProgressList = new ArrayList<>();
         savedCareerIds   = new HashSet<>();
@@ -159,7 +160,7 @@ public class HomeActivity extends AppCompatActivity {
                 startActivity(new Intent(this, SavedCareersActivity.class)));
 
         cardCertifications.setOnClickListener(v ->
-                Toast.makeText(this, "My Certifications – coming soon!", Toast.LENGTH_SHORT).show());
+                startActivity(new Intent(this, ObtainedCertificationsActivity.class)));
 
         cardProgress.setOnClickListener(v ->
                 Toast.makeText(this, "My Progress – coming soon!", Toast.LENGTH_SHORT).show());

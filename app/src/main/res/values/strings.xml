@@ -232,4 +232,43 @@
     <string name="cert_result_modules_label">Modules Completed</string>
     <string name="cert_result_provider_label">Provider</string>
 
+    <!-- ============================================================= -->
+    <!-- Admin Dashboard Screen Strings                                -->
+    <!-- ============================================================= -->
+
+    <!-- Admin Dashboard -->
+    <string name="admin_title">Admin Dashboard</string>
+    <string name="admin_subtitle">Manage your platform</string>
+    <string name="admin_welcome">Welcome, Admin %1$s 👋</string>
+    <string name="admin_stats_title">Platform Statistics</string>
+    <string name="admin_stat_total_users">Total Users</string>
+    <string name="admin_stat_career_profiles">Career Profiles</string>
+    <string name="admin_stat_certs_started">Certs Started</string>
+    <string name="admin_stat_certs_completed">Certs Completed</string>
+    <string name="admin_loading_stats">Loading…</string>
+    <string name="admin_actions_title">Quick Actions</string>
+    <string name="admin_manage_users">Manage Users</string>
+    <string name="admin_manage_certifications">Manage Certifications</string>
+    <string name="admin_view_logs">View Activity Logs</string>
+    <string name="admin_unauthorized">You are not authorized to access the admin panel.</string>
+    <string name="admin_stats_error">Could not load statistics.</string>
+    <string name="admin_logout">Logout</string>
+    <string name="admin_logout_confirm">Are you sure you want to logout?</string>
+    <string name="admin_logout_cancel">Cancel</string>
+
+    <!-- Users List Screen -->
+    <string name="users_list_title">All Users</string>
+    <string name="users_list_empty">No users found.</string>
+    <string name="users_list_error">Could not load users.</string>
+    <string name="users_list_role_label">Role: %1$s</string>
+    <string name="users_list_joined_label">Joined: %1$s</string>
+
+    <!-- Certifications Admin Screen -->
+    <string name="certs_admin_title">Manage Certifications</string>
+    <string name="certs_admin_coming_soon">Certification management features coming soon!</string>
+
+    <!-- Activity Logs Screen -->
+    <string name="activity_logs_title">Activity Logs</string>
+    <string name="activity_logs_coming_soon">Activity log features coming soon!</string>
+
 </resources>

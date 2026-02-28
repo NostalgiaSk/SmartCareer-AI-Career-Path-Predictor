@@ -7,6 +7,7 @@ import android.text.Spanned;
 import android.text.TextPaint;
 import android.text.method.LinkMovementMethod;
 import android.text.style.ClickableSpan;
+import android.util.Log;
 import android.util.Patterns;
 import android.view.View;
 import android.widget.Button;
@@ -19,6 +20,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
 import com.hanin.smartcareer.R;
 import com.hanin.smartcareer.firebase.AuthRepository;
 
@@ -47,8 +51,9 @@ public class LoginActivity extends AppCompatActivity {
         setupListeners();
         setupCreateAccountText();
 
+        // If user is already signed in, check their role and navigate
         if (authRepository.getCurrentUser() != null) {
-            navigateToHome();
+            navigateByRole();
         }
     }
 
@@ -157,8 +162,8 @@ public class LoginActivity extends AppCompatActivity {
                 Toast.makeText(LoginActivity.this,
                         R.string.toast_login_success, Toast.LENGTH_SHORT).show();
 
-                // Navigate to the Home Dashboard
-                navigateToHome();
+                // Check user role and navigate to the appropriate dashboard
+                navigateByRole();
             }
 
             @Override
@@ -178,14 +183,55 @@ public class LoginActivity extends AppCompatActivity {
         btnLogin.setEnabled(!isLoading);
     }
 
-    /**
-     * Navigates to {@link HomeActivity} and clears the back stack so
-     * the user cannot press Back to return to the login screen.
-     */
-    private void navigateToHome() {
-        Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
-        finish();
+    // ── Role-based navigation ───────────────────────────────────────
+
+    private void navigateByRole() {
+        // Get the currently signed-in Firebase user
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+        // Safety check: if user is null, stay on login
+        if (user == null) {
+            Log.w("LoginActivity", "navigateByRole: user is null");
+            return;
+        }
+
+        String uid = user.getUid();
+
+        // Query Firestore for the user's role
+        FirebaseFirestore.getInstance()
+                .collection("users")
+                .document(uid)
+                .get()
+                .addOnSuccessListener(snapshot -> {
+                    Intent intent;
+
+                    if (snapshot.exists()
+                            && "admin".equals(snapshot.getString("role"))) {
+                        // ✅ Admin user → open AdminDashboardActivity
+                        intent = new Intent(LoginActivity.this,
+                                AdminDashboardActivity.class);
+                    } else {
+                        // Regular student → open HomeActivity
+                        intent = new Intent(LoginActivity.this,
+                                HomeActivity.class);
+                    }
+
+                    // Clear the back stack so the user can't go back to login
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                            | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                    finish();
+                })
+                .addOnFailureListener(e -> {
+                    // Firestore read failed — default to HomeActivity
+                    Log.e("LoginActivity",
+                            "navigateByRole: Firestore read failed", e);
+                    Intent intent = new Intent(LoginActivity.this,
+                            HomeActivity.class);
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK
+                            | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                    startActivity(intent);
+                    finish();
+                });
     }
 }

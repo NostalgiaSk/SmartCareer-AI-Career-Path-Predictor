@@ -132,6 +132,34 @@
             android:label="@string/app_name"
             android:theme="@style/Theme.SmartCareer" />
 
+        <!-- Admin Dashboard (role-gated) -->
+        <activity
+            android:name=".activities.AdminDashboardActivity"
+            android:exported="false"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.SmartCareer" />
+
+        <!-- Admin: Users list -->
+        <activity
+            android:name=".activities.UsersListActivity"
+            android:exported="false"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.SmartCareer" />
+
+        <!-- Admin: Certifications management (placeholder) -->
+        <activity
+            android:name=".activities.CertificationsAdminActivity"
+            android:exported="false"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.SmartCareer" />
+
+        <!-- Admin: Activity logs (placeholder) -->
+        <activity
+            android:name=".activities.ActivityLogsActivity"
+            android:exported="false"
+            android:label="@string/app_name"
+            android:theme="@style/Theme.SmartCareer" />
+
     </application>
 
 </manifest>

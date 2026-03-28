@@ -1,28 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<!--
-    REDESIGNED Home Dashboard layout — 2025 modern startup aesthetic.
 
-    Design decisions:
-    ▸ Full-width gradient hero header with rounded bottom (32dp)
-    ▸ Featured "Top Career Match" card with white-on-gradient styling
-    ▸ Quick actions in a horizontal scroll with generous 20dp radius cards
-    ▸ Section titles use emoji icons for visual weight without extra drawables
-    ▸ All cards have 20dp corner radius + soft 4dp elevation
-    ▸ RecyclerViews use layout animations for cascading entry
-    ▸ Generous spacing (24dp horizontal, 20dp+ vertical gaps)
--->
 
-<ScrollView
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/swipeRefreshLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".activities.HomeActivity">
+
+<ScrollView
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/sc_background"
     android:fillViewport="true"
-    android:overScrollMode="never"
-    tools:context=".activities.HomeActivity">
+    android:overScrollMode="never">
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -552,3 +546,4 @@
 
     </LinearLayout>
 </ScrollView>
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>

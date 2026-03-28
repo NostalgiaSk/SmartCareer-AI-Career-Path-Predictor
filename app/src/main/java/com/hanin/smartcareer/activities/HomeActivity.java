@@ -16,6 +16,7 @@ import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.card.MaterialCardView;
@@ -51,6 +52,7 @@ public class HomeActivity extends AppCompatActivity {
     private TextView tvTopMatchName, tvTopMatchScore, tvTopMatchDesc;
 
     private ProgressBar progressLatest, progressSaved, progressCerts;
+    private SwipeRefreshLayout swipeRefreshLayout;
 
     // Empty state containers for each section
     private LinearLayout emptyLatest, emptySaved, emptyCerts;
@@ -70,6 +72,7 @@ public class HomeActivity extends AppCompatActivity {
     private FirebaseAuth auth;
     private FirebaseFirestore db;
     private String uid;
+    private boolean isFirstLaunch = true;
 
 
     @Override
@@ -105,6 +108,18 @@ public class HomeActivity extends AppCompatActivity {
         preloadSavedIdsAndFetch();
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // Skip refresh on first launch (onCreate already fetches data)
+        if (isFirstLaunch) {
+            isFirstLaunch = false;
+            return;
+        }
+        // Auto-refresh when returning from CareerProfileActivity or any other screen
+        refreshAllData();
+    }
+
    
 
     private void initViews() {
@@ -114,6 +129,12 @@ public class HomeActivity extends AppCompatActivity {
         // Logout button in hero header
         ImageView ivLogout = findViewById(R.id.ivLogout);
         ivLogout.setOnClickListener(v -> showLogoutConfirmation());
+
+        // Pull-to-refresh
+        swipeRefreshLayout = findViewById(R.id.swipeRefreshLayout);
+        swipeRefreshLayout.setColorSchemeResources(
+                R.color.sc_primary, R.color.sc_primary_dark, R.color.sc_secondary);
+        swipeRefreshLayout.setOnRefreshListener(this::refreshAllData);
 
         // Top Career Match card
         cardTopMatch    = findViewById(R.id.cardTopMatch);
@@ -199,6 +220,31 @@ public class HomeActivity extends AppCompatActivity {
         btnEmptyLatest.setOnClickListener(goToProfile);
         btnEmptySaved.setOnClickListener(goToProfile);
         btnEmptyCerts.setOnClickListener(goToProfile);
+    }
+
+    // ── Refresh all data from Firebase ────────────────────────────────
+
+    /**
+     * Clears existing data and re-fetches everything from Firebase.
+     * Called by SwipeRefreshLayout on manual pull and by onResume() for auto-refresh.
+     */
+    private void refreshAllData() {
+        // Clear existing data
+        latestCareers.clear();
+        savedCareers.clear();
+        certProgressList.clear();
+        savedCareerIds.clear();
+
+        // Notify adapters of clear (if they exist)
+        if (latestAdapter != null) latestAdapter.notifyDataSetChanged();
+        if (savedAdapter != null) savedAdapter.notifyDataSetChanged();
+        if (certAdapter != null) certAdapter.notifyDataSetChanged();
+
+        // Reset top match card
+        cardTopMatch.setVisibility(View.GONE);
+
+        // Re-fetch everything
+        preloadSavedIdsAndFetch();
     }
 
     // ── Preload saved IDs, then set up adapters ──────────────────────
@@ -310,6 +356,7 @@ public class HomeActivity extends AppCompatActivity {
                         progressLatest.setVisibility(View.GONE);
                         emptyLatest.setVisibility(View.VISIBLE);
                         rvLatestCareers.setVisibility(View.GONE);
+                        swipeRefreshLayout.setRefreshing(false);
                         return;
                     }
 
@@ -351,6 +398,7 @@ public class HomeActivity extends AppCompatActivity {
 
                                 latestAdapter.notifyDataSetChanged();
                                 progressLatest.setVisibility(View.GONE);
+                                swipeRefreshLayout.setRefreshing(false);
 
                                 if (latestCareers.isEmpty()) {
                                     emptyLatest.setVisibility(View.VISIBLE);
@@ -367,6 +415,7 @@ public class HomeActivity extends AppCompatActivity {
                                 progressLatest.setVisibility(View.GONE);
                                 emptyLatest.setVisibility(View.VISIBLE);
                                 rvLatestCareers.setVisibility(View.GONE);
+                                swipeRefreshLayout.setRefreshing(false);
                                 Toast.makeText(this, "Could not load career suggestions.", Toast.LENGTH_SHORT).show();
                             });
                 })
@@ -375,6 +424,7 @@ public class HomeActivity extends AppCompatActivity {
                     progressLatest.setVisibility(View.GONE);
                     emptyLatest.setVisibility(View.VISIBLE);
                     rvLatestCareers.setVisibility(View.GONE);
+                    swipeRefreshLayout.setRefreshing(false);
                     Toast.makeText(this, "Could not load career profiles.", Toast.LENGTH_SHORT).show();
                 });
     }

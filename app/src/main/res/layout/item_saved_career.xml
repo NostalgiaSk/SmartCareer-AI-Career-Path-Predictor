@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<!--
-    REDESIGNED saved career card — compact card for horizontal list,
-    now with 20dp corners, gradient-tinted score, and delete icon.
--->
+
 
 <com.google.android.material.card.MaterialCardView
     xmlns:android="http://schemas.android.com/apk/res/android"

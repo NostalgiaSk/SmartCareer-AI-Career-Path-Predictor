@@ -72,6 +72,7 @@ dependencies {
     implementation(libs.google.material)
     implementation(libs.constraintlayout)
     implementation(libs.appcompat)
+    implementation(libs.swiperefreshlayout)
 
     // Networking – Retrofit + Gson + OkHttp
     implementation(libs.retrofit)

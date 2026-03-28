@@ -18,20 +18,6 @@ import com.hanin.smartcareer.R;
 
 import java.util.List;
 
-/**
- * Full career detail screen for a saved career.
- *
- * Receives a "suggestion_id" via Intent, then fetches the full career
- * document from users/{uid}/saved_careers/{suggestionId}.
- *
- * Displays:
- * - Career title and match score
- * - Full description
- * - Required skills
- * - Missing / skill-gap skills
- * - Recommended certifications
- * - A delete button to remove the career from saved_careers
- */
 public class CareerDetailActivity extends AppCompatActivity {
 
     private static final String TAG = "CareerDetailActivity";

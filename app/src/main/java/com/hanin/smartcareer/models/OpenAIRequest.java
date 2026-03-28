@@ -22,7 +22,6 @@ public class OpenAIRequest {
     @SerializedName("max_tokens")
     private int maxTokens;
 
-    // ── Constructor ─────────────────────────────────────────────────
 
     public OpenAIRequest(String model, List<Message> messages,
                          double temperature, int maxTokens) {
@@ -32,7 +31,6 @@ public class OpenAIRequest {
         this.maxTokens   = maxTokens;
     }
 
-    // ── Inner class: a single chat message ──────────────────────────
 
     public static class Message {
 

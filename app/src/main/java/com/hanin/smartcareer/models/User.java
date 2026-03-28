@@ -13,7 +13,6 @@ public class User {
     private int careerProfilesCount;
     private Timestamp createdAt;
 
-    // ── Constructors ─────────────────────────────────────────────────
 
     public User() {
         // Required empty constructor for Firestore

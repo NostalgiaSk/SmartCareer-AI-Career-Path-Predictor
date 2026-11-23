@@ -72,3 +72,8 @@ Thumbs.db
 # 🧵 Native
 # =========================
 *.so
+
+# Diagram tooling
+diagrams/plantuml.jar
+*.jar
+

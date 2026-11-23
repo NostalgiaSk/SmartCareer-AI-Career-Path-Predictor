@@ -1,5 +1,5 @@
 # =========================
-# 🏗 Gradle
+# ?? Gradle
 # =========================
 .gradle/
 build/
@@ -9,7 +9,7 @@ build/
 .gradle-cache/
 
 # =========================
-# 📦 Local Configuration
+# ?? Local Configuration
 # =========================
 local.properties
 
@@ -19,7 +19,7 @@ local.properties
 .env.*
 
 # =========================
-# 🔐 Keystore & Signing
+# ?? Keystore & Signing
 # =========================
 *.jks
 *.keystore
@@ -27,7 +27,7 @@ local.properties
 *.key
 
 # =========================
-# 📱 Android Generated Files
+# ?? Android Generated Files
 # =========================
 *.apk
 *.aab
@@ -39,7 +39,7 @@ captures/
 .cxx/
 
 # =========================
-# 🧠 Android Studio / IntelliJ
+# ?? Android Studio / IntelliJ
 # =========================
 .idea/
 *.iml
@@ -53,27 +53,26 @@ captures/
 .idea/assetWizardSettings.xml
 
 # =========================
-# 🖥 OS Files
+# ?? OS Files
 # =========================
 .DS_Store
 Thumbs.db
 
 # =========================
-# 📝 Logs
+# ?? Logs
 # =========================
 *.log
 
 # =========================
-# 🧪 Profiling
+# ?? Profiling
 # =========================
 *.hprof
 
 # =========================
-# 🧵 Native
+# ?? Native
 # =========================
 *.so
 
 # Diagram tooling
 diagrams/plantuml.jar
-*.jar
 

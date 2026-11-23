@@ -1,0 +1,22 @@
+@startuml activity-career-suggestions
+!theme plain
+skinparam shadowing false
+title Activity: Get Career Suggestions
+
+start
+:Enter skills, interests, GPA, projects;
+:Tap Generate Suggestions;
+:Validate inputs;
+
+if (Valid?) then (yes)
+  :Send profile to AI Engine;
+  :Receive career suggestions (JSON);
+  :Parse careers;
+  :Save profile + suggestions to Firestore;
+  :Show Career Suggestions screen;
+else (no)
+  :Show validation errors;
+endif
+
+stop
+@enduml

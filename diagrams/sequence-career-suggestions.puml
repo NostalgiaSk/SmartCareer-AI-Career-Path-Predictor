@@ -1,0 +1,24 @@
+@startuml sequence-career-suggestions
+!theme plain
+skinparam shadowing false
+title Sequence: Get Career Suggestions
+
+actor Student
+participant "CareerProfileActivity" as Profile
+participant "OpenAIService" as API
+participant "AI Engine" as AI
+participant "Firestore" as DB
+
+Student -> Profile : enter skills, interests,\nGPA, projects
+Student -> Profile : tap Generate
+Profile -> Profile : validate inputs
+Profile -> API : getChatCompletion(request)
+API -> AI : career prompt
+AI --> API : JSON careers
+API --> Profile : OpenAIResponse
+Profile -> Profile : parse careers
+Profile -> DB : save profile + suggestions
+DB --> Profile : success
+Profile --> Student : show CareerSuggestions
+
+@enduml

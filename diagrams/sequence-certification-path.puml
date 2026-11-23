@@ -1,0 +1,33 @@
+@startuml sequence-certification-path
+!theme plain
+skinparam shadowing false
+title Sequence: Follow Certification Path
+
+actor Student
+participant "CertificationDetail\nActivity" as Cert
+participant "OpenAIService" as API
+participant "AI Engine" as AI
+participant "ModuleActivity" as Module
+participant "QuizActivity" as Quiz
+participant "Firestore" as DB
+
+Student -> Cert : open certification
+Cert -> DB : load progress
+DB --> Cert : saved progress (or empty)
+Cert -> API : getChatCompletion(modules prompt)
+API -> AI : generate modules
+AI --> API : JSON modules
+API --> Cert : OpenAIResponse
+Cert -> Cert : parse & show modules
+Student -> Cert : select a module
+Cert -> Module : open module
+Student -> Module : study content
+Module -> Quiz : start quiz
+Student -> Quiz : answer questions
+Quiz -> Quiz : score (>= 70% = pass)
+Quiz --> Cert : quiz result
+Cert -> DB : save progress
+DB --> Cert : saved
+Cert --> Student : unlock next module\n(or earn certificate)
+
+@enduml

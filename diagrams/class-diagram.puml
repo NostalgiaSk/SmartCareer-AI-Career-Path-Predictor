@@ -1,0 +1,94 @@
+@startuml SmartCareer_Class_Diagram
+!theme plain
+skinparam classAttributeIconSize 0
+skinparam classFontSize 13
+skinparam linetype ortho
+title SmartCareer — Domain Models
+
+class User {
+  - uid: String
+  - email: String
+  - fullName: String
+  - role: String
+  - careerProfilesCount: int
+  - createdAt: Timestamp
+}
+
+class Career {
+  - suggestionId: String
+  - careerName: String
+  - matchScore: int
+  - description: String
+  - skillGaps: ArrayList<String>
+  - certifications: ArrayList<String>
+  - aiGenerated: boolean
+}
+
+class SkillGap {
+  - skillName: String
+  - explanation: String
+}
+
+class Certification {
+  - certName: String
+  - provider: String
+  - difficulty: String
+}
+
+class CertificationProgress {
+  - certName: String
+  - provider: String
+  - progressPercent: int
+}
+
+class Module {
+  - moduleId: String
+  - title: String
+  - content: String
+  - duration: String
+  - orderIndex: int
+  - completed: boolean
+  - locked: boolean
+  - quizPassed: boolean
+  - quizScore: int
+}
+
+class QuizQuestion {
+  - question: String
+  - options: ArrayList<String>
+  - correctIndex: int
+}
+
+class OpenAIRequest {
+  - model: String
+  - messages: List<Message>
+  - temperature: double
+  - maxTokens: int
+}
+
+class "OpenAIRequest.Message" as Message {
+  - role: String
+  - content: String
+}
+
+class OpenAIResponse {
+  - choices: List<Choice>
+}
+
+class "OpenAIResponse.Choice" as Choice {
+  + message: MessageBody
+}
+
+' Relationships
+User "1" --> "*" Career : saves / receives suggestions
+Career "*" --> "*" SkillGap : has gaps
+Career "*" --> "*" Certification : recommends
+Certification "1" --> "*" Module : learning path
+Certification "1" --> "0..1" CertificationProgress : tracks
+Module "1" *-- "*" QuizQuestion : contains
+OpenAIRequest "1" *-- "*" Message : messages
+OpenAIResponse "1" *-- "*" Choice : choices
+OpenAIRequest ..> Career : generates suggestions for
+OpenAIRequest ..> Module : generates content for
+
+@enduml

@@ -1,0 +1,27 @@
+@startuml sequence-login
+!theme plain
+skinparam shadowing false
+title Sequence: Login
+
+actor Student
+participant "LoginActivity" as Login
+participant "AuthRepository" as Auth
+participant "Firebase Auth" as FA
+participant "Firestore" as DB
+
+Student -> Login : enter email & password
+Login -> Auth : login(email, password)
+Auth -> FA : signInWithEmailAndPassword()
+FA --> Auth : success (FirebaseUser)
+Auth -> DB : get user document (uid)
+DB --> Auth : user data
+Auth --> Login : onSuccess()
+Login -> DB : get role
+DB --> Login : role
+alt role = admin
+  Login --> Student : open AdminDashboard
+else role = student
+  Login --> Student : open HomeActivity
+end
+
+@enduml

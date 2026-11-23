@@ -1,0 +1,56 @@
+@startuml SmartCareer_UseCase_Diagram
+!theme plain
+left to right direction
+skinparam packageStyle rectangle
+skinparam shadowing false
+skinparam usecase {
+  BorderColor Black
+  BackgroundColor White
+}
+skinparam actor {
+  BorderColor Black
+  BackgroundColor White
+}
+title SmartCareer — Use Case Diagram
+
+actor Student
+actor Admin
+actor "AI Engine" as AI
+
+rectangle SmartCareer {
+
+  usecase "Register / Login" as UC1
+  usecase "Create Career Profile" as UC2
+  usecase "Get Career Suggestions" as UC3
+  usecase "View Career Details" as UC4
+  usecase "View Skill Gaps" as UC5
+  usecase "Save Career" as UC6
+  usecase "Follow Certification Path" as UC7
+  usecase "Complete Modules & Quizzes" as UC8
+  usecase "Earn Certificate" as UC9
+  usecase "View My Certifications" as UC10
+
+  usecase "Manage Users" as UC11
+  usecase "View Activity Logs" as UC12
+  usecase "Manage Certifications" as UC13
+}
+
+Student --> UC1
+Student --> UC2
+Student --> UC3
+Student --> UC4
+Student --> UC5
+Student --> UC6
+Student --> UC7
+Student --> UC10
+
+UC3 ..> AI : includes
+UC7 ..> UC8 : includes
+UC8 ..> UC9 : includes
+UC7 ..> AI : includes
+
+Admin --> UC11
+Admin --> UC12
+Admin --> UC13
+
+@enduml

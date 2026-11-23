@@ -1,0 +1,32 @@
+@startuml activity-certification-path
+!theme plain
+skinparam shadowing false
+title Activity: Follow Certification Path
+
+start
+:Open certification;
+:Load progress from Firestore;
+:Request modules from AI Engine;
+:Display learning modules;
+
+while (Modules remaining?) is (yes)
+  :Select a module;
+  :Study module content;
+  :Take quiz;
+  :Calculate score;
+
+  if (Score >= 70%?) then (yes)
+    :Mark module completed;
+    :Save progress to Firestore;
+    :Unlock next module;
+  else (no)
+    :Show fail result;
+    :Retry quiz;
+  endif
+endwhile (no)
+
+:Earn certificate;
+:View My Certifications;
+
+stop
+@enduml

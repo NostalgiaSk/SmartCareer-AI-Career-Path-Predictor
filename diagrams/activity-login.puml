@@ -1,0 +1,24 @@
+@startuml activity-login
+!theme plain
+skinparam shadowing false
+title Activity: Login
+
+start
+:Enter email and password;
+:Submit login;
+:Authenticate with Firebase Auth;
+
+if (Auth success?) then (yes)
+  :Load user document from Firestore;
+  :Read user role;
+  if (role = admin?) then (yes)
+    :Open Admin Dashboard;
+  else (no)
+    :Open Home Screen;
+  endif
+else (no)
+  :Show error message;
+endif
+
+stop
+@enduml
